@@ -105,6 +105,38 @@ function stripBlockquotes(text: string): string {
     .join("\n");
 }
 
+/**
+ * The three AI-writing tells that a program can catch without judgement.
+ *
+ * Everything else on that list, forced triads, inflated significance, participle
+ * padding, is a judgement call and belongs to the writer and the critique agent.
+ * These three are literal characters, so they are checked here instead of trusted.
+ *
+ * Warnings rather than errors on purpose: `--strict` promotes them, and the
+ * generator and `forge promote` both run strict, so new material is blocked either
+ * way without invalidating anything already on disk.
+ */
+function checkProseStyle(report: Report, file: string, raw: string) {
+  // Quoted source text is someone else's wording, and code is not prose.
+  const prose = stripBlockquotes(stripFences(raw));
+
+  const dashes = (prose.match(/[—–]/g) ?? []).length;
+  if (dashes) {
+    report.warn(
+      file,
+      `${dashes} em or en dash(es) in prose; use a period, comma, colon, or parentheses instead`,
+    );
+  }
+  const curly = (prose.match(/[“”]/g) ?? []).length;
+  if (curly) {
+    report.warn(file, `${curly} curly quotation mark(s); use straight quotes`);
+  }
+  const emoji = (prose.match(/\p{Extended_Pictographic}/gu) ?? []).length;
+  if (emoji) {
+    report.warn(file, `${emoji} emoji in prose; teaching material does not decorate`);
+  }
+}
+
 function countWords(text: string): number {
   return (text.match(/\b[\p{L}\p{N}][\p{L}\p{N}'’-]*\b/gu) ?? []).length;
 }
@@ -169,6 +201,7 @@ function loadChapters(report: Report, topicDir: string): Chapter[] {
 }
 
 function checkChapterBody(report: Report, chapter: Chapter) {
+  checkProseStyle(report, chapter.file, chapter.body);
   const prose = stripFences(chapter.body);
   const words = countWords(stripBlockquotes(prose));
 
@@ -523,6 +556,8 @@ export function validateTopic(topicDir: string, strictFlag: boolean): Report {
         report.error(path, `${label} does not exist`);
       } else if (statSync(path).size === 0) {
         report.error(path, `${label} is empty`);
+      } else if (label !== "eval.spec") {
+        checkProseStyle(report, path, readFileSync(path, "utf8"));
       }
     }
     if (!isNonEmptyDir(join(dir, challenge.reference))) {

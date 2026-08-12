@@ -55,6 +55,14 @@ allowed. Hedging used to cover thin research is not.
 These two rules pull against each other on purpose. Confident prose plus a pinned
 quote for every claim means the confidence has to be earned before it is written.
 
+**It reads like a person wrote it.** Everything a learner sees is held to
+`.claude/skills/forge-generate/references/prose.md`: chapters, quiz questions, briefs,
+rubrics, and what the Teacher, Helper, and Judge say. Material that reads as machine
+output gets skimmed, and skimmed material does not teach. Three tells are checked by
+the validator as warnings, which `--strict` turns into errors: em or en dashes, curly
+quotation marks, emoji. The rest of that standard is judgement and the critique agent
+rules on it.
+
 ## The three roles
 
 Every topic gets all three, scoped to that topic's directory so inactive topics

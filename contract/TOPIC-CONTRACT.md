@@ -218,8 +218,20 @@ Contested material is stated as contested: "X and Y disagree on Z. X argues A
 
 **Structure.** At least 400 words. At least two `##` headings. At least one
 citation marker per 150 words of prose, which is a floor on sourcing density rather
-than a style rule — a chapter with one marker and 2000 words is unsourced material
+than a style rule: a chapter with one marker and 2000 words is unsourced material
 with a citation stapled to it.
+
+**Prose style.** Three tells of machine-written text are checked as warnings, in
+chapters and in `brief.md` and `rubric.md`: em or en dashes, curly quotation marks,
+and emoji. Blockquotes and fenced code are exempt, since a quote must not be edited
+and code is not prose. Warnings become errors under `--strict`, which the generator
+and `forge promote` both run, so they block new material without invalidating
+anything already written.
+
+The rest of that standard cannot be checked by a program and is written down in
+`.claude/skills/forge-generate/references/prose.md`: no announcing, no inflated
+significance, no participle padding, no forced triads, and no closing flourish. The
+critique agent rules on it.
 
 ---
 

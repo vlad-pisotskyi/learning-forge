@@ -33,6 +33,18 @@ validator enforces both directions.
 
 ## Prose
 
+Read `.claude/skills/forge-generate/references/prose.md` before writing any of it. That
+file is the style standard for everything a learner reads, and the summary here is only
+the part that trips people most often.
+
+Three tells are checked by the validator, as warnings that `--strict` promotes to errors:
+em or en dashes, curly quotation marks, and emoji. Blockquotes and fenced code are exempt.
+Replace a dash with a period, a comma, a colon, or parentheses.
+
+The unchecked half matters as much. Do not announce what a section will do, do not inflate
+significance, do not end clauses with "highlighting..." or "ensuring...", do not force
+groups of three, and do not close with a flourish. Write "is" rather than "serves as".
+
 State facts. The banned hedges are `may`, `might`, `perhaps`, `possibly`, `probably`,
 `arguably`, `some argue`, `some say`, `it is believed`, `is thought to`, `seems to`,
 `tends to`, `it could be argued`, `generally considered`, `widely considered`.

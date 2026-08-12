@@ -237,6 +237,51 @@ describe("quiz answer keys", () => {
   });
 });
 
+describe("prose style", () => {
+  const warningsOf = (dir: string) =>
+    validateTopic(dir, false).warnings.map((w) => `${w.where}: ${w.message}`);
+
+  it("warns on an em dash in chapter prose", () => {
+    const dir = copyFixture();
+    patch(join(dir, "chapters/ch01-widget-anatomy.md"), "A widget has three parts", "A widget — really — has three parts");
+    expect(matching(warningsOf(dir), "em or en dash").length).toBe(1);
+  });
+
+  it("leaves a dash inside a quoted excerpt alone", () => {
+    const dir = copyFixture();
+    const file = join(dir, "chapters/ch01-widget-anatomy.md");
+    writeFileSync(file, `${readFileSync(file, "utf8")}\n> a quoted passage — as the source wrote it\n`);
+    expect(matching(warningsOf(dir), "em or en dash").length).toBe(0);
+  });
+
+  it("warns on curly quotation marks and on emoji", () => {
+    const dir = copyFixture();
+    const file = join(dir, "chapters/ch02-fastening-and-alignment.md");
+    writeFileSync(file, `${readFileSync(file, "utf8")}\nThe spec says “nine newton metres” and that is that. \u{1F527}\n`);
+    const warnings = warningsOf(dir);
+    expect(matching(warnings, "curly quotation mark").length).toBe(1);
+    expect(matching(warnings, "emoji").length).toBe(1);
+  });
+
+  it("holds the brief and the rubric to the same standard", () => {
+    const dir = copyFixture();
+    const challenge = "challenges/c01-assemble-widget";
+    for (const name of ["brief.md", "rubric.md"]) {
+      const file = join(dir, challenge, name);
+      writeFileSync(file, `${readFileSync(file, "utf8")}\nOne more thing — worth stating plainly.\n`);
+    }
+    expect(matching(warningsOf(dir), "em or en dash").length).toBe(2);
+  });
+
+  // Warnings, so they block new material under --strict without invalidating
+  // anything already written.
+  it("becomes an error under strict", () => {
+    const dir = copyFixture();
+    patch(join(dir, "chapters/ch01-widget-anatomy.md"), "A widget has three parts", "A widget — really — has three parts");
+    expect(matching(errorsOf(dir), "em or en dash").length).toBe(1);
+  });
+});
+
 describe("hidden material", () => {
   it("rejects a brief that points at .hidden", () => {
     const dir = copyFixture();

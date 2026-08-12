@@ -16,9 +16,13 @@ becomes motivated and a passage that almost fits starts to look like it fits.
 
 ## Before writing
 
-Read `.claude/rules/topic-material.md`. It is the working detail for prose and
-citations. Read the excerpts allocated to you in `topics/<slug>/sources.json`, and read
-only those.
+Read two files. `.claude/rules/topic-material.md` is the working detail for citations, and
+`.claude/skills/forge-generate/references/prose.md` is the style standard for every word a
+learner reads. The second one is not optional polish: material that reads as machine output
+gets skimmed, and skimmed material does not teach.
+
+Then read the excerpts allocated to you in `topics/<slug>/sources.json`, and read only
+those.
 
 The order of work is source first, sentence second. Take an excerpt, understand what it
 actually supports, then write the sentence that paraphrases it. Paraphrase in the prose;

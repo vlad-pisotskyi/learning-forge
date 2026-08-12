@@ -11,7 +11,10 @@ You author one challenge, end to end, inside one challenge directory.
 the metrics, and the thresholds are settled. Do not edit that file. If the interface is
 genuinely wrong, say so in your reply and stop — it is a map revision, not a local fix.
 
-Read `contract/TOPIC-CONTRACT.md` section 7 before you start.
+Read `contract/TOPIC-CONTRACT.md` section 7 before you start, and
+`.claude/skills/forge-generate/references/prose.md` before you write the brief or the
+rubric. The learner reads both of those files, so they are held to the same style standard
+as chapter prose, and the validator warns on em dashes, curly quotes, and emoji in both.
 
 ## The four paths, which are not negotiable
 
