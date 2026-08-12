@@ -129,7 +129,23 @@ Learner progress (`topics/*/.state/`) and learner attempts
 (`topics/*/challenges/*/work/`) are local-only and gitignored. Anyone can clone
 this repo and start clean.
 
-The hidden material is committed and therefore readable by a human who goes
-looking. That is accepted and unavoidable in a repo the learner owns. The boundary
-being enforced is that no agent surfaces it: the Teacher and Helper cannot read it
-at all, and the Judge reads it in an isolated context and returns only a verdict.
+`.hidden/` is hidden from agents, not from people. The evaluation set and the
+reference solution are committed, so anyone reading this public repo can open them,
+and that is fine — the material is ordinary published knowledge and the learner owns
+the repo. What the boundary buys is that no agent hands them over mid-challenge: the
+Teacher and Helper cannot read `.hidden/` at all, and the Judge reads it in an
+isolated context that returns a verdict and nothing else. Deciding to look is the
+learner's to make deliberately; it should never happen because a model was asked a
+leading question.
+
+## The repo is public
+
+Committed material contains nothing personal. No names, emails, tokens, keys,
+internal hostnames, or anything taken from a private system. Sources cite publicly
+reachable URLs and quote published text.
+
+The one category of personal data this repo produces — what the learner answered,
+scored, and got wrong — is gitignored (`topics/*/.state/`,
+`topics/*/challenges/*/work/`), so it stays off GitHub by default rather than by
+anyone remembering. Do not add either path to a commit, and do not quote their
+contents into a chapter, a commit message, or an issue.
