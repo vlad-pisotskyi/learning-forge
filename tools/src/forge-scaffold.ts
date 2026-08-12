@@ -29,6 +29,7 @@ import {
   MARKER,
   ROLE_SKILLS,
   challengeManifestSchema,
+  quizKeyPath,
   sourcesFileSchema,
   type SourcesFile,
 } from "./contract.ts";
@@ -42,8 +43,10 @@ import {
   isStub,
   manifestFromPlan,
   paths,
+  UNSTAMPED,
   referenceEntrypoint,
   researchShardSchema,
+  stampTemplate,
   runStateSchema,
   topicPlanSchema,
   type ChallengePlan,
@@ -387,10 +390,28 @@ export function applyPlan(root: string, slug: string, clock: Clock = systemClock
     const text = `${frontmatterBlock({ ...planned, status }, audit ? { audit } : undefined)}\n${body.replace(/^\n+/, "")}`;
     note(existing ? refreshed : written, rel, writeIfChanged(path, text));
 
+    // Two halves, stubbed together. An empty `questions` array is what marks a
+    // quiz unwritten; `forge status` counts anything under three as outstanding.
     const quizRel = paths.quizFile(chapter.id);
     const quizPath = join(topicDir, quizRel);
     if (!existsSync(quizPath)) {
-      note(written, quizRel, writeIfChanged(quizPath, json({ contractVersion: CONTRACT_VERSION, chapter: chapter.id, questions: [], passing: { atLeast: 2 } })));
+      note(
+        written,
+        quizRel,
+        writeIfChanged(
+          quizPath,
+          json({ contractVersion: CONTRACT_VERSION, chapter: chapter.id, questions: [], passing: { atLeast: 2 } }),
+        ),
+      );
+    }
+    const keyRel = quizKeyPath(chapter.id);
+    const keyPath = join(topicDir, keyRel);
+    if (!existsSync(keyPath)) {
+      note(
+        written,
+        keyRel,
+        writeIfChanged(keyPath, json({ contractVersion: CONTRACT_VERSION, chapter: chapter.id, answers: [] })),
+      );
     }
   }
 
@@ -419,6 +440,26 @@ export function applyPlan(root: string, slug: string, clock: Clock = systemClock
     const referenceRel = referenceEntrypoint(challenge.interface.entrypoint);
     stubUnlessAuthored(join(dir, referenceRel), solutionStub(challenge.id), `${rel}/${referenceRel}`, written);
   }
+
+  /* --- the three roles, stamped from templates --- */
+  // Generated, so always refreshed: a fix to a template has to reach every topic,
+  // and a topic-specific edit here would be silently lost anyway.
+  for (const role of ROLE_SKILLS) {
+    const templatePath = paths.roleTemplate(root, role);
+    if (!existsSync(templatePath)) {
+      problems.push(`missing role template ${templatePath}`);
+      continue;
+    }
+    const stamped = stampTemplate(readFileSync(templatePath, "utf8"), plan);
+    const left = UNSTAMPED.exec(stamped);
+    if (left) {
+      problems.push(`${templatePath}: unsubstituted placeholder ${left[0]}`);
+      continue;
+    }
+    const rel = paths.roleSkill(role);
+    note(refreshed, rel, writeIfChanged(join(topicDir, rel), stamped));
+  }
+  if (problems.length) return { plan, written, refreshed, orphans: [], problems };
 
   recordStage(root, slug, "apply", `${plan.chapters.length} chapter(s), ${plan.challenges.length} challenge(s)`, clock);
 
@@ -500,9 +541,13 @@ export function statusOf(root: string, slug: string): Status {
 
   const quizzesOwed = chapterFiles.filter(({ id }) => {
     const path = join(topicDir, paths.quizFile(id));
-    if (!existsSync(path)) return true;
-    const data = readJsonFile(path) as { questions?: unknown[] };
-    return !Array.isArray(data.questions) || data.questions.length < 3;
+    const keyPath = join(topicDir, quizKeyPath(id));
+    if (!existsSync(path) || !existsSync(keyPath)) return true;
+    const quiz = readJsonFile(path) as { questions?: unknown[] };
+    const key = readJsonFile(keyPath) as { answers?: unknown[] };
+    // A quiz with questions and no answers is half-written, not written.
+    if (!Array.isArray(quiz.questions) || quiz.questions.length < 3) return true;
+    return !Array.isArray(key.answers) || key.answers.length !== quiz.questions.length;
   });
   outstanding.push({
     kind: "quizzes",
@@ -685,13 +730,48 @@ export function checkPlanFile(root: string, slug: string, approved = false): Che
   };
 }
 
-/* ---------------------------------------------------------------- dry run */
+/* --------------------------------------------------------------- progress */
 
-export type TryResult = {
+/**
+ * Creates a valid empty progress file, or leaves an existing one alone. The Teacher
+ * could write this itself, but a file shape is exactly the thing a program should
+ * own — a malformed progress file is a broken session, not a broken sentence.
+ */
+export function initProgress(root: string, slug: string, now = new Date().toISOString()): boolean {
+  const path = join(paths.topicDir(root, slug), ".state", "progress.json");
+  if (existsSync(path)) return false;
+  writeIfChanged(
+    path,
+    json({
+      contractVersion: CONTRACT_VERSION,
+      topic: slug,
+      updated: now,
+      chapters: {},
+      weakConcepts: [],
+      challenges: {},
+    }),
+  );
+  return true;
+}
+
+/* ------------------------------------------------------------ evaluation */
+
+export type MetricRow = {
+  name: string;
+  value: number | undefined;
+  threshold: number;
+  direction: "gte" | "lte";
+  ok: boolean;
+};
+
+export type EvalResult = {
   challenge: string;
+  against: "work" | "reference";
   staged: string;
   command: string;
+  ran: boolean;
   passed: boolean;
+  metrics: MetricRow[];
   output: string;
   problems: string[];
 };
@@ -706,13 +786,28 @@ export type TryResult = {
  * mirroring the real layout closely enough that every relative path in the eval set
  * resolves the same way it will for a learner.
  */
-export function tryChallenge(root: string, slug: string, challengeId: string): TryResult {
+export function evalChallenge(
+  root: string,
+  slug: string,
+  challengeId: string,
+  againstReference = false,
+): EvalResult {
   const topicDir = paths.topicDir(root, slug);
   const challengesDir = join(topicDir, "challenges");
   const dirName = existsSync(challengesDir)
     ? readdirSync(challengesDir).find((name) => name.startsWith(`${challengeId}-`))
     : undefined;
-  const blank = { challenge: challengeId, staged: "", command: "", passed: false, output: "" };
+  const against = againstReference ? ("reference" as const) : ("work" as const);
+  const blank = {
+    challenge: challengeId,
+    against,
+    staged: "",
+    command: "",
+    ran: false,
+    passed: false,
+    metrics: [],
+    output: "",
+  };
   if (!dirName) return { ...blank, problems: [`no challenge directory for ${challengeId} under ${challengesDir}`] };
 
   const source = join(challengesDir, dirName);
@@ -725,18 +820,29 @@ export function tryChallenge(root: string, slug: string, challengeId: string): T
   }
   const challenge = manifest.data;
   const referenceRel = referenceEntrypoint(challenge.interface.entrypoint);
-  if (!existsSync(join(source, referenceRel))) {
+
+  // Where the code under test comes from. The reference has to sit at the mirrored
+  // path; the learner's is simply their work tree.
+  const from = againstReference ? join(source, paths.reference()) : join(source, "work");
+  const entrypointAt = againstReference
+    ? join(source, referenceRel)
+    : join(source, challenge.interface.entrypoint);
+  if (!existsSync(entrypointAt)) {
     return {
       ...blank,
       problems: [
-        `the reference solution must place ${referenceRel}, because the evaluation set imports ${challenge.interface.entrypoint}`,
+        againstReference
+          ? `the reference solution must place ${referenceRel}, because the evaluation set imports ${challenge.interface.entrypoint}`
+          : `nothing at ${challenge.interface.entrypoint}; the submission has to implement the interface the brief pins`,
       ],
     };
   }
-  for (const path of [join(source, referenceRel), join(source, challenge.eval.spec)]) {
-    if (isStub(readFileSync(path, "utf8"))) {
-      return { ...blank, problems: [`${path} is still a stub`] };
-    }
+  const specPath = join(source, challenge.eval.spec);
+  if (isStub(readFileSync(specPath, "utf8"))) {
+    return { ...blank, problems: [`${specPath} is still a stub`] };
+  }
+  if (againstReference && isStub(readFileSync(entrypointAt, "utf8"))) {
+    return { ...blank, problems: [`${entrypointAt} is still a stub`] };
   }
 
   /* --- stage a mini topic: <try>/challenges/<dir>/ plus a corpus alongside --- */
@@ -745,7 +851,7 @@ export function tryChallenge(root: string, slug: string, challengeId: string): T
   rmSync(stageRoot, { recursive: true, force: true });
   mkdirSync(staged, { recursive: true });
   cpSync(join(source, ".hidden"), join(staged, ".hidden"), { recursive: true });
-  cpSync(join(source, referenceRel), join(staged, challenge.interface.entrypoint));
+  cpSync(from, join(staged, "work"), { recursive: true });
   if (existsSync(join(source, "starter"))) {
     cpSync(join(source, "starter"), join(staged, "starter"), { recursive: true });
   }
@@ -772,14 +878,41 @@ export function tryChallenge(root: string, slug: string, challengeId: string): T
     command = `node ${spec}`;
     run = spawnSync("node", [spec], { cwd: staged, encoding: "utf8" });
   }
+  const output = `${run.stdout ?? ""}${run.stderr ?? ""}`.trim();
+
+  /* --- read the metrics back out --- */
+  const reported = new Map<string, number>();
+  for (const line of output.matchAll(/^\s*metric\s+(\S+)\s+(-?\d+(?:\.\d+)?)\s*$/gm)) {
+    reported.set(line[1] as string, Number(line[2]));
+  }
+  const metrics: MetricRow[] = challenge.eval.metrics.map((declared) => {
+    const value = reported.get(declared.name);
+    return {
+      name: declared.name,
+      value,
+      threshold: declared.threshold,
+      direction: declared.direction,
+      ok:
+        value !== undefined &&
+        (declared.direction === "gte" ? value >= declared.threshold : value <= declared.threshold),
+    };
+  });
+  const missing = metrics.filter((m) => m.value === undefined).map((m) => m.name);
 
   return {
     challenge: challengeId,
+    against,
     staged,
     command,
-    passed: run.status === 0,
-    output: `${run.stdout ?? ""}${run.stderr ?? ""}`.trim(),
-    problems: [],
+    ran: run.status !== null,
+    passed: run.status === 0 && metrics.every((m) => m.ok),
+    metrics,
+    output,
+    problems: missing.length
+      ? [
+          `the evaluation set reported no value for: ${missing.join(", ")}. It must print one "metric <name> <value>" line per declared metric.`,
+        ]
+      : [],
   };
 }
 

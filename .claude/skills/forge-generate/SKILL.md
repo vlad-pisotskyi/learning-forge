@@ -38,13 +38,15 @@ same invocation.
 `npm run forge -- apply`, and they are treated differently.
 
 *Plan-derived* files are rewritten from the map every time apply runs: `topic.json`,
-`concepts.json`, chapter frontmatter, and challenge manifests. Never hand-write
-these. To change one, change the map and apply it again.
+`concepts.json`, chapter frontmatter, challenge manifests, and the topic's three role
+skills, which are stamped from `templates/`. Never hand-write these. To change one,
+change the map or the template and apply it again.
 
 *Stub* files carry a `forge:stub` marker and exist to be replaced: chapter bodies,
-quiz files, `brief.md`, `rubric.md`, the eval set, the reference solution. These are
-yours. Replacing one means removing the marker along with the placeholder text —
-`forge status` counts a file that still carries the marker as unwritten.
+quiz files and their answer keys, `brief.md`, `rubric.md`, the eval set, the reference
+solution. These are yours. Replacing one means removing the marker along with the
+placeholder text — `forge status` counts a file that still carries the marker as
+unwritten.
 
 **Sources come before prose.** Only the research stage reaches the web. The chapter
 writer has no web search or fetch tools, so the ordinary path to an unsourced claim
@@ -85,10 +87,8 @@ npm run forge -- promote <slug>          # draft → validated, if it passes cle
 `validated` is mechanical and says nothing about quality. `verified` belongs to the
 verification agents and is not this skill's to hand out.
 
-Two things a `validated` topic still is not. It is not audited — the faithfulness
-auditor and the critique agent have not run. And it is not yet usable by a learner:
-the topic's Teacher, Helper, and Judge are placeholder files until the role templates
-exist, and generation does not write them. Say both when reporting a finished run.
+A `validated` topic is still not audited: the faithfulness auditor and the critique
+agent have not run. Say that when reporting a finished run.
 
 `--strict` promotes warnings to errors, and `promote` always runs strict. Two
 warnings bite here in particular: a source with `primary: false`, and a paper with no

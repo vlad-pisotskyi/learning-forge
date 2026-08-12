@@ -29,10 +29,26 @@ Every one of those is derived in the `paths` object or in the `*FromPlan` functi
 A field that can be derived is a field that can disagree with itself, so adding one
 to the plan is a regression even when it is convenient.
 
+## The role templates
+
+The three role skills are stamped, not authored per topic:
+`.claude/skills/forge-generate/templates/{teach,help,judge}.md` with `<<SLUG>>` and
+`<<TITLE>>` substituted by `stampTemplate`, written on every apply. Keep the
+substitution set tiny — a template that embedded the chapter list would go stale the
+first time the map changed, so the roles read `topic.json` at runtime instead.
+`UNSTAMPED` catches a placeholder nobody substituted, which is otherwise a silent bug
+in generated material.
+
+The Helper and the Judge are `context: fork` skills bound to root-level agent types
+(`topic-helper`, `topic-judge`, plus `topic-quiz-grader` for quizzes). They have to be
+root-level: project agents are discovered by walking up from the working directory, so
+an agent under `topics/<slug>/.claude/agents/` never loads for a session started at the
+repo root.
+
 ## Two conventions the code depends on
 
 `.hidden/solution/` mirrors `work/`, so `referenceEntrypoint` can map an entrypoint to
-the file the reference has to occupy. `forge try` relies on that mapping to stage the
+the file the reference has to occupy. `forge eval --reference` relies on that mapping to stage the
 reference where the evaluation set imports it; break the convention and proving a
 challenge solvable becomes impossible again.
 

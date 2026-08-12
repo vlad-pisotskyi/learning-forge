@@ -18,6 +18,7 @@ import { sourcesFileSchema } from "../src/contract.ts";
 import {
   PLAN_VERSION,
   paths,
+  UNSTAMPED,
   referenceEntrypoint,
   topicPlanSchema,
   type TopicPlan,
@@ -29,7 +30,8 @@ import {
   mergeSources,
   promoteToValidated,
   statusOf,
-  tryChallenge,
+  evalChallenge,
+  initProgress,
 } from "../src/forge-scaffold.ts";
 import { validateTopic } from "../src/validate.ts";
 
@@ -50,9 +52,16 @@ function at<T>(items: readonly T[], index: number): T {
   return item;
 }
 
+const TEMPLATES = new URL("../../.claude/skills/forge-generate/templates", import.meta.url).pathname;
+
+/**
+ * A temp repo root with the real role templates in place, so stamping is exercised
+ * against the templates that actually ship rather than against fixtures of them.
+ */
 function makeRoot(): string {
   const root = mkdtempSync(join(tmpdir(), "forge-root-"));
   temps.push(root);
+  cpSync(TEMPLATES, join(root, ".claude/skills/forge-generate/templates"), { recursive: true });
   return root;
 }
 
@@ -438,7 +447,7 @@ describe("forge check", () => {
   });
 });
 
-describe("forge try", () => {
+describe("forge eval", () => {
   /** A challenge whose eval set really imports the entrypoint, run on plain node. */
   function stageRunnable(root: string, plan: TopicPlan, evalBody: string) {
     const onNode = {
@@ -457,10 +466,13 @@ describe("forge try", () => {
     return { dir, challenge };
   }
 
+  // The eval set reports each declared metric on its own line; that convention is
+  // how the Judge and the CLI read scores back out of an arbitrary runner.
   const passingEval = `import { checkBuild } from "../../work/src/index.ts";
 if (typeof checkBuild !== "function") throw new Error("entrypoint does not export checkBuild");
 if (checkBuild().length !== 0) throw new Error("expected no problems for a sound build");
-console.log("detection-rate 1.0");
+console.log("metric detection-rate 1.0");
+console.log("metric false-positive-rate 0.0");
 `;
 
   it("runs the held-out set against the reference solution", () => {
@@ -469,13 +481,67 @@ console.log("detection-rate 1.0");
     initTopic(root, SLUG, clock);
     stageRunnable(root, plan, passingEval);
 
-    const result = tryChallenge(root, SLUG, "c01");
+    const result = evalChallenge(root, SLUG, "c01", true);
     expect(result.problems).toEqual([]);
     expect(result.passed, result.output).toBe(true);
-    expect(result.output).toContain("detection-rate 1.0");
+    expect(result.metrics.map((m) => [m.name, m.value, m.ok])).toEqual([
+      ["detection-rate", 1, true],
+      ["false-positive-rate", 0, true],
+    ]);
     // The eval set imported work/src/index.ts and got the reference, which is the
     // whole point: relative paths resolve exactly as they will for a learner.
     expect(existsSync(join(result.staged, "work/src/index.ts"))).toBe(true);
+  });
+
+  it("scores the learner's work, not the reference, by default", () => {
+    const root = makeRoot();
+    const plan = planFromFixture();
+    initTopic(root, SLUG, clock);
+    const { dir, challenge } = stageRunnable(root, plan, passingEval);
+    // The learner's own attempt, deliberately different from the reference.
+    mkdirSync(join(dir, "work/src"), { recursive: true });
+    writeFileSync(join(dir, "work/src/index.ts"), "export function checkBuild() {\n  return [];\n}\n");
+
+    const result = evalChallenge(root, SLUG, challenge.id);
+    expect(result.against).toBe("work");
+    expect(result.passed, result.output).toBe(true);
+  });
+
+  it("says what is missing when the submission never implemented the interface", () => {
+    const root = makeRoot();
+    const plan = planFromFixture();
+    initTopic(root, SLUG, clock);
+    stageRunnable(root, plan, passingEval);
+    // work/ is empty, which is where every learner starts.
+    expect(evalChallenge(root, SLUG, "c01").problems.join(" ")).toMatch(/nothing at work\/src\/index\.ts/);
+  });
+
+  it("treats a metric the evaluation set never printed as a defect in the challenge", () => {
+    const root = makeRoot();
+    const plan = planFromFixture();
+    initTopic(root, SLUG, clock);
+    stageRunnable(root, plan, `console.log("metric detection-rate 1.0");\n`);
+
+    const result = evalChallenge(root, SLUG, "c01", true);
+    expect(result.passed).toBe(false);
+    expect(result.problems.join(" ")).toMatch(/no value for: false-positive-rate/);
+  });
+
+  it("fails a run whose metric came in under its threshold", () => {
+    const root = makeRoot();
+    const plan = planFromFixture();
+    initTopic(root, SLUG, clock);
+    stageRunnable(
+      root,
+      plan,
+      `console.log("metric detection-rate 0.4");\nconsole.log("metric false-positive-rate 0.0");\n`,
+    );
+
+    const result = evalChallenge(root, SLUG, "c01", true);
+    expect(result.passed).toBe(false);
+    expect(result.problems).toEqual([]);
+    expect(result.metrics.find((m) => m.name === "detection-rate")?.ok).toBe(false);
+    expect(result.metrics.find((m) => m.name === "false-positive-rate")?.ok).toBe(true);
   });
 
   it("reports failure when the reference does not satisfy its own evaluation set", () => {
@@ -488,7 +554,7 @@ console.log("detection-rate 1.0");
       `import { checkBuild } from "../../work/src/index.ts";\nif (checkBuild().length === 0) throw new Error("the reference missed every planted fault");\n`,
     );
 
-    const result = tryChallenge(root, SLUG, "c01");
+    const result = evalChallenge(root, SLUG, "c01", true);
     expect(result.passed).toBe(false);
     expect(result.output).toMatch(/planted fault/);
   });
@@ -499,7 +565,7 @@ console.log("detection-rate 1.0");
     initTopic(root, SLUG, clock);
     approve(root, plan);
     applyPlan(root, SLUG, clock);
-    expect(tryChallenge(root, SLUG, "c01").problems.join(" ")).toMatch(/still a stub/);
+    expect(evalChallenge(root, SLUG, "c01", true).problems.join(" ")).toMatch(/still a stub/);
   });
 
   it("names the path the reference has to occupy when it is somewhere else", () => {
@@ -513,7 +579,79 @@ console.log("detection-rate 1.0");
     const dir = join(paths.topicDir(root, SLUG), paths.challengeDir(challenge));
     rmSync(join(dir, referenceEntrypoint(challenge.interface.entrypoint)));
     writeFileSync(join(dir, ".hidden/solution/somewhere-else.ts"), "export const x = 1;\n");
-    expect(tryChallenge(root, SLUG, "c01").problems.join(" ")).toMatch(/must place \.hidden\/solution\/src\/index\.ts/);
+    expect(evalChallenge(root, SLUG, "c01", true).problems.join(" ")).toMatch(/must place \.hidden\/solution\/src\/index\.ts/);
+  });
+});
+
+describe("role stamping", () => {
+  it("replaces the init placeholders with stamped templates", () => {
+    const root = makeRoot();
+    const plan = planFromFixture();
+    initTopic(root, SLUG, clock);
+
+    const teachPath = join(paths.topicDir(root, SLUG), paths.roleSkill("teach"));
+    expect(readFileSync(teachPath, "utf8")).toContain("forge:stub");
+
+    approve(root, plan);
+    expect(applyPlan(root, SLUG, clock).problems).toEqual([]);
+
+    for (const role of ["teach", "help", "judge"]) {
+      const text = readFileSync(join(paths.topicDir(root, SLUG), paths.roleSkill(role)), "utf8");
+      expect(text, role).not.toContain("forge:stub");
+      expect(text, role).not.toMatch(UNSTAMPED);
+      expect(text, role).toContain(SLUG);
+      expect(text, role).toContain(plan.title);
+      expect(parseYaml(text.slice(4, text.indexOf("\n---", 4))).name, role).toBe(role);
+    }
+  });
+
+  it("gives the graded roles a forked context so they cannot see the conversation", () => {
+    const root = makeRoot();
+    const plan = planFromFixture();
+    initTopic(root, SLUG, clock);
+    approve(root, plan);
+    applyPlan(root, SLUG, clock);
+
+    const frontmatterOf = (role: string) => {
+      const text = readFileSync(join(paths.topicDir(root, SLUG), paths.roleSkill(role)), "utf8");
+      return parseYaml(text.slice(4, text.indexOf("\n---", 4)));
+    };
+    // The Helper and Judge run as subagents; that is where their tool restrictions
+    // and their isolation come from. The Teacher is a conversation and must not.
+    for (const role of ["help", "judge"]) {
+      expect(frontmatterOf(role).context, role).toBe("fork");
+      expect(frontmatterOf(role).agent, role).toMatch(/^topic-/);
+      expect(frontmatterOf(role).background, role).toBe(false);
+    }
+    expect(frontmatterOf("teach").context).toBeUndefined();
+  });
+
+  it("refuses to apply when a role template is missing", () => {
+    const root = makeRoot();
+    const plan = planFromFixture();
+    initTopic(root, SLUG, clock);
+    approve(root, plan);
+    rmSync(paths.roleTemplate(root, "judge"));
+    expect(applyPlan(root, SLUG, clock).problems.join(" ")).toMatch(/missing role template/);
+  });
+});
+
+describe("forge progress", () => {
+  it("creates a progress file the validator accepts, and leaves an existing one alone", () => {
+    const root = makeRoot();
+    const plan = planFromFixture();
+    initTopic(root, SLUG, clock);
+    approve(root, plan);
+    applyPlan(root, SLUG, clock);
+    overlayAuthoredContent(root, plan);
+
+    expect(initProgress(root, SLUG, "2026-08-02T09:00:00Z")).toBe(true);
+    expect(validateTopic(paths.topicDir(root, SLUG), true).findings).toEqual([]);
+
+    const path = join(paths.topicDir(root, SLUG), ".state/progress.json");
+    const first = readFileSync(path, "utf8");
+    expect(initProgress(root, SLUG, "2026-08-03T09:00:00Z")).toBe(false);
+    expect(readFileSync(path, "utf8")).toBe(first);
   });
 });
 

@@ -60,9 +60,11 @@ quote for every claim means the confidence has to be earned before it is written
 Every topic gets all three, scoped to that topic's directory so inactive topics
 cost nothing at session start.
 
-**Teacher.** Delivers one chapter at a time, quizzes at the end, answers questions
-about that chapter, records progress. Loads the current chapter and the learner's
-recorded weak concepts. Never the whole book.
+**Teacher.** Works through one chapter at a time: the learner reads the prose, the
+Teacher answers what they ask, quizzes them, and records progress. Loads the current
+chapter and the learner's recorded weak concepts, never the whole book. It asks the
+quiz questions without holding the answers — the key lives in `quizzes/.hidden/` and
+is read only by a grader that never saw the lesson.
 
 **Helper.** Available during challenges. Explains concepts, reframes the problem,
 asks leading questions, points at the chapter that covers the confusion. Cannot
@@ -103,10 +105,11 @@ apply, chapters, challenges. The map stage stops for approval before any prose
 exists. `npm run forge -- status <slug>` says where a topic is and what it still
 owes, read off disk, so a run survives a dead session.
 
-Structure is the CLI's, content is the model's. `npm run forge` writes the tree,
-the source ids, the manifests, chapter frontmatter, and quiz shells; agents write
-prose, excerpts, questions, briefs, and code. Never hand-author a file the CLI
-generates — revise the map and apply it again.
+Structure is the CLI's, content is the model's. `npm run forge` writes the tree, the
+source ids, the manifests, chapter frontmatter, quiz shells, and the three role skills
+stamped from templates; agents write prose, excerpts, questions, briefs, and code.
+Never hand-author a file the CLI generates — revise the map or the template and apply
+it again.
 
 Read `contract/TOPIC-CONTRACT.md` in full before generating. Generated material is
 checked mechanically, not by eye:
@@ -122,8 +125,8 @@ passes, not instead of it.
 
 ## What is committed and what is not
 
-Chapters, sources, challenge briefs, rubrics, hidden evaluation sets, and reference
-solutions are committed. They are the material.
+Chapters, sources, challenge briefs, rubrics, quiz answer keys, hidden evaluation
+sets, and reference solutions are committed. They are the material.
 
 Learner progress (`topics/*/.state/`) and learner attempts
 (`topics/*/challenges/*/work/`) are local-only and gitignored. Anyone can clone
@@ -137,6 +140,11 @@ Teacher and Helper cannot read `.hidden/` at all, and the Judge reads it in an
 isolated context that returns a verdict and nothing else. Deciding to look is the
 learner's to make deliberately; it should never happen because a model was asked a
 leading question.
+
+The read boundary is currently stated in each role's own instructions rather than
+enforced by the harness. Tool lists restrict tools, not paths, so "no reading
+`.hidden/`" becomes real in Phase 5, as a hook. What is already mechanical is the
+Helper having no write tools and the graders running in isolated contexts.
 
 ## The repo is public
 

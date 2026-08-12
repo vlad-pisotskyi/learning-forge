@@ -65,13 +65,17 @@ Judge compares approaches against it.
 ## Proving it works
 
 ```
-npm run forge -- try <slug> <challengeId>
+npm run forge -- eval <slug> <challengeId> --reference
 ```
 
 This stages a mini topic under `.forge-cache/`, puts your reference solution at the
 entrypoint path, and runs your evaluation set against it. Do not try to do this by hand,
 and never write into `work/` to make it happen — `work/` belongs to the learner and must
 stay empty.
+
+Your evaluation set has to print one `metric <name> <value>` line per metric the manifest
+declares, because that is how the score is read back out. A declared metric that never
+gets printed is reported as a defect in your challenge, not as a failing submission.
 
 The command must pass. A challenge whose reference solution fails its own evaluation set
 is broken. Report the actual numbers, and say so if a metric only just clears: a

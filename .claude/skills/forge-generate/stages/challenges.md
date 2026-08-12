@@ -65,7 +65,9 @@ can read is a specification, and hidden criteria would only teach them to guess.
 on the problem rather than on plumbing. No part of the solution.
 
 **`.hidden/eval/`** — the held-out set, with its own labelled judgements. It imports
-the learner's entrypoint and produces exactly the metrics the manifest names. It must
+the learner's entrypoint and prints one `metric <name> <value>` line for each metric the
+manifest names, no more and no fewer — that convention is how a score gets read back out
+of any runner. It must
 fail loudly on a missing or wrong-shaped entrypoint rather than scoring zero silently,
 because a learner who wired the interface wrong deserves to be told that instead of
 being told they scored nothing.
@@ -76,13 +78,18 @@ interface the learner gets.
 ## 5. Prove the challenge is solvable
 
 ```
-npm run forge -- try <slug> <challengeId>
+npm run forge -- eval <slug> <challengeId> --reference
 ```
 
 This stages a mini topic under `.forge-cache/<slug>/try/`, puts the reference solution
 where the entrypoint belongs, and runs the evaluation set against it. Every relative
 path inside the eval set resolves exactly as it will for a learner, and `work/` in the
-real topic stays empty.
+real topic stays empty. Without `--reference` the same command scores the learner's
+`work/`, which is what the Judge runs.
+
+The numbers come from the `metric <name> <value>` lines the evaluation set prints, one
+per metric the manifest declares. A declared metric that never gets printed is reported
+as a defect in the challenge, because a threshold nobody measured is not a threshold.
 
 The command fails when the reference does not clear the thresholds its own manifest
 pins. A challenge in that state is broken. Finding it here costs an hour; finding it
@@ -108,9 +115,8 @@ npm run forge -- promote <slug>
 Report each challenge's reference score against its thresholds, anything the validator
 still warns about, and whether the topic promoted to `validated`.
 
-Two caveats belong in that report every time. A `validated` topic has not been audited
-— the faithfulness auditor and the critique agent have not run, and `verified` is
-theirs to give. And it is not yet usable by a learner, because the topic's Teacher,
-Helper, and Judge are placeholder files until the role templates exist.
+One caveat belongs in that report every time: a `validated` topic has not been audited.
+The faithfulness auditor and the critique agent have not run, and `verified` is theirs
+to give.
 
 Then stop.

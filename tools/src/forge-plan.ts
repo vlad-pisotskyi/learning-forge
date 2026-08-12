@@ -158,9 +158,25 @@ export const paths = {
   challengeDir: (challenge: ChallengePlan) => `challenges/${challenge.id}-${challenge.slug}`,
   evalSpec: (challengeId: string) => `.hidden/eval/${challengeId}.eval.ts`,
   reference: () => ".hidden/solution",
-  /** Where a dry run stages a mini topic so the eval set's relative paths hold. */
+  /** Where a run stages a mini topic so the eval set's relative paths hold. */
   tryDir: (root: string, slug: string) => `${paths.cacheDir(root, slug)}/try`,
+  /** The role templates the generator stamps into every topic. */
+  roleTemplate: (root: string, role: string) =>
+    `${root}/.claude/skills/forge-generate/templates/${role}.md`,
+  roleSkill: (role: string) => `.claude/skills/${role}/SKILL.md`,
 } as const;
+
+/**
+ * What a role template has substituted into it. Deliberately tiny: a template that
+ * embedded the chapter list would go stale the first time the map changed, so the
+ * roles read `topic.json` at runtime and only identity is stamped.
+ */
+export function stampTemplate(template: string, plan: { slug: string; title: string }): string {
+  return template.replaceAll("<<SLUG>>", plan.slug).replaceAll("<<TITLE>>", plan.title);
+}
+
+/** Anything left unsubstituted is a template bug, and a silent one if unchecked. */
+export const UNSTAMPED = /<<[A-Z_]+>>/;
 
 /**
  * `.hidden/solution/` mirrors `work/`, so the reference solution can be staged at

@@ -5,7 +5,8 @@
  *   npm run forge -- check <slug>       rule on the draft map without applying it
  *   npm run forge -- apply <slug>       project the approved map onto disk
  *   npm run forge -- status [<slug>]    what is still owed, and what to run next
- *   npm run forge -- try <slug> <cNN>   run a challenge's eval set against its reference
+ *   npm run forge -- eval <slug> <cNN>  run a challenge's eval set (--reference for the solution)
+ *   npm run forge -- progress <slug>    create the learner's progress file if it is missing
  *   npm run forge -- promote <slug>     draft to validated, if the validator agrees
  *
  * These are the mechanical steps of the forge-generate skill. They are a CLI
@@ -22,7 +23,8 @@ import {
   mergeSources,
   promoteToValidated,
   statusOf,
-  tryChallenge,
+  evalChallenge,
+  initProgress,
 } from "./forge-scaffold.ts";
 
 const USAGE = `Usage:
@@ -31,7 +33,8 @@ const USAGE = `Usage:
   npm run forge -- check <slug> [--approved]
   npm run forge -- apply <slug>
   npm run forge -- status [<slug> | --all]
-  npm run forge -- try <slug> <challengeId>
+  npm run forge -- eval <slug> <challengeId> [--reference]
+  npm run forge -- progress <slug>
   npm run forge -- promote <slug>`;
 
 const args = process.argv.slice(2);
@@ -142,19 +145,33 @@ switch (command) {
     break;
   }
 
-  case "try": {
+  case "eval": {
     const slug = requireSlug();
     const challengeId = rest[1];
-    if (!challengeId) fail("try needs a challenge id, e.g. c02");
-    const result = tryChallenge(root, slug, challengeId);
-    if (result.problems.length) reportProblems(`${slug}/${challengeId}`, result.problems);
-    console.log(`${result.passed ? "✓" : "✗"} ${challengeId}: ${result.command}`);
-    console.log(`  staged at ${result.staged}`);
-    if (result.output) console.log(result.output.replace(/^/gm, "  "));
-    if (!result.passed) {
-      console.error(`\n✗ ${challengeId}: the reference solution does not pass its own evaluation set`);
-      process.exit(1);
+    if (!challengeId) fail("eval needs a challenge id, e.g. c02");
+    const result = evalChallenge(root, slug, challengeId, args.includes("--reference"));
+    if (result.problems.length && !result.ran) reportProblems(`${slug}/${challengeId}`, result.problems);
+
+    console.log(`${result.passed ? "✓" : "✗"} ${challengeId} against ${result.against}: ${result.command}`);
+    for (const m of result.metrics) {
+      const shown = m.value === undefined ? "not reported" : String(m.value);
+      const bar = `${m.direction === "gte" ? ">=" : "<="} ${m.threshold}`;
+      console.log(`  ${m.ok ? "✓" : "✗"} ${m.name.padEnd(20)} ${shown.padStart(12)}  ${bar}`);
     }
+    for (const problem of result.problems) console.log(`  ! ${problem}`);
+    if (result.output) console.log(result.output.replace(/^/gm, "  "));
+    if (!result.passed) process.exit(1);
+    break;
+  }
+
+  case "progress": {
+    const slug = requireSlug();
+    const created = initProgress(root, slug);
+    console.log(
+      created
+        ? `✓ topics/${slug}/.state/progress.json created`
+        : `✓ topics/${slug}/.state/progress.json already exists; left alone`,
+    );
     break;
   }
 
