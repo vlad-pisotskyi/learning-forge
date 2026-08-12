@@ -58,7 +58,12 @@ quote for every claim means the confidence has to be earned before it is written
 **It reads like a person wrote it.** Everything a learner sees is held to
 `.claude/skills/forge-generate/references/prose.md`: chapters, quiz questions, briefs,
 rubrics, and what the Teacher, Helper, and Judge say. Material that reads as machine
-output gets skimmed, and skimmed material does not teach. Three tells are checked by
+output gets skimmed, and skimmed material does not teach.
+
+The line runs between building the Forge and using it. Working on the repo, whatever
+compressed register the owner has set for conversation applies, and that includes
+reporting on a generation run. Anything a learner reads is a deliverable and follows
+the prose standard instead, no matter how terse the surrounding chat is. Three tells are checked by
 the validator as warnings, which `--strict` turns into errors: em or en dashes, curly
 quotation marks, emoji. The rest of that standard is judgement and the critique agent
 rules on it.
