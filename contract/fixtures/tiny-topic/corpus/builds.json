@@ -1,0 +1,19 @@
+{
+  "builds": [
+    {
+      "id": "b01",
+      "steps": [
+        { "kind": "inspect-seat" },
+        { "kind": "torque", "fastener": "flange-bolt-m6", "newtonMetres": 9 },
+        { "kind": "alignment-check" }
+      ]
+    },
+    {
+      "id": "b02",
+      "steps": [
+        { "kind": "torque", "fastener": "flange-bolt-m6", "newtonMetres": 13 },
+        { "kind": "alignment-check" }
+      ]
+    }
+  ]
+}

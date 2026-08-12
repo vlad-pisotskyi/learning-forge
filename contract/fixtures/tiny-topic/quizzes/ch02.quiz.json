@@ -1,0 +1,34 @@
+{
+  "contractVersion": 1,
+  "chapter": "ch02",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "torque-spec",
+      "kind": "recall",
+      "prompt": "What are the two failure modes bounding the torque window for an M6 flange bolt, and where does each boundary sit?",
+      "answer": "Below seven newton metres the joint loosens under vibration. Above eleven newton metres the flange thread strips. The rating sits at nine.",
+      "accept": ["loosens under vibration below 7 Nm", "thread strips above 11 Nm", "rated at 9 Nm"],
+      "sourceRefs": ["S02.a"]
+    },
+    {
+      "id": "q2",
+      "concept": "torque-spec",
+      "kind": "discrimination",
+      "prompt": "Both undertightening and overtightening are errors. Why is overtightening the better one to make?",
+      "answer": "Overtightening strips the thread immediately, in the shop, where it is caught and cheap. Undertightening passes inspection and fails later in the field under vibration.",
+      "accept": ["overtightening fails immediately and visibly", "undertightening passes inspection and fails later in service"],
+      "sourceRefs": ["S02.a"]
+    },
+    {
+      "id": "q3",
+      "concept": "alignment-check",
+      "kind": "application",
+      "prompt": "An alignment check fails on a freshly assembled widget. Before touching a flange, what do you establish first, and why?",
+      "answer": "Establish that the seat was clean before the halves were brought together, because the check inherits any error in the seat and reports it as misalignment.",
+      "accept": ["check whether the seat was clean", "because seat error propagates into the alignment reading", "adjusting the flange would be treating a symptom"],
+      "sourceRefs": ["S01.b"]
+    }
+  ],
+  "passing": { "atLeast": 2 }
+}

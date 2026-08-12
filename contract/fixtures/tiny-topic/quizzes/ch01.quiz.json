@@ -1,0 +1,34 @@
+{
+  "contractVersion": 1,
+  "chapter": "ch01",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "widget-anatomy",
+      "kind": "recall",
+      "prompt": "Which parts of a widget carry load, and which does not?",
+      "answer": "The spine and the two flanges carry load. The shroud carries none; it keeps debris out of the seat.",
+      "accept": ["spine and flanges carry load", "shroud carries no load"],
+      "sourceRefs": ["S01.a"]
+    },
+    {
+      "id": "q2",
+      "concept": "widget-anatomy",
+      "kind": "application",
+      "prompt": "A widget arrives with a badly dented shroud and a straight spine. Is it serviceable, and what reasoning gets you there?",
+      "answer": "It is serviceable. The damage is on a part outside the load path, so it does not affect whether the widget carries load.",
+      "accept": ["yes, serviceable", "because the shroud is not in the load path"],
+      "sourceRefs": ["S01.a"]
+    },
+    {
+      "id": "q3",
+      "concept": "widget-anatomy",
+      "kind": "discrimination",
+      "prompt": "The seat is described separately from the spine, flanges, and shroud. What makes it a different kind of thing?",
+      "answer": "The seat is the machined face where two halves meet, so it belongs to both halves rather than being a part of one. An error in it propagates into later measurements.",
+      "accept": ["it is shared between two halves", "it is a machined mating face, not a component", "errors in it propagate into later measurements"],
+      "sourceRefs": ["S01.b"]
+    }
+  ],
+  "passing": { "atLeast": 2 }
+}

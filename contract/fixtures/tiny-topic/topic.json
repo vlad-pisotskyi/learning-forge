@@ -1,0 +1,12 @@
+{
+  "contractVersion": 1,
+  "slug": "tiny-topic",
+  "title": "Widget assembly (validator fixture)",
+  "summary": "An invented subject used to exercise the topic validator. Two chapters, three concepts, one challenge, synthetic sources.",
+  "generatedAt": "2026-08-12",
+  "generator": { "skill": "fixture", "version": "0.1.0" },
+  "language": "typescript",
+  "status": "draft",
+  "chapters": ["ch01", "ch02"],
+  "challenges": ["c01"]
+}

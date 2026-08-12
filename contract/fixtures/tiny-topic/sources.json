@@ -1,0 +1,43 @@
+{
+  "contractVersion": 1,
+  "sources": [
+    {
+      "id": "S01",
+      "kind": "docs",
+      "title": "Widget Handbook (synthetic fixture source)",
+      "published": "2025",
+      "url": "https://example.com/fixtures/widget-handbook",
+      "retrieved": "2026-08-12",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "§1.2 Parts and load paths",
+          "quote": "A widget carries load through the spine and the two flanges. The shroud carries no load and exists to keep debris out of the seat."
+        },
+        {
+          "key": "b",
+          "locator": "§1.4 Seats",
+          "quote": "The seat is the machined face where the two halves meet. A seat that is not clean will read as misalignment on every subsequent measurement."
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "kind": "spec",
+      "title": "Widget Fastener Specification WF-7 (synthetic fixture source)",
+      "published": "2024-03-01",
+      "url": "https://example.com/fixtures/wf-7",
+      "identifier": "WF-7",
+      "retrieved": "2026-08-12",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Table 3, row M6",
+          "quote": "An M6 flange bolt is rated to 9 newton metres. Below 7 newton metres the joint loosens under vibration. Above 11 newton metres the flange thread strips."
+        }
+      ]
+    }
+  ]
+}

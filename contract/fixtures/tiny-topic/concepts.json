@@ -1,0 +1,20 @@
+{
+  "contractVersion": 1,
+  "concepts": [
+    {
+      "id": "widget-anatomy",
+      "label": "Widget anatomy",
+      "blurb": "The named parts of a widget and which of them carry load."
+    },
+    {
+      "id": "torque-spec",
+      "label": "Torque specification",
+      "blurb": "The tightening force a fastener is rated for, and what happens on either side of it."
+    },
+    {
+      "id": "alignment-check",
+      "label": "Alignment check",
+      "blurb": "The measurement that confirms two widget halves seat square to each other."
+    }
+  ]
+}
