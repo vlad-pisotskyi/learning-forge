@@ -18,6 +18,8 @@ import {
   conceptsFileSchema,
   progressFileSchema,
   quizFileSchema,
+  quizKeyFileSchema,
+  quizKeyPath,
   sourcesFileSchema,
   topicManifestSchema,
   type ChallengeManifest,
@@ -411,15 +413,45 @@ export function validateTopic(topicDir: string, strictFlag: boolean): Report {
         report.error(quizPath, `${q.id} tests "${q.concept}", which ${chapter.id} does not teach`);
       }
       covered.add(q.concept);
-      for (const ref of q.sourceRefs ?? []) {
-        if (sources && !excerptRefs.has(ref)) report.error(quizPath, `${q.id}: sourceRef ${ref} resolves to nothing`);
-      }
     }
     for (const concept of taught) {
       if (!covered.has(concept)) report.error(quizPath, `no question covers "${concept}", which ${chapter.id} teaches`);
     }
     if (!quiz.questions.some((q) => q.kind !== "recall")) {
       report.error(quizPath, "every question is recall; add an application or discrimination question");
+    }
+    // The visible file is the one the Teacher reads. It must not point at the key.
+    if (readFileSync(quizPath, "utf8").includes(".hidden")) {
+      report.error(quizPath, "mentions .hidden; the visible quiz must not point at its answer key");
+    }
+
+    /* --- the answer key, which only the grader reads --- */
+    const keyRelative = quizKeyPath(chapter.id);
+    const keyPath = join(topicDir, keyRelative);
+    const key = check(report, keyPath, quizKeyFileSchema, readJson(report, keyPath));
+    if (!key) continue;
+    if (key.chapter !== chapter.id) {
+      report.error(keyPath, `chapter "${key.chapter}" does not match the owning chapter ${chapter.id}`);
+    }
+    // One answer per question, no extras. A key that has drifted from its quiz
+    // grades the learner against questions nobody asked.
+    const answered = new Set<string>();
+    for (const a of key.answers) {
+      if (answered.has(a.id)) report.error(keyPath, `duplicate answer for "${a.id}"`);
+      answered.add(a.id);
+      if (!seenQ.has(a.id)) report.error(keyPath, `answers "${a.id}", which the quiz does not ask`);
+      for (const ref of a.sourceRefs ?? []) {
+        if (sources && !excerptRefs.has(ref)) report.error(keyPath, `${a.id}: sourceRef ${ref} resolves to nothing`);
+      }
+    }
+    for (const q of quiz.questions) {
+      if (!answered.has(q.id)) report.error(keyPath, `no answer for question "${q.id}"`);
+    }
+  }
+  for (const orphan of listFiles(join(topicDir, "quizzes", ".hidden"), ".json")) {
+    const owner = orphan.replace(/\.key\.json$/, "");
+    if (!chapters.some((c) => c.id === owner)) {
+      report.error(join(topicDir, "quizzes", ".hidden", orphan), "answer key belongs to no chapter");
     }
   }
   for (const orphan of quizFiles) {

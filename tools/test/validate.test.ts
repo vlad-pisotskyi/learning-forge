@@ -178,6 +178,65 @@ describe("quizzes", () => {
   });
 });
 
+describe("quiz answer keys", () => {
+  it("rejects a chapter whose answer key is missing", () => {
+    const dir = copyFixture();
+    rmSync(join(dir, "quizzes/.hidden/ch01.key.json"));
+    expect(matching(errorsOf(dir), "missing required file").length).toBeGreaterThan(0);
+  });
+
+  it("rejects an answer to a question the quiz does not ask", () => {
+    const dir = copyFixture();
+    editJson(join(dir, "quizzes/.hidden/ch01.key.json"), (data) => {
+      data.answers.push({ ...data.answers[0], id: "q9" });
+    });
+    expect(matching(errorsOf(dir), "which the quiz does not ask").length).toBe(1);
+  });
+
+  // Renaming rather than removing: the key's own floor of three answers catches a
+  // short key on its own, so the cross-file check is what catches a drifted one.
+  it("rejects a question the key does not answer", () => {
+    const dir = copyFixture();
+    editJson(join(dir, "quizzes/.hidden/ch01.key.json"), (data) => {
+      data.answers[data.answers.length - 1].id = "q9";
+    });
+    expect(matching(errorsOf(dir), "no answer for question").length).toBe(1);
+  });
+
+  it("rejects a key whose chapter disagrees with its filename", () => {
+    const dir = copyFixture();
+    editJson(join(dir, "quizzes/.hidden/ch01.key.json"), (data) => {
+      data.chapter = "ch02";
+    });
+    expect(matching(errorsOf(dir), "does not match the owning chapter").length).toBeGreaterThan(0);
+  });
+
+  it("rejects a key that belongs to no chapter", () => {
+    const dir = copyFixture();
+    cpSync(join(dir, "quizzes/.hidden/ch01.key.json"), join(dir, "quizzes/.hidden/ch09.key.json"));
+    expect(matching(errorsOf(dir), "answer key belongs to no chapter").length).toBe(1);
+  });
+
+  // The split is only worth anything if the answer cannot sit in the visible file.
+  it("rejects an answer left behind in the visible quiz", () => {
+    const dir = copyFixture();
+    editJson(join(dir, "quizzes/ch01.quiz.json"), (data) => {
+      data.questions[0].answer = "The spine, the flanges, and the seat.";
+      data.questions[0].accept = ["names the spine"];
+    });
+    const errors = errorsOf(dir);
+    expect(matching(errors, "unrecognized").length + matching(errors, "answer").length).toBeGreaterThan(0);
+  });
+
+  it("rejects a visible quiz that points at its own key", () => {
+    const dir = copyFixture();
+    editJson(join(dir, "quizzes/ch01.quiz.json"), (data) => {
+      data.questions[0].prompt = "See .hidden/ch01.key.json — what are the three parts?";
+    });
+    expect(matching(errorsOf(dir), "must not point at its answer key").length).toBe(1);
+  });
+});
+
 describe("hidden material", () => {
   it("rejects a brief that points at .hidden", () => {
     const dir = copyFixture();

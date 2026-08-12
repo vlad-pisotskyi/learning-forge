@@ -6,7 +6,7 @@
  */
 import { z } from "zod";
 
-export const CONTRACT_VERSION = 1;
+export const CONTRACT_VERSION = 2;
 
 export const SLUG = /^[a-z][a-z0-9-]{1,48}$/;
 export const CHAPTER_ID = /^ch\d{2}$/;
@@ -128,6 +128,12 @@ export const chapterFrontmatterSchema = z
   })
   .strict();
 
+/**
+ * The visible half of a quiz: prompts and the bar, no answers.
+ *
+ * `.strict()` is what enforces the split. A generator that leaves `answer` or
+ * `accept` in this file gets a schema error rather than a quiet leak.
+ */
 export const quizFileSchema = z
   .object({
     contractVersion: version,
@@ -140,6 +146,25 @@ export const quizFileSchema = z
             concept: conceptId,
             kind: z.enum(["recall", "application", "discrimination"]),
             prompt: z.string().min(15).max(500).endsWith("?"),
+          })
+          .strict(),
+      )
+      .min(3)
+      .max(8),
+    passing: z.object({ atLeast: z.number().int().min(2) }).strict(),
+  })
+  .strict();
+
+/** The hidden half: what a right answer contains. Read only by the quiz grader. */
+export const quizKeyFileSchema = z
+  .object({
+    contractVersion: version,
+    chapter: chapterId,
+    answers: z
+      .array(
+        z
+          .object({
+            id: z.string().regex(QUESTION_ID),
             answer: z.string().min(10).max(800),
             accept: z.array(z.string().min(3)).min(1).max(5),
             sourceRefs: z.array(excerptRef).optional(),
@@ -148,7 +173,6 @@ export const quizFileSchema = z
       )
       .min(3)
       .max(8),
-    passing: z.object({ atLeast: z.number().int().min(2) }).strict(),
   })
   .strict();
 
@@ -272,8 +296,12 @@ export type TopicManifest = z.infer<typeof topicManifestSchema>;
 export type ConceptsFile = z.infer<typeof conceptsFileSchema>;
 export type ChapterFrontmatter = z.infer<typeof chapterFrontmatterSchema>;
 export type QuizFile = z.infer<typeof quizFileSchema>;
+export type QuizKeyFile = z.infer<typeof quizKeyFileSchema>;
 export type SourcesFile = z.infer<typeof sourcesFileSchema>;
 export type ChallengeManifest = z.infer<typeof challengeManifestSchema>;
 export type ProgressFile = z.infer<typeof progressFileSchema>;
 
 export const ROLE_SKILLS = ["teach", "help", "judge"] as const;
+
+/** Where a chapter's answer key lives, relative to the topic root. */
+export const quizKeyPath = (chapterId: string) => `quizzes/.hidden/${chapterId}.key.json`;

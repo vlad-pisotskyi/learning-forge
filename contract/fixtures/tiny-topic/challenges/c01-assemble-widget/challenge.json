@@ -1,9 +1,12 @@
 {
-  "contractVersion": 1,
+  "contractVersion": 2,
   "id": "c01",
   "title": "Validate a widget build order",
   "afterChapter": "ch02",
-  "exercises": ["widget-anatomy", "torque-spec"],
+  "exercises": [
+    "widget-anatomy",
+    "torque-spec"
+  ],
   "language": "typescript",
   "estimatedHours": 1,
   "brief": "brief.md",
@@ -22,8 +25,16 @@
     "runner": "vitest",
     "spec": ".hidden/eval/c01.eval.ts",
     "metrics": [
-      { "name": "detection-rate", "threshold": 0.9, "direction": "gte" },
-      { "name": "false-positive-rate", "threshold": 0.1, "direction": "lte" }
+      {
+        "name": "detection-rate",
+        "threshold": 0.9,
+        "direction": "gte"
+      },
+      {
+        "name": "false-positive-rate",
+        "threshold": 0.1,
+        "direction": "lte"
+      }
     ]
   },
   "reference": ".hidden/solution"

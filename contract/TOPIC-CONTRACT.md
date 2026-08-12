@@ -1,6 +1,6 @@
 # The topic contract
 
-Version 1.
+Version 2.
 
 Every topic the Forge generates satisfies this contract. The contract exists so a
 generated topic can be checked by a program instead of by reading it, and so that
@@ -34,7 +34,9 @@ topics/<slug>/
     ch01-<slug>.md               one chapter, YAML frontmatter + prose
     ch02-<slug>.md
   quizzes/
-    ch01.quiz.json               questions, expected answers, passing bar
+    ch01.quiz.json               the questions, and the bar. The learner may read this.
+    .hidden/
+      ch01.key.json              expected answers and accept points. The grader only.
   challenges/
     c01-<slug>/
       challenge.json             manifest: position, concepts, interface, eval
@@ -59,21 +61,32 @@ topics/<slug>/
 
 Chapter files are named `<id>-<slug>.md` where the id matches `^ch\d{2}$`. Challenge
 directories are named `<id>-<slug>` where the id matches `^c\d{2}$`. Quiz files are
-named `<chapterId>.quiz.json`. The validator reads ids from frontmatter and manifests,
+named `<chapterId>.quiz.json` and their keys `.hidden/<chapterId>.key.json`. The
+validator reads ids from frontmatter and manifests,
 then confirms the filenames agree, so a renamed file cannot silently detach from its
 metadata.
 
 ### What is committed
 
 Everything above is committed except `work/` and `.state/`, which are gitignored.
-Hidden evaluation sets and reference solutions **are** committed — they are the
-material, and the repo is only useful with them. The guarantee is not that a human
-cannot find them; it is that no agent surfaces them. The Teacher and Helper are
-denied read access to `.hidden/`, and the Judge reads it inside an isolated context
-that returns a verdict and nothing else.
+Hidden evaluation sets, answer keys, and reference solutions **are** committed — they
+are the material, and the repo is only useful with them. The guarantee is not that a
+human cannot find them; it is that no agent surfaces them.
 
-Nothing outside `.hidden/` may reveal hidden material. `brief.md`, `rubric.md`, and
-`starter/` must not contain the string `.hidden`, and the validator enforces that.
+There are two `.hidden/` directories, serving the same purpose at different scales.
+`quizzes/.hidden/` holds answer keys and is readable only by the quiz grader.
+`challenges/<id>/.hidden/` holds evaluation sets and reference solutions and is
+readable only by the Judge. Both graders run in isolated contexts that return a
+verdict and nothing else. The Teacher and the Helper read neither.
+
+The Teacher asks the questions without holding the answers. That split exists because
+a role that just spent half an hour explaining a concept is the worst available judge
+of whether the explanation worked, and because an answer key sitting in the context of
+a conversation leaks into the phrasing of the next hint.
+
+Nothing outside a `.hidden/` directory may reveal hidden material. `brief.md`,
+`rubric.md`, `starter/`, and the visible quiz files must not contain the string
+`.hidden`, and the validator enforces that.
 
 ---
 
@@ -81,7 +94,7 @@ Nothing outside `.hidden/` may reveal hidden material. `brief.md`, `rubric.md`, 
 
 ```json
 {
-  "contractVersion": 1,
+  "contractVersion": 2,
   "slug": "wiki-retrieval",
   "title": "Retrieval over Wikipedia",
   "summary": "Building and evaluating retrieval systems over encyclopedic text, from lexical scoring through reranking.",
@@ -96,7 +109,7 @@ Nothing outside `.hidden/` may reveal hidden material. `brief.md`, `rubric.md`, 
 
 | Field | Rule |
 |---|---|
-| `contractVersion` | Must be `1`. |
+| `contractVersion` | Must be `2`. |
 | `slug` | Kebab-case; equals the directory name. |
 | `title` | 4–80 characters. |
 | `summary` | 1–2 sentences, 20–400 characters. |
@@ -121,7 +134,7 @@ a human can answer. With it, that check is arithmetic.
 
 ```json
 {
-  "contractVersion": 1,
+  "contractVersion": 2,
   "concepts": [
     { "id": "term-frequency", "label": "Term frequency", "blurb": "How often a term occurs in a document." },
     { "id": "idf", "label": "Inverse document frequency", "blurb": "How much a term's rarity across the corpus raises its weight." }
@@ -212,21 +225,22 @@ with a citation stapled to it.
 
 ## 5. Quizzes
 
-One file per chapter, at `quizzes/<chapterId>.quiz.json`.
+Two files per chapter. The questions are visible; the answers are not.
+
+### `quizzes/<chapterId>.quiz.json`
+
+What the Teacher reads and the learner may read.
 
 ```json
 {
-  "contractVersion": 1,
+  "contractVersion": 2,
   "chapter": "ch03",
   "questions": [
     {
       "id": "q1",
       "concept": "idf",
       "kind": "application",
-      "prompt": "A term appears in every document in the corpus. What does IDF do to its weight, and why is that the behaviour you want?",
-      "answer": "IDF drives the weight toward zero, because a term present everywhere cannot discriminate between documents.",
-      "accept": ["weight goes to zero or near zero", "because the term does not discriminate"],
-      "sourceRefs": ["S07.a"]
+      "prompt": "A term appears in every document in the corpus. What does IDF do to its weight, and why is that the behaviour you want?"
     }
   ],
   "passing": { "atLeast": 3 }
@@ -241,10 +255,38 @@ One file per chapter, at `quizzes/<chapterId>.quiz.json`.
 | `questions[].concept` | A concept id that the owning chapter `teaches`. |
 | `questions[].kind` | `recall`, `application`, or `discrimination`. |
 | `questions[].prompt` | 15–500 characters, ends with `?`. |
-| `questions[].answer` | The expected answer as prose, 10–800 characters. |
-| `questions[].accept` | 1–5 points a passing answer must contain. The Teacher grades against these, not against exact wording. |
-| `questions[].sourceRefs` | Optional excerpt refs (`S07.a`) backing the answer. Must resolve. |
 | `passing.atLeast` | Integer, at least 2, at most the number of questions. |
+
+The passing bar is visible on purpose, for the same reason a challenge's thresholds
+are: the learner is told what they are being held to. What they are not told is what
+a right answer looks like.
+
+### `quizzes/.hidden/<chapterId>.key.json`
+
+What the quiz grader reads, and nothing else does.
+
+```json
+{
+  "contractVersion": 2,
+  "chapter": "ch03",
+  "answers": [
+    {
+      "id": "q1",
+      "answer": "IDF drives the weight toward zero, because a term present everywhere cannot discriminate between documents.",
+      "accept": ["weight goes to zero or near zero", "because the term does not discriminate"],
+      "sourceRefs": ["S07.a"]
+    }
+  ]
+}
+```
+
+| Field | Rule |
+|---|---|
+| `chapter` | Must match the visible quiz and the filename. |
+| `answers` | Exactly one entry per question in the visible file, same ids, no extras. |
+| `answers[].answer` | The expected answer as prose, 10–800 characters. |
+| `answers[].accept` | 1–5 points a passing answer must contain. The grader scores against these, not against exact wording. |
+| `answers[].sourceRefs` | Optional excerpt refs (`S07.a`) backing the answer. Must resolve. |
 
 Every concept the chapter `teaches` is covered by at least one question, and at
 least one question is `application` or `discrimination`. A quiz made only of
@@ -254,6 +296,11 @@ understood.
 `discrimination` questions ask the learner to tell two things apart — the shape of
 question that catches a confusion a recall question sails past.
 
+The split is what lets the Teacher quiz without being able to lead. It asks the
+prompts, collects the answers, and hands both to a grader that never saw the lesson.
+Grading against `accept` points rather than wording is the same rule as before; only
+who applies it has moved.
+
 ---
 
 ## 6. Sources
@@ -262,7 +309,7 @@ One file, `sources.json`, for the whole topic.
 
 ```json
 {
-  "contractVersion": 1,
+  "contractVersion": 2,
   "sources": [
     {
       "id": "S07",
@@ -331,7 +378,7 @@ challenges/c02-bm25-from-scratch/
 
 ```json
 {
-  "contractVersion": 1,
+  "contractVersion": 2,
   "id": "c02",
   "title": "BM25 from scratch",
   "afterChapter": "ch05",
@@ -436,7 +483,7 @@ Teacher and the Judge, read by all three roles.
 
 ```json
 {
-  "contractVersion": 1,
+  "contractVersion": 2,
   "topic": "wiki-retrieval",
   "updated": "2026-08-12T09:31:00Z",
   "chapters": {
@@ -525,8 +572,13 @@ model finds more comfortable.
 The contract is versioned by `contractVersion`, which every file carries. Adding an
 optional field is a compatible change and does not bump the version. Adding a
 required field, removing a field, tightening a rule, or changing a filename
-convention bumps it to 2, and the validator then refuses version 1 topics until
+convention bumps it, and the validator then refuses topics at the older version until
 they are migrated.
+
+Version 2 split the quiz in two: `quizzes/<chapterId>.quiz.json` kept the prompts and
+the passing bar, and the answers and `accept` points moved to
+`quizzes/.hidden/<chapterId>.key.json` so the Teacher no longer holds the key to the
+quiz it administers.
 
 The order of work when the contract changes: edit this document, then the schemas in
 `tools/src/contract.ts`, then the validator's checks, then the fixture in

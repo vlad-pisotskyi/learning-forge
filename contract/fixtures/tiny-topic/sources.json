@@ -1,5 +1,5 @@
 {
-  "contractVersion": 1,
+  "contractVersion": 2,
   "sources": [
     {
       "id": "S01",
@@ -12,12 +12,12 @@
       "excerpts": [
         {
           "key": "a",
-          "locator": "§1.2 Parts and load paths",
+          "locator": "\u00a71.2 Parts and load paths",
           "quote": "A widget carries load through the spine and the two flanges. The shroud carries no load and exists to keep debris out of the seat."
         },
         {
           "key": "b",
-          "locator": "§1.4 Seats",
+          "locator": "\u00a71.4 Seats",
           "quote": "The seat is the machined face where the two halves meet. A seat that is not clean will read as misalignment on every subsequent measurement."
         }
       ]
