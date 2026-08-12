@@ -22,11 +22,18 @@ The corpus of build records lives in `corpus/builds.json`. Fastener ratings are 
 
 ## What counts as a fault
 
-Everything the two chapters established. A torque figure outside its fastener's
-window is a fault, and the two sides of that window are different faults, not one. A
-torque figure applied to a fastener that has no rating is a fault. An alignment check
-taken before the fasteners reached their figure is a fault. A missing seat inspection
-is a fault, and so is an alignment check that follows one.
+Everything the two chapters established, and there are five faults in total.
+
+A torque figure below its fastener's window is `torque-under-window`, and above it is
+`torque-over-window`. The two sides are different faults, not one, and the window is
+inclusive at both ends. A torque figure applied to a fastener with no rating is
+`torque-unrated-fastener`. An alignment check with any torque step still after it is
+`check-before-torque`, because the check was taken before the fasteners reached their
+figure. A build with no seat inspection anywhere is `seat-not-inspected`.
+
+Report each distinct fault once. A fault is distinct by its class and, where it has
+one, its fastener, so two identical over-torques of the same fastener are one problem
+and not two.
 
 ## How this is graded
 

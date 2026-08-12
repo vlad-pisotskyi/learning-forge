@@ -477,15 +477,53 @@ would only teach them to guess.
 ### `.hidden/eval/`
 
 The held-out evaluation set: test files plus whatever fixtures and labelled
-relevance judgements they need. It imports the learner's entrypoint and produces
-the metrics named in `challenge.json`. Only the Judge runs it.
+judgements they need. It imports the learner's entrypoint and produces the metrics
+named in `challenge.json`. Only the Judge runs it.
+
+It reports each metric by printing one line to stdout:
+
+```
+metric <name> <value>
+```
+
+The name matches a `eval.metrics[].name` exactly and the value is a number, with an
+optional minus sign and an optional decimal part. One line per declared metric. This
+is the whole interface between an evaluation set and whatever is scoring it, which is
+what lets `eval.runner` be either `vitest` or `node` without the scorer caring.
+
+Thresholds are not the evaluation set's business. It prints the numbers and the runner
+compares them to `challenge.json`, so the bar exists in exactly one place. An
+evaluation set that asserts its own thresholds has put the bar in two places, and they
+will disagree.
+
+The validator checks that the spec imports the entrypoint and that it names each
+declared metric. It cannot check that the numbers mean anything, which is why the
+dry run below exists.
 
 ### `.hidden/solution/`
 
-A working reference implementation. It exists so the Judge can compare approaches
-and so the Forge can prove the challenge is solvable within the interface it
-specified. A challenge whose reference solution does not pass its own evaluation
-set is broken, and the dry-run phase exists to catch that.
+A working reference implementation, mirroring `work/`: an entrypoint of
+`work/src/index.ts` puts the reference at `.hidden/solution/src/index.ts`.
+
+It exists so the Judge can compare approaches, and so the Forge can prove the
+challenge is solvable within the interface it specified. A challenge whose reference
+solution does not pass its own evaluation set is broken.
+
+That proof is a command, not an assertion:
+
+```
+npm run forge -- eval <slug> <challengeId> --reference
+```
+
+It stages a copy of the challenge under `.forge-cache/`, because the evaluation set
+imports `work/` and `work/` belongs to the learner. The staged `work/` is the starter
+with the code under test laid over it, in that order, which is what a learner's work
+tree is once they have followed the brief. So a reference may rely on a module the
+starter provides, and only the entrypoint has to be duplicated.
+
+The reference is never staged when a learner's submission is being scored. Nothing
+forces an evaluation set to import `work/` rather than whatever sits nearest to it, so
+the answer is simply not present in the tree.
 
 ---
 

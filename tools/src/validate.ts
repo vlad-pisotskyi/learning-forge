@@ -6,6 +6,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, join, relative, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
+import { isStub, referenceEntrypoint } from "./forge-plan.ts";
 import {
   ALLOW_HEDGE,
   HEDGES,
@@ -562,6 +563,45 @@ export function validateTopic(topicDir: string, strictFlag: boolean): Report {
     }
     if (!isNonEmptyDir(join(dir, challenge.reference))) {
       report.error(join(dir, challenge.reference), "reference solution is missing or empty");
+    } else {
+      // A non-empty directory was the whole of this check, which let a reference that
+      // implements nothing pass while `forge eval --reference` was the only thing that
+      // would have noticed. The mirrored entrypoint is the file the evaluation set
+      // actually imports once the reference is staged.
+      const referenceRel = referenceEntrypoint(challenge.interface.entrypoint);
+      const referencePath = join(dir, referenceRel);
+      if (!existsSync(referencePath)) {
+        report.error(
+          referencePath,
+          `the reference must place ${referenceRel}, mirroring the entrypoint ${challenge.interface.entrypoint} that the evaluation set imports`,
+        );
+      } else if (isStub(readFileSync(referencePath, "utf8"))) {
+        report.error(referencePath, "the reference entrypoint is still a stub");
+      }
+    }
+
+    // An evaluation set that never reaches the learner's code cannot be scoring it. This
+    // is the mechanical half of "the reference passes its own evaluation set"; the other
+    // half is running it, which `forge eval --reference` does.
+    const specPath = join(dir, challenge.eval.spec);
+    if (existsSync(specPath) && statSync(specPath).size > 0) {
+      const spec = readFileSync(specPath, "utf8");
+      if (isStub(spec)) {
+        report.error(specPath, "the evaluation set is still a stub");
+      } else if (!spec.includes("work/")) {
+        report.error(
+          specPath,
+          `does not import ${challenge.interface.entrypoint}, so it is not scoring the submission`,
+        );
+      }
+      for (const metric of challenge.eval.metrics) {
+        if (!spec.includes(`metric ${metric.name}`)) {
+          report.warn(
+            specPath,
+            `never prints "metric ${metric.name} <value>", which is how the runner reports a declared metric`,
+          );
+        }
+      }
     }
     if (!isNonEmptyDir(join(dir, "starter"))) {
       report.warn(join(dir, "starter"), "no starter scaffolding");

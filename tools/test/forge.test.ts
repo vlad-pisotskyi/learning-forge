@@ -9,7 +9,7 @@
  * of frontmatter. So if the scaffold gets `order`, a quiz path, or a challenge
  * manifest wrong, that test fails and says where.
  */
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -31,6 +31,7 @@ import {
   promoteToValidated,
   statusOf,
   evalChallenge,
+  parseMetrics,
   initProgress,
 } from "../src/forge-scaffold.ts";
 import { validateTopic } from "../src/validate.ts";
@@ -52,6 +53,7 @@ function at<T>(items: readonly T[], index: number): T {
   return item;
 }
 
+const REPO = new URL("../..", import.meta.url).pathname;
 const TEMPLATES = new URL("../../.claude/skills/forge-generate/templates", import.meta.url).pathname;
 
 /**
@@ -62,6 +64,9 @@ function makeRoot(): string {
   const root = mkdtempSync(join(tmpdir(), "forge-root-"));
   temps.push(root);
   cpSync(TEMPLATES, join(root, ".claude/skills/forge-generate/templates"), { recursive: true });
+  // A real checkout has its dependencies installed, and the eval sets a challenge stages
+  // import vitest by name. Symlinking rather than copying keeps makeRoot cheap.
+  symlinkSync(join(REPO, "node_modules"), join(root, "node_modules"), "dir");
   return root;
 }
 
@@ -723,5 +728,168 @@ describe("forge status", () => {
     expect(status.outstanding.find((o) => o.kind === "chapters")?.ids).toEqual([]);
     expect(status.outstanding.find((o) => o.kind === "quizzes")?.ids).toEqual([]);
     expect(status.excerpts.uncited).toEqual([]);
+  });
+});
+
+describe("parseMetrics", () => {
+  // Vitest labels captured output with the file that produced it. Without using that
+  // label, a metric line from anywhere else in the run becomes this challenge's score,
+  // and which one wins depends on file scheduling.
+  const SPEC = "c01.eval.ts";
+
+  it("keeps the lines the challenge's own spec printed", () => {
+    const output = [
+      "stdout | challenges/c01-assemble-widget/.hidden/eval/c01.eval.ts > scores",
+      "metric detection-rate 0.95",
+      "metric false-positive-rate 0.02",
+    ].join("\n");
+    expect([...parseMetrics(output, SPEC)]).toEqual([
+      ["detection-rate", 0.95],
+      ["false-positive-rate", 0.02],
+    ]);
+  });
+
+  it("ignores lines another spec printed, however late they arrive", () => {
+    const output = [
+      "stdout | challenges/c01-assemble-widget/.hidden/eval/c01.eval.ts > scores",
+      "metric detection-rate 0.95",
+      "stdout | challenges/c02-something-else/.hidden/eval/c02.eval.ts > scores",
+      "metric detection-rate 0.01",
+      "metric false-positive-rate 0.99",
+    ].join("\n");
+    expect(parseMetrics(output, SPEC).get("detection-rate")).toBe(0.95);
+    expect(parseMetrics(output, SPEC).has("false-positive-rate")).toBe(false);
+  });
+
+  it("keeps unattributed lines, which is how the node runner reports", () => {
+    // One process, one spec, no headers. Unattributed output belongs to the spec by
+    // construction there.
+    expect([...parseMetrics("metric recall 0.5", SPEC)]).toEqual([["recall", 0.5]]);
+  });
+
+  it("reads negative and integer values, and ignores prose that mentions a metric", () => {
+    const output = ["metric drift -0.25", "metric hits 12", "the metric detection-rate is fine"].join("\n");
+    expect([...parseMetrics(output, SPEC)]).toEqual([
+      ["drift", -0.25],
+      ["hits", 12],
+    ]);
+  });
+});
+
+describe("forge eval on the vitest runner", () => {
+  /**
+   * A temp topic carrying the fixture's real challenge material on the runner its
+   * manifest actually declares. Every other eval case in this file rewrites the runner
+   * to `node` first, which is exactly how the vitest path stayed broken while its tests
+   * passed.
+   */
+  function stageFixtureChallenge(root: string): { topicDir: string; challengeDir: string } {
+    const plan = planFromFixture();
+    initTopic(root, SLUG, clock);
+    approve(root, plan);
+    applyPlan(root, SLUG, clock);
+    const topicDir = paths.topicDir(root, SLUG);
+    cpSync(join(FIXTURE, "corpus"), join(topicDir, "corpus"), { recursive: true });
+    const rel = paths.challengeDir(at(plan.challenges, 0));
+    for (const sub of ["starter", ".hidden"]) {
+      cpSync(join(FIXTURE, rel, sub), join(topicDir, rel, sub), { recursive: true });
+    }
+    return { topicDir, challengeDir: join(topicDir, rel) };
+  }
+
+  /** A submission at the entrypoint, over a copy of the starter, as a learner would have. */
+  function submit(challengeDir: string, body: string) {
+    cpSync(join(challengeDir, "starter"), join(challengeDir, "work"), { recursive: true });
+    writeFileSync(join(challengeDir, "work/src/index.ts"), body);
+  }
+
+  it("proves the reference solution passes its own held-out set", () => {
+    const root = makeRoot();
+    stageFixtureChallenge(root);
+
+    const result = evalChallenge(root, SLUG, "c01", true);
+    expect(result.problems).toEqual([]);
+    expect(result.ran).toBe(true);
+    expect(result.metrics.map((m) => [m.name, m.value, m.ok])).toEqual([
+      ["detection-rate", 1, true],
+      ["false-positive-rate", 0, true],
+    ]);
+    expect(result.passed, result.output).toBe(true);
+  });
+
+  it("stages work/ as starter plus the code under test", () => {
+    // The reference imports a module the starter provides. Staging the reference alone
+    // makes that import fail, and the challenge is then reported unsolvable by its own
+    // reference. A type-only import would survive erasure and hide this.
+    const root = makeRoot();
+    stageFixtureChallenge(root);
+    const result = evalChallenge(root, SLUG, "c01", true);
+    expect(existsSync(join(result.staged, "work/src/types.ts"))).toBe(true);
+    expect(existsSync(join(result.staged, "work/src/index.ts"))).toBe(true);
+  });
+
+  it("never stages the reference solution beside the code being scored", () => {
+    const root = makeRoot();
+    const { challengeDir } = stageFixtureChallenge(root);
+    submit(challengeDir, "export function checkBuild() {\n  return [];\n}\n");
+
+    const result = evalChallenge(root, SLUG, "c01");
+    expect(existsSync(join(result.staged, ".hidden/eval"))).toBe(true);
+    expect(existsSync(join(result.staged, ".hidden/solution"))).toBe(false);
+  });
+
+  it("scores only its own spec, with an unrelated eval set in the same tree", () => {
+    // This is the regression for the defect that made a pass impossible: the generated
+    // config collected every *.eval.ts under the process cwd, so the un-staged original
+    // ran against an empty work/ and failed the run whatever the reference scored, and
+    // any stray metric line could win the scrape.
+    const root = makeRoot();
+    stageFixtureChallenge(root);
+    writeFileSync(
+      join(root, "stray.eval.ts"),
+      `import { it } from "vitest";\n` +
+        `it("stray", () => {\n` +
+        `  console.log("metric detection-rate 0.01");\n` +
+        `  console.log("metric false-positive-rate 0.99");\n` +
+        `});\n`,
+    );
+
+    const result = evalChallenge(root, SLUG, "c01", true);
+    expect(result.output).not.toContain("stray");
+    expect(result.metrics.map((m) => m.value)).toEqual([1, 0]);
+    expect(result.passed, result.output).toBe(true);
+  });
+
+  it("fails a submission that reports nothing, on detection rather than false positives", () => {
+    const root = makeRoot();
+    const { challengeDir } = stageFixtureChallenge(root);
+    submit(challengeDir, "export function checkBuild() {\n  return [];\n}\n");
+
+    const result = evalChallenge(root, SLUG, "c01");
+    expect(result.ran).toBe(true);
+    const value = (name: string) => result.metrics.find((m) => m.name === name);
+    expect(value("detection-rate")?.value).toBe(0);
+    expect(value("detection-rate")?.ok).toBe(false);
+    // Reporting nothing is not a clean sheet, but it is not a false positive either.
+    expect(value("false-positive-rate")?.value).toBe(0);
+    expect(result.passed).toBe(false);
+  });
+
+  it("fails a submission that calls every build broken, on false positives", () => {
+    const root = makeRoot();
+    const { challengeDir } = stageFixtureChallenge(root);
+    submit(
+      challengeDir,
+      `import type { Build, Problem } from "./types.ts";\n` +
+        `export function checkBuild(_build: Build): Problem[] {\n` +
+        `  return [{ fault: "seat-not-inspected", detail: "assume the worst" }];\n` +
+        `}\n`,
+    );
+
+    const result = evalChallenge(root, SLUG, "c01");
+    const value = (name: string) => result.metrics.find((m) => m.name === name);
+    expect(value("false-positive-rate")?.value).toBeGreaterThan(0.1);
+    expect(value("false-positive-rate")?.ok).toBe(false);
+    expect(result.passed).toBe(false);
   });
 });

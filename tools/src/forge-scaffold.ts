@@ -12,6 +12,7 @@
  * chapter is rewrite its frontmatter and leave the prose alone.
  */
 import { spawnSync } from "node:child_process";
+import { createRequire } from "node:module";
 import {
   cpSync,
   existsSync,
@@ -777,6 +778,75 @@ export type EvalResult = {
 };
 
 /**
+ * Bounds on an evaluation run. Node's default `maxBuffer` is 1 MiB, and an evaluation
+ * set that prints past it is killed with its output truncated, which reads exactly like
+ * an evaluation set that forgot to print its metrics. The timeout is the only thing
+ * bounding a submission that loops forever.
+ */
+const RUN_LIMITS = {
+  encoding: "utf8",
+  maxBuffer: 32 * 1024 * 1024,
+  timeout: 10 * 60 * 1000,
+} as const;
+
+/**
+ * Vitest's entry script, resolved from this file rather than from the process cwd.
+ *
+ * Running it as `npx vitest` was wrong twice. `npx` installs on a miss, so a checkout
+ * without its dependencies reaches for the network mid-evaluation and reports whatever
+ * npm says as a defect in the evaluation set. And resolution followed the cwd, so the
+ * version that ran depended on where the command was typed. Resolving from
+ * `import.meta.url` pins it to the Forge's own dependency, which is the one the contract
+ * means when it says `vitest`.
+ */
+function vitestEntry(): string | undefined {
+  try {
+    const pkgPath = createRequire(import.meta.url).resolve("vitest/package.json");
+    const pkg = JSON.parse(readFileSync(pkgPath, "utf8")) as {
+      bin?: string | Record<string, string>;
+    };
+    const bin = typeof pkg.bin === "string" ? pkg.bin : pkg.bin?.["vitest"];
+    return bin ? join(dirname(pkgPath), bin) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+const METRIC = /^\s*metric\s+(\S+)\s+(-?\d+(?:\.\d+)?)\s*$/;
+
+/** Vitest labels captured output with the file that produced it. */
+const STDOUT_HEADER = /^std(?:out|err)\s*\|\s*(\S+)/;
+
+/**
+ * Pull `metric <name> <value>` lines out of a run's output, keeping only the ones the
+ * challenge's own evaluation set printed.
+ *
+ * Attribution matters because the output is one merged stream. A sweep of the whole
+ * thing takes the last occurrence of each name, so a metric line from anywhere else in
+ * the run silently becomes this challenge's score. That is worse than an error: it
+ * reports a plausible wrong number, and which number wins depends on file scheduling.
+ *
+ * A line before any header is kept. The `node` runner spawns one process for one spec
+ * and labels nothing, so unattributed output there belongs to the spec by construction.
+ */
+export function parseMetrics(output: string, specFile: string): Map<string, number> {
+  const reported = new Map<string, number>();
+  let attributed: string | undefined;
+  for (const line of output.split("\n")) {
+    const header = STDOUT_HEADER.exec(line);
+    if (header?.[1]) {
+      attributed = header[1];
+      continue;
+    }
+    const metric = METRIC.exec(line);
+    if (!metric?.[1] || metric[2] === undefined) continue;
+    if (attributed !== undefined && basename(attributed) !== specFile) continue;
+    reported.set(metric[1], Number(metric[2]));
+  }
+  return reported;
+}
+
+/**
  * Runs a challenge's held-out evaluation set against its own reference solution.
  *
  * This is the step that turns "the challenge is solvable" from an assertion into a
@@ -850,11 +920,24 @@ export function evalChallenge(
   const staged = join(stageRoot, "challenges", dirName);
   rmSync(stageRoot, { recursive: true, force: true });
   mkdirSync(staged, { recursive: true });
-  cpSync(join(source, ".hidden"), join(staged, ".hidden"), { recursive: true });
-  cpSync(from, join(staged, "work"), { recursive: true });
+
+  // Only the evaluation set is staged, never `.hidden/solution/`. When the thing being
+  // scored is a learner's submission, copying the reference into the same tree would
+  // leave a working answer sitting at a predictable path beside their code, and nothing
+  // forces an evaluation set to import `work/` rather than whatever is nearest.
+  cpSync(join(source, ".hidden", "eval"), join(staged, ".hidden", "eval"), { recursive: true });
+
+  // `work/` is the starter plus the code under test, in that order, because that is what
+  // a learner's work tree is: the brief tells them to copy the starter in and build from
+  // it. Staging the reference on its own would fail any reference that imports a module
+  // the starter provides, and would fail it as "the challenge is unsolvable".
+  const stagedWork = join(staged, "work");
   if (existsSync(join(source, "starter"))) {
+    cpSync(join(source, "starter"), stagedWork, { recursive: true });
     cpSync(join(source, "starter"), join(staged, "starter"), { recursive: true });
   }
+  cpSync(from, stagedWork, { recursive: true, force: true });
+
   if (existsSync(join(topicDir, "corpus"))) {
     cpSync(join(topicDir, "corpus"), join(stageRoot, "corpus"), { recursive: true });
   }
@@ -864,27 +947,48 @@ export function evalChallenge(
   let command: string;
   let run;
   if (challenge.eval.runner === "vitest") {
-    // Vitest's default include matches *.test.ts and *.spec.ts, neither of which an
-    // eval set is. A generated config in the staging directory is what lets the
-    // held-out set keep the .eval.ts name the contract gives it.
-    const configPath = join(stageRoot, "vitest.config.ts");
+    // Two things this config has to do. Vitest's default include matches *.test.ts and
+    // *.spec.ts, neither of which an eval set is, so the include is what lets the
+    // held-out set keep the .eval.ts name the contract gives it. And `root` pins the
+    // search to the staging tree: without it vitest roots at the process cwd and
+    // collects every *.eval.ts in the repository, including the un-staged original,
+    // which then runs against the learner's empty work/ and fails the whole run no
+    // matter how the code under test scored.
+    // A plain object, not `defineConfig`, and `.mjs` rather than `.ts`. defineConfig is
+    // a types helper that does nothing at runtime, and importing it would make this
+    // generated file depend on resolving `vitest/config` from the staging tree, which is
+    // a directory that exists to hold a copy of somebody's homework.
+    const configPath = join(stageRoot, "vitest.config.mjs");
     writeIfChanged(
       configPath,
-      `import { defineConfig } from "vitest/config";\nexport default defineConfig({ test: { include: ["**/*.eval.ts"] } });\n`,
+      `export default {\n` +
+        `  root: ${JSON.stringify(stageRoot)},\n` +
+        `  test: { root: ${JSON.stringify(stageRoot)}, include: ["**/*.eval.ts"] },\n` +
+        `};\n`,
     );
-    command = `npx vitest run --config ${configPath}`;
-    run = spawnSync("npx", ["vitest", "run", "--config", configPath], { cwd: root, encoding: "utf8" });
+    const entry = vitestEntry();
+    if (!entry) {
+      return {
+        ...blank,
+        staged,
+        problems: [
+          `the challenge declares the vitest runner, and vitest is not resolvable from this checkout. Run npm install.`,
+        ],
+      };
+    }
+    command = `node ${entry} run --config ${configPath} --root ${stageRoot}`;
+    run = spawnSync("node", [entry, "run", "--config", configPath, "--root", stageRoot], {
+      cwd: stageRoot,
+      ...RUN_LIMITS,
+    });
   } else {
     command = `node ${spec}`;
-    run = spawnSync("node", [spec], { cwd: staged, encoding: "utf8" });
+    run = spawnSync("node", [spec], { cwd: staged, ...RUN_LIMITS });
   }
   const output = `${run.stdout ?? ""}${run.stderr ?? ""}`.trim();
 
   /* --- read the metrics back out --- */
-  const reported = new Map<string, number>();
-  for (const line of output.matchAll(/^\s*metric\s+(\S+)\s+(-?\d+(?:\.\d+)?)\s*$/gm)) {
-    reported.set(line[1] as string, Number(line[2]));
-  }
+  const reported = parseMetrics(output, basename(spec));
   const metrics: MetricRow[] = challenge.eval.metrics.map((declared) => {
     const value = reported.get(declared.name);
     return {
@@ -897,22 +1001,42 @@ export function evalChallenge(
         (declared.direction === "gte" ? value >= declared.threshold : value <= declared.threshold),
     };
   });
-  const missing = metrics.filter((m) => m.value === undefined).map((m) => m.name);
+
+  // Three failures that look alike in the output and are not alike at all. Reporting a
+  // spawn failure or a kill as "your evaluation set printed no metrics" blames the
+  // author for a problem in the tooling, which is how a 1 MiB output limit gets
+  // diagnosed as a missing console.log.
+  const problems: string[] = [];
+  if (run.error) {
+    problems.push(`the evaluation set could not be run: ${run.error.message}`);
+  } else if (run.signal) {
+    problems.push(
+      `the evaluation set was killed by ${run.signal}. It either ran past the ${
+        RUN_LIMITS.timeout / 1000
+      } second limit or printed more than ${RUN_LIMITS.maxBuffer / (1024 * 1024)} MiB.`,
+    );
+  } else {
+    const missing = metrics.filter((m) => m.value === undefined).map((m) => m.name);
+    if (missing.length) {
+      problems.push(
+        `the evaluation set reported no value for: ${missing.join(", ")}. It must print one "metric <name> <value>" line per declared metric.`,
+      );
+    }
+  }
 
   return {
     challenge: challengeId,
     against,
     staged,
     command,
-    ran: run.status !== null,
+    // Started, and exited on its own terms. A process that never spawned and one the
+    // kernel killed both used to report the same way, which is what let a kill be
+    // misattributed to the evaluation set.
+    ran: run.error === undefined && run.status !== null,
     passed: run.status === 0 && metrics.every((m) => m.ok),
     metrics,
     output,
-    problems: missing.length
-      ? [
-          `the evaluation set reported no value for: ${missing.join(", ")}. It must print one "metric <name> <value>" line per declared metric.`,
-        ]
-      : [],
+    problems,
   };
 }
 

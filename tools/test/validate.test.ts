@@ -298,6 +298,58 @@ describe("hidden material", () => {
     rmSync(join(dir, "challenges/c01-assemble-widget/.hidden/solution"), { recursive: true });
     expect(matching(errorsOf(dir), "reference solution is missing or empty").length).toBe(1);
   });
+
+  // A non-empty directory used to be the whole of the reference check, so a reference
+  // that implemented nothing passed validation and only `forge eval --reference` would
+  // have caught it. These five cases are what stops a placeholder reading as proof.
+
+  it("rejects a reference that does not place the mirrored entrypoint", () => {
+    const dir = copyFixture();
+    const solution = join(dir, "challenges/c01-assemble-widget/.hidden/solution/src");
+    rmSync(join(solution, "index.ts"));
+    writeFileSync(join(solution, "elsewhere.ts"), "export function checkBuild() {\n  return [];\n}\n");
+    expect(matching(errorsOf(dir), "mirroring the entrypoint").length).toBe(1);
+  });
+
+  it("rejects a reference entrypoint that is still a stub", () => {
+    const dir = copyFixture();
+    writeFileSync(
+      join(dir, "challenges/c01-assemble-widget/.hidden/solution/src/index.ts"),
+      "/* forge:stub */\nexport function checkBuild() {\n  return [];\n}\n",
+    );
+    expect(matching(errorsOf(dir), "reference entrypoint is still a stub").length).toBe(1);
+  });
+
+  it("rejects an evaluation set that never imports the submission", () => {
+    const dir = copyFixture();
+    writeFileSync(
+      join(dir, "challenges/c01-assemble-widget/.hidden/eval/c01.eval.ts"),
+      `import { expect, it } from "vitest";\n` +
+        `it("proves nothing", () => {\n` +
+        `  console.log("metric detection-rate 1");\n` +
+        `  console.log("metric false-positive-rate 0");\n` +
+        `  expect(true).toBe(true);\n` +
+        `});\n`,
+    );
+    expect(matching(errorsOf(dir), "is not scoring the submission").length).toBe(1);
+  });
+
+  it("rejects an evaluation set that is still a stub", () => {
+    const dir = copyFixture();
+    const spec = join(dir, "challenges/c01-assemble-widget/.hidden/eval/c01.eval.ts");
+    patch(spec, "/**", "/* forge:stub */\n/**");
+    expect(matching(errorsOf(dir), "evaluation set is still a stub").length).toBe(1);
+  });
+
+  it("warns when the evaluation set never prints a metric the manifest declares", () => {
+    const dir = copyFixture();
+    const spec = join(dir, "challenges/c01-assemble-widget/.hidden/eval/c01.eval.ts");
+    patch(spec, "metric false-positive-rate", "score false-positive-rate");
+    const report = validateTopic(dir, false);
+    expect(matching(report.warnings.map((w) => w.message), 'never prints "metric false-positive-rate').length).toBe(1);
+    // And the warning is what blocks new material, because the generator runs strict.
+    expect(matching(errorsOf(dir), 'never prints "metric false-positive-rate').length).toBe(1);
+  });
 });
 
 describe("status gates", () => {

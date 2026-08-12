@@ -48,6 +48,11 @@ The one rule with no exemptions is also a `permissions.deny` entry in
 script is deleted. The conditional rules cannot be expressed that way, because a deny
 rule cannot ask which agent is calling.
 
+That deny turns out to bind the shell as well, which the hook cannot: a `mkdir` into a
+challenge's `work/` fails with `Operation not permitted` while the same `mkdir`
+elsewhere under `topics/` succeeds. So `work/` is closed against Bash and the write
+tools both, and the Bash caveat below applies only to hidden material.
+
 ## Known limits
 
 Written down because a guardrail whose gaps are undocumented gets trusted further than
