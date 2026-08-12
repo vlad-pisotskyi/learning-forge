@@ -45,6 +45,28 @@ root-level: project agents are discovered by walking up from the working directo
 an agent under `topics/<slug>/.claude/agents/` never loads for a session started at the
 repo root.
 
+## The verification handoff
+
+The two verification agents write JSON, the CLI writes frontmatter. `chapterAuditSchema`
+and `chapterCritiqueSchema` are that handoff, checkpointed one file per chapter per agent
+under `.forge-cache/<slug>/verdicts/`, and `recordVerdicts` stamps the audit block from
+them.
+
+Neither schema carries a verdict or a count, and that is not an oversight. Both are derived
+in `recordVerdicts`: faithfulness passes when every claim is `supported`, critique passes
+when no finding is `blocking`. An agent that cannot write the word cannot write a pass over
+its own contrary evidence, which is the same reason the quiz answers moved out of the
+visible quiz file.
+
+Field order in those schemas is load bearing. `quote` precedes `ruling` and `detail`
+precedes `severity`, because a model emitting JSON emits it in field order, and writing the
+evidence before the verdict is the one judge mitigation with a clean measured effect. Do not
+reorder them for tidiness.
+
+`recordVerdicts` also resolves every marker an audit names and confirms the quoted span
+appears in that excerpt. That check is the reason this layer is worth anything, so it fails
+loudly: one invented quote discards the whole chapter's audit rather than that one claim.
+
 ## Two conventions the code depends on
 
 `.hidden/solution/` mirrors `work/`, so `referenceEntrypoint` can map an entrypoint to

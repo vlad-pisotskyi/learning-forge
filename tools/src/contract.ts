@@ -6,7 +6,7 @@
  */
 import { z } from "zod";
 
-export const CONTRACT_VERSION = 2;
+export const CONTRACT_VERSION = 3;
 
 export const SLUG = /^[a-z][a-z0-9-]{1,48}$/;
 export const CHAPTER_ID = /^ch\d{2}$/;
@@ -115,6 +115,13 @@ export const chapterFrontmatterSchema = z
             claims: z.number().int().nonnegative(),
             supported: z.number().int().nonnegative(),
             unsupported: z.number().int().nonnegative(),
+            /**
+             * The source says "often" and the chapter says "always". Its own count
+             * because the measured judge literature folds this into "supported" and
+             * therefore misses it, and because a no-hedging house style manufactures
+             * exactly this error.
+             */
+            overstated: z.number().int().nonnegative(),
             contradicted: z.number().int().nonnegative(),
             unreachable: z.number().int().nonnegative(),
           })

@@ -39,6 +39,7 @@ export const STAGES = [
   "apply",
   "chapters",
   "challenges",
+  "verify",
   "validated",
 ] as const;
 
@@ -60,6 +61,116 @@ export const runStateSchema = z
     log: z.array(
       z.object({ stage: z.enum(STAGES), at: isoDay, note: z.string().min(1) }).strict(),
     ),
+  })
+  .strict();
+
+/**
+ * What an auditor writes in `quote` when the cited excerpt says nothing on the point.
+ *
+ * A sentinel rather than an empty string, because an empty field reads as a field the
+ * auditor forgot rather than a search it actually ran and came back from.
+ */
+export const NOTHING_FOUND = "NOTHING FOUND";
+
+/**
+ * One chapter's faithfulness audit, as the auditor hands it over.
+ *
+ * It carries rulings and nothing else. No verdict field, no counts: the CLI derives both
+ * from the rulings, so an auditor cannot report a pass over a chapter with three
+ * unsupported claims in it. That is the same trick the quiz split uses. Where a rule can
+ * be made structural instead of trusted, it is.
+ *
+ * `span` is the passage from the cited excerpt that carries the claim. It is required for
+ * a `supported` ruling and refused for any other, which is what stops "supported" from
+ * being a thing the auditor can assert without looking.
+ */
+export const chapterAuditSchema = z
+  .object({
+    planVersion,
+    chapter: z.string().regex(CHAPTER_ID),
+    auditedAt: isoDay,
+    claims: z
+      .array(
+        z
+          .object({
+            /** The claim as the auditor decomposed it, standing alone. */
+            claim: z.string().min(10).max(600),
+            /** The marker the chapter attached to it. Absent means the claim carries none. */
+            ref: z.string().regex(EXCERPT_REF).optional(),
+            /**
+             * The nearest thing the cited excerpt actually says, quoted verbatim, or
+             * NOTHING_FOUND when it says nothing on the point.
+             *
+             * Declared before `ruling` on purpose. Writing the evidence before the
+             * verdict is the best-measured mitigation in the judge literature, and it is
+             * cheap: reordering alone moved one reported agreement score from 0.06 to
+             * 0.23. Reading order is not execution order for a model that emits JSON in
+             * field order, so the field order is the intervention.
+             */
+            quote: z.string().min(1).max(1200),
+            ruling: z.enum([
+              "supported",
+              "overstated",
+              "unsupported",
+              "contradicted",
+              "unreachable",
+            ]),
+            /** Why, for anything that is not plainly supported. */
+            note: z.string().min(10).max(600).optional(),
+          })
+          .strict()
+          .refine((claim) => claim.ruling !== "supported" || claim.quote !== NOTHING_FOUND, {
+            message: `a "supported" ruling cannot quote ${NOTHING_FOUND}`,
+          })
+          .refine((claim) => claim.ruling === "supported" || claim.note !== undefined, {
+            message: "a ruling other than supported must say why",
+          })
+          .refine((claim) => claim.ruling === "unreachable" || claim.ref !== undefined, {
+            message: "a claim ruled against a source must name the marker it cites",
+          }),
+      )
+      .min(1),
+  })
+  .strict();
+
+/**
+ * One chapter's pedagogical critique.
+ *
+ * A critique verdict cannot be derived the way a faithfulness verdict can, since quality
+ * is the judgement being asked for. So the derivable part is made derivable: the verdict
+ * is a pass when no finding is blocking, and the critic records findings rather than a
+ * grade. A critic that wants to fail a chapter has to name what is wrong with it.
+ */
+export const chapterCritiqueSchema = z
+  .object({
+    planVersion,
+    chapter: z.string().regex(CHAPTER_ID),
+    auditedAt: isoDay,
+    findings: z.array(
+      z
+        .object({
+          kind: z.enum([
+            "prerequisite-gap",
+            "ordering",
+            "concept-not-taught",
+            "concept-not-exercised",
+            "unexplained-term",
+            "example-missing",
+            "quiz-mismatch",
+            "prose",
+          ]),
+          detail: z.string().min(20).max(1200),
+          /**
+           * Last on purpose, for the same reason `quote` precedes `ruling` in an audit:
+           * naming the problem before grading its weight is the one mitigation in the
+           * judge literature with a clean measured effect.
+           */
+          severity: z.enum(["blocking", "advisory"]),
+        })
+        .strict(),
+    ),
+    /** What the chapter does well, so a revision does not remove it. */
+    keep: z.array(z.string().min(10).max(400)).optional(),
   })
   .strict();
 
@@ -127,6 +238,8 @@ export const topicPlanSchema = z
   .strict();
 
 export type RunState = z.infer<typeof runStateSchema>;
+export type ChapterAudit = z.infer<typeof chapterAuditSchema>;
+export type ChapterCritique = z.infer<typeof chapterCritiqueSchema>;
 export type ResearchShard = z.infer<typeof researchShardSchema>;
 export type SourceDraft = z.infer<typeof sourceDraftSchema>;
 export type ChapterPlan = z.infer<typeof chapterPlanSchema>;
@@ -158,6 +271,16 @@ export const paths = {
   challengeDir: (challenge: ChallengePlan) => `challenges/${challenge.id}-${challenge.slug}`,
   evalSpec: (challengeId: string) => `.hidden/eval/${challengeId}.eval.ts`,
   reference: () => ".hidden/solution",
+  /**
+   * Where the verification agents leave their rulings. One file per chapter per agent, so
+   * a dead auditor costs one chapter rather than the pass, and `forge verify` can be run
+   * again over whatever is already on disk.
+   */
+  verdictDir: (root: string, slug: string) => `${paths.cacheDir(root, slug)}/verdicts`,
+  auditFile: (root: string, slug: string, chapterId: string) =>
+    `${paths.verdictDir(root, slug)}/${chapterId}.audit.json`,
+  critiqueFile: (root: string, slug: string, chapterId: string) =>
+    `${paths.verdictDir(root, slug)}/${chapterId}.critique.json`,
   /** Where a run stages a mini topic so the eval set's relative paths hold. */
   tryDir: (root: string, slug: string) => `${paths.cacheDir(root, slug)}/try`,
   /** The role templates the generator stamps into every topic. */

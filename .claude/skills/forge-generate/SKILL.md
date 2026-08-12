@@ -1,6 +1,6 @@
 ---
 name: forge-generate
-description: Generate a topic under topics/<slug> — one stage per invocation, research through challenges, checkpointed and resumable.
+description: Generate a topic under topics/<slug> — one stage per invocation, research through verification, checkpointed and resumable.
 ---
 
 # forge-generate
@@ -27,6 +27,7 @@ nothing else — the playbooks are written to be read one at a time.
 | apply | — | `npm run forge -- apply <slug>` has projected the approved map onto disk |
 | chapters | `stages/chapters.md` | every chapter and quiz is written and the validator names no chapter problems |
 | challenges | `stages/challenges.md` | every challenge has a brief, a rubric, starter code, an evaluation set, and a reference solution that passes it |
+| verify | `stages/verify.md` | every chapter carries a faithfulness and a critique verdict, both passing, and the topic is `verified` |
 
 When a topic does not exist yet, `npm run forge -- init <slug>` creates its tree.
 Stop after each stage and report what happened. Do not start the next one in the

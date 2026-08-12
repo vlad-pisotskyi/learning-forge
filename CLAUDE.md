@@ -114,7 +114,7 @@ session limit in ten minutes by fanning out four unbounded research agents at on
 ## Generating a topic
 
 The `forge-generate` skill runs it, one stage per invocation: research, map,
-apply, chapters, challenges. The map stage stops for approval before any prose
+apply, chapters, challenges, verify. The map stage stops for approval before any prose
 exists. `npm run forge -- status <slug>` says where a topic is and what it still
 owes, read off disk, so a run survives a dead session.
 
@@ -132,9 +132,13 @@ npm run validate -- topics/<slug>      # one topic
 npm run validate:all                   # every topic
 ```
 
-A topic that fails the validator is not done. Both verification agents — the
-pedagogical critique and the faithfulness auditor — run after the validator
-passes, not instead of it.
+A topic that fails the validator is not done. Both verification agents run after the
+validator passes, not instead of it: `forge-auditor` rules on every claim against its
+cited excerpt, `forge-critic` rules on whether the chapter teaches. Neither writes its
+own verdict. They hand over rulings and `npm run forge -- verify <slug>` derives the
+verdicts, checks that every quoted span actually appears in the excerpt it names, and
+stamps the audit block. Why the design looks like this, and which parts of it rest on
+measured evidence rather than folk practice, is in `.claude/rules/verification.md`.
 
 ## What is committed and what is not
 

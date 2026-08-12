@@ -614,6 +614,7 @@ audit:
     claims: 34
     supported: 34
     unsupported: 0
+    overstated: 0
     contradicted: 0
     unreachable: 0
   critique:
@@ -625,11 +626,50 @@ A chapter with `status: verified` must carry both verdicts as `pass`. A topic wi
 `status: verified` requires every chapter verified. The validator enforces both, so
 "verified" cannot be set by hand on material that was never audited.
 
-The faithfulness auditor's verdict set is `supported`, `unsupported`,
-`contradicted`, and `unreachable`, and a claim is `unsupported` until a quoted span
-proves otherwise. `unreachable` exists so that a source the auditor could not fetch
-is recorded as unchecked rather than being pushed into whichever of pass or fail the
-model finds more comfortable.
+Neither verdict is the auditing agent's to write. An agent hands over rulings, one per
+claim, and `npm run forge -- verify <slug>` derives the verdict and every count from
+them. Faithfulness passes when every claim is `supported`. Critique passes when no
+finding is `blocking`. This is the same arrangement as the quiz split: an agent cannot
+report a pass over a chapter it also reported three unsupported claims in, because it
+never gets to write the word.
+
+### The five rulings
+
+`supported` — the cited excerpt carries the claim.
+
+`overstated` — the excerpt supports a weaker version of it. The source says "often"
+and the chapter says "always", or the source rates one case and the chapter
+generalises. This is a separate ruling and not a shade of `supported` because a house
+style that forbids hedging manufactures exactly this error, and because the graders
+that fold it into `supported` are measurably the ones that never catch it.
+
+`unsupported` — the excerpt says nothing on the point.
+
+`contradicted` — the excerpt says the opposite. Worth stating plainly that this is the
+ruling models are worst at, and that the documented failure is grading a contradiction
+as support, so an auditor reporting zero contradictions across a whole topic has not
+demonstrated there are none.
+
+`unreachable` — the source could not be read. It exists so that unchecked is recorded
+as unchecked rather than being pushed into whichever of pass or fail is more
+comfortable.
+
+### Every quoted span is checked
+
+A ruling names the marker it rests on and quotes, verbatim, the nearest thing that
+excerpt actually says, or the literal `NOTHING FOUND`. The quote is written before the
+ruling, not after it.
+
+`forge verify` then resolves the marker and confirms the quote appears in that
+excerpt, ignoring only whitespace and case. A quote that does not appear is rejected
+and the chapter is not stamped at all.
+
+That check is the load-bearing one, and it is arithmetic rather than judgement for a
+reason. A model asked to quote a supporting passage will supply a fluent one whether or
+not it exists, and a fabricated citation is documented to flip a large minority of
+judge verdicts. Instructing an auditor to be strict does not fix this; the published
+attempts at strictness-by-instruction move the numbers barely or in the wrong
+direction. Resolving the marker and looking does fix it.
 
 ---
 
@@ -645,6 +685,14 @@ Version 2 split the quiz in two: `quizzes/<chapterId>.quiz.json` kept the prompt
 the passing bar, and the answers and `accept` points moved to
 `quizzes/.hidden/<chapterId>.key.json` so the Teacher no longer holds the key to the
 quiz it administers.
+
+Version 3 added `overstated` to the faithfulness rulings and to the audit block's
+counts, after a research pass on how graders of this kind actually fail. The finding
+that forced it: the single largest documented error category for judges of this type is
+insensitivity to a claim that overreaches its source, and every shipped framework
+examined folds that case into "supported" and so cannot see it. A required count is a
+version bump, and this was the cheapest moment to take one, with no topic yet generated
+to migrate.
 
 The order of work when the contract changes: edit this document, then the schemas in
 `tools/src/contract.ts`, then the validator's checks, then the fixture in

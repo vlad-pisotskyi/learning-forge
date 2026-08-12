@@ -381,6 +381,7 @@ describe("status gates", () => {
         "    claims: 10",
         "    supported: 9",
         "    unsupported: 1",
+        "    overstated: 0",
         "    contradicted: 0",
         "    unreachable: 0",
         "  critique:",

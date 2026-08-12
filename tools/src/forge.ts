@@ -8,6 +8,7 @@
  *   npm run forge -- eval <slug> <cNN>  run a challenge's eval set (--reference for the solution)
  *   npm run forge -- progress <slug>    create the learner's progress file if it is missing
  *   npm run forge -- promote <slug>     draft to validated, if the validator agrees
+ *   npm run forge -- verify <slug>      stamp the verification agents' rulings into frontmatter
  *
  * These are the mechanical steps of the forge-generate skill. They are a CLI
  * rather than skill prose because a program that writes the same tree every time
@@ -22,6 +23,7 @@ import {
   initTopic,
   mergeSources,
   promoteToValidated,
+  recordVerdicts,
   statusOf,
   evalChallenge,
   initProgress,
@@ -35,7 +37,8 @@ const USAGE = `Usage:
   npm run forge -- status [<slug> | --all]
   npm run forge -- eval <slug> <challengeId> [--reference]
   npm run forge -- progress <slug>
-  npm run forge -- promote <slug>`;
+  npm run forge -- promote <slug>
+  npm run forge -- verify <slug>`;
 
 const args = process.argv.slice(2);
 const command = args[0];
@@ -191,6 +194,37 @@ switch (command) {
     );
     console.error(`  see: npm run validate -- topics/${slug} --strict`);
     process.exit(1);
+  }
+
+  case "verify": {
+    const slug = requireSlug();
+    const result = recordVerdicts(root, slug);
+
+    for (const row of result.chapters) {
+      const mark = row.status === "verified" ? "✓" : row.faithfulness === "pending" || row.critique === "pending" ? "·" : "✗";
+      const claims = row.claims ? `${row.claims} claim(s)` : "no audit";
+      const blocking = row.blocking ? `, ${row.blocking} blocking` : "";
+      console.log(
+        `  ${mark} ${row.chapter.padEnd(6)} faithfulness ${row.faithfulness.padEnd(7)} critique ${row.critique.padEnd(7)} ${claims}${blocking}`,
+      );
+    }
+    for (const path of result.stamped) console.log(`  + ${path}`);
+
+    if (result.problems.length) {
+      console.error(`✗ topics/${slug}: ${result.problems.length} problem(s)`);
+      for (const problem of result.problems) console.error(`  ${problem}`);
+      process.exit(1);
+    }
+
+    const pending = result.chapters.filter((row) => row.status !== "verified");
+    if (pending.length) {
+      console.log(
+        `topics/${slug}: ${result.chapters.length - pending.length}/${result.chapters.length} chapters verified, status ${result.topicStatus}`,
+      );
+      break;
+    }
+    console.log(`✓ topics/${slug}: every chapter verified, status ${result.topicStatus}`);
+    break;
   }
 
   default:

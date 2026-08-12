@@ -23,7 +23,7 @@ import {
   statSync,
   writeFileSync,
 } from "node:fs";
-import { basename, dirname, join } from "node:path";
+import { basename, dirname, join, relative } from "node:path";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 import {
   CONTRACT_VERSION,
@@ -37,6 +37,9 @@ import {
 import {
   PLAN_VERSION,
   STUB_MARKER,
+  NOTHING_FOUND,
+  chapterAuditSchema,
+  chapterCritiqueSchema,
   challengeManifestFromPlan,
   checkPlan,
   excerptRefs,
@@ -172,6 +175,8 @@ export function initTopic(root: string, slug: string, clock: Clock = systemClock
   }
   mkdirSync(paths.researchDir(root, slug), { recursive: true });
   created.push(`.forge-cache/${slug}/research/`);
+  mkdirSync(paths.verdictDir(root, slug), { recursive: true });
+  created.push(`.forge-cache/${slug}/verdicts/`);
   recordStage(root, slug, "init", "tree created", clock);
   created.push(`.forge-cache/${slug}/run.json`);
 
@@ -644,7 +649,10 @@ function nextStep(
   if (owed("chapters") || owed("quizzes")) return "run the chapters stage";
   if (citationsMissing) return "some chapters do not cite their allocated excerpts; send those chapters back";
   if (owed("challenges")) return "run the challenges stage";
-  return "run: npm run validate -- topics/<slug> --strict";
+  if (stage !== "verify" && stage !== "validated") {
+    return "run: npm run validate -- topics/<slug> --strict, then the verify stage";
+  }
+  return "run the verify stage: npm run forge -- verify <slug> to see what is still owed";
 }
 
 function readApprovedPlan(root: string, slug: string): TopicPlan | undefined {
@@ -1061,4 +1069,205 @@ export function promoteToValidated(root: string, slug: string): PromoteResult {
   manifest.status = "validated";
   writeIfChanged(path, json(manifest));
   return { promoted: true, errors: 0, warnings: 0 };
+}
+
+/* ----------------------------------------------------------------- verify */
+
+export type ChapterVerdictRow = {
+  chapter: string;
+  faithfulness: "pass" | "fail" | "pending";
+  critique: "pass" | "fail" | "pending";
+  claims: number;
+  blocking: number;
+  status: "draft" | "verified";
+};
+
+export type VerifyResult = {
+  chapters: ChapterVerdictRow[];
+  topicStatus: string;
+  stamped: string[];
+  problems: string[];
+};
+
+/**
+ * Stamps the verification agents' rulings into chapter frontmatter.
+ *
+ * The agents write one JSON file per chapter under `.forge-cache/<slug>/verdicts/`, this
+ * reads them and writes the audit block. Two reasons it works that way rather than
+ * letting an agent edit frontmatter directly. Frontmatter is the CLI's to write, which is
+ * the rule the whole generator is built on. And a file per chapter per agent means a dead
+ * auditor costs one chapter, and running this again over what is already on disk is safe.
+ *
+ * Every number in the audit block is derived here from the rulings, and so is the
+ * faithfulness verdict. An auditor cannot write "pass" over a chapter with an unsupported
+ * claim in it, because it never gets to write the word.
+ */
+export function recordVerdicts(root: string, slug: string, clock: Clock = systemClock): VerifyResult {
+  const topicDir = paths.topicDir(root, slug);
+  const problems: string[] = [];
+  const stamped: string[] = [];
+  const rows: ChapterVerdictRow[] = [];
+
+  const plan = readApprovedPlan(root, slug);
+  const chapterFiles = plan
+    ? plan.chapters.map((c) => ({ id: c.id, path: join(topicDir, paths.chapterFile(c)) }))
+    : listChapterFiles(topicDir);
+
+  // Marker to the passage it resolves to, so a quoted span can be checked against the
+  // source it says it came from.
+  const excerpts = new Map<string, string>();
+  const sourcesPath = join(topicDir, "sources.json");
+  if (existsSync(sourcesPath)) {
+    const sources = sourcesFileSchema.safeParse(readJsonFile(sourcesPath));
+    if (sources.success) {
+      for (const source of sources.data.sources) {
+        for (const excerpt of source.excerpts) {
+          excerpts.set(`${source.id}.${excerpt.key}`, excerpt.quote);
+        }
+      }
+    } else {
+      problems.push("sources.json does not parse, so no quoted span can be checked");
+    }
+  }
+
+  for (const { id, path } of chapterFiles) {
+    if (!existsSync(path)) {
+      problems.push(`${id}: no chapter file at ${path}`);
+      continue;
+    }
+    const split = splitFrontmatter(readFileSync(path, "utf8"));
+    if (!split) {
+      problems.push(`${id}: chapter has no frontmatter`);
+      continue;
+    }
+
+    const auditPath = paths.auditFile(root, slug, id);
+    const critiquePath = paths.critiqueFile(root, slug, id);
+
+    let faithfulness: Record<string, unknown> | undefined;
+    let claims = 0;
+    if (existsSync(auditPath)) {
+      const parsed = chapterAuditSchema.safeParse(readJsonFile(auditPath));
+      if (!parsed.success) {
+        for (const issue of parsed.error.issues) {
+          problems.push(`${id}.audit.json: ${issue.path.join(".") || "(root)"}: ${issue.message}`);
+        }
+      } else if (parsed.data.chapter !== id) {
+        problems.push(`${id}.audit.json: reports on chapter ${parsed.data.chapter}`);
+      } else {
+        // Every quoted span is checked against the excerpt it claims to come from. This
+        // is the one judge failure the literature says is worst for us: fabricated
+        // citations flip a reported 12 to 29 percent of verdicts, and a model asked to
+        // quote a supporting passage will supply a fluent one whether or not it exists.
+        // Asking it not to is a prompt. Checking is arithmetic.
+        const forged = parsed.data.claims.filter((claim) => {
+          if (claim.quote === NOTHING_FOUND) return false;
+          if (!claim.ref) return false;
+          const excerpt = excerpts.get(claim.ref);
+          if (excerpt === undefined) return true;
+          return !loose(excerpt).includes(loose(claim.quote));
+        });
+        for (const claim of forged) {
+          const known = claim.ref !== undefined && excerpts.has(claim.ref);
+          problems.push(
+            known
+              ? `${id}.audit.json: the span quoted for "${claim.claim.slice(0, 60)}..." does not appear in ${claim.ref}`
+              : `${id}.audit.json: "${claim.claim.slice(0, 60)}..." cites ${claim.ref ?? "no excerpt"}, which is not in sources.json`,
+          );
+        }
+        if (forged.length === 0) {
+          const tally = (ruling: string) =>
+            parsed.data.claims.filter((claim) => claim.ruling === ruling).length;
+          claims = parsed.data.claims.length;
+          const supported = tally("supported");
+          faithfulness = {
+            // Derived, not reported. Every claim supported or there is no pass.
+            verdict: supported === claims ? "pass" : "fail",
+            at: parsed.data.auditedAt,
+            claims,
+            supported,
+            unsupported: tally("unsupported"),
+            overstated: tally("overstated"),
+            contradicted: tally("contradicted"),
+            unreachable: tally("unreachable"),
+          };
+        }
+      }
+    }
+
+    let critique: Record<string, unknown> | undefined;
+    let blocking = 0;
+    if (existsSync(critiquePath)) {
+      const parsed = chapterCritiqueSchema.safeParse(readJsonFile(critiquePath));
+      if (!parsed.success) {
+        for (const issue of parsed.error.issues) {
+          problems.push(`${id}.critique.json: ${issue.path.join(".") || "(root)"}: ${issue.message}`);
+        }
+      } else if (parsed.data.chapter !== id) {
+        problems.push(`${id}.critique.json: reports on chapter ${parsed.data.chapter}`);
+      } else {
+        blocking = parsed.data.findings.filter((f) => f.severity === "blocking").length;
+        const advisory = parsed.data.findings.length - blocking;
+        critique = {
+          verdict: blocking === 0 ? "pass" : "fail",
+          at: parsed.data.auditedAt,
+          ...(parsed.data.findings.length
+            ? { notes: `${blocking} blocking, ${advisory} advisory` }
+            : {}),
+        };
+      }
+    }
+
+    const passed =
+      faithfulness?.["verdict"] === "pass" && critique?.["verdict"] === "pass";
+    rows.push({
+      chapter: id,
+      faithfulness: (faithfulness?.["verdict"] as ChapterVerdictRow["faithfulness"]) ?? "pending",
+      critique: (critique?.["verdict"] as ChapterVerdictRow["critique"]) ?? "pending",
+      claims,
+      blocking,
+      status: passed ? "verified" : "draft",
+    });
+
+    // Nothing to stamp until both agents have ruled. A half-audited chapter keeps
+    // whatever it had, so a partial pass cannot look like a finished one.
+    if (faithfulness === undefined || critique === undefined) continue;
+
+    const { audit: _dropped, ...rest } = split.frontmatter;
+    const frontmatter: Record<string, unknown> = { ...rest, status: passed ? "verified" : "draft" };
+    const text = `${frontmatterBlock(frontmatter, { audit: { faithfulness, critique } })}\n${split.body.replace(/^\n+/, "")}`;
+    if (writeIfChanged(path, text)) stamped.push(relative(root, path));
+  }
+
+  /* --- the topic's own status --- */
+  const manifestPath = join(topicDir, "topic.json");
+  let topicStatus = "draft";
+  if (existsSync(manifestPath)) {
+    const manifest = readJsonFile(manifestPath) as Record<string, unknown>;
+    topicStatus = String(manifest["status"] ?? "draft");
+    const everyChapterVerified = rows.length > 0 && rows.every((row) => row.status === "verified");
+    if (everyChapterVerified && topicStatus === "validated") {
+      manifest["status"] = "verified";
+      writeIfChanged(manifestPath, json(manifest));
+      topicStatus = "verified";
+    } else if (everyChapterVerified && topicStatus === "draft") {
+      // Statuses move in one direction and verified sits above validated. A topic that
+      // never passed the validator does not skip it because two agents liked the prose.
+      problems.push(
+        "every chapter is verified, but the topic is still draft; run npm run forge -- promote <slug> first",
+      );
+    }
+  }
+
+  recordStage(root, slug, "verify", `${rows.filter((r) => r.status === "verified").length}/${rows.length} chapters verified`, clock);
+  return { chapters: rows, topicStatus, stamped, problems };
+}
+
+/**
+ * Whitespace-insensitive, case-insensitive text, for comparing a quoted span against the
+ * passage it came from. An auditor that re-wraps a quote across lines has still quoted
+ * it; one that paraphrases has not, and this still catches that.
+ */
+function loose(text: string): string {
+  return text.replace(/\s+/g, " ").trim().toLowerCase();
 }

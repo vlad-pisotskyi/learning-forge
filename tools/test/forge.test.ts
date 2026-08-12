@@ -29,6 +29,7 @@ import {
   initTopic,
   mergeSources,
   promoteToValidated,
+  recordVerdicts,
   statusOf,
   evalChallenge,
   parseMetrics,
@@ -891,5 +892,253 @@ describe("forge eval on the vitest runner", () => {
     expect(value("false-positive-rate")?.value).toBeGreaterThan(0.1);
     expect(value("false-positive-rate")?.ok).toBe(false);
     expect(result.passed).toBe(false);
+  });
+});
+
+describe("forge verify", () => {
+  /** A topic that would pass the validator, ready to be audited. */
+  function auditable(root: string) {
+    const plan = planFromFixture();
+    initTopic(root, SLUG, clock);
+    approve(root, plan);
+    applyPlan(root, SLUG, clock);
+    overlayAuthoredContent(root, plan);
+    return plan;
+  }
+
+  /**
+   * Rulings whose quotes really do appear in the fixture's sources.json, because the
+   * recorder checks them. Building these by hand is the point: a test that fed the
+   * recorder invented spans would pass while proving the opposite of what it claims.
+   */
+  const REAL_SPANS = [
+    { ref: "S01.a", quote: "The shroud carries no load" },
+    { ref: "S01.b", quote: "The seat is the machined face where the two halves meet" },
+    { ref: "S02.a", quote: "An M6 flange bolt is rated to 9 newton metres" },
+  ] as const;
+
+  const supported = (n: number) =>
+    Array.from({ length: n }, (_, i) => ({
+      claim: `The chapter asserts something checkable, number ${i + 1}.`,
+      ...at(REAL_SPANS, i % REAL_SPANS.length),
+      ruling: "supported" as const,
+    }));
+
+  function writeAudit(root: string, chapter: string, claims: unknown[]) {
+    writeFileSync(
+      paths.auditFile(root, SLUG, chapter),
+      json({ planVersion: PLAN_VERSION, chapter, auditedAt: AT, claims }),
+    );
+  }
+
+  function writeCritique(root: string, chapter: string, findings: unknown[] = []) {
+    writeFileSync(
+      paths.critiqueFile(root, SLUG, chapter),
+      json({ planVersion: PLAN_VERSION, chapter, auditedAt: AT, findings }),
+    );
+  }
+
+  const json = (data: unknown) => `${JSON.stringify(data, null, 2)}\n`;
+
+  function frontmatterOf(root: string, chapter: { id: string; slug: string }): any {
+    const path = join(paths.topicDir(root, SLUG), paths.chapterFile(chapter as never));
+    return splitChapter(readFileSync(path, "utf8")).frontmatter;
+  }
+
+  it("derives the counts and the verdict from the rulings", () => {
+    const root = makeRoot();
+    const plan = auditable(root);
+    const chapter = at(plan.chapters, 0);
+    writeAudit(root, chapter.id, [
+      ...supported(3),
+      { claim: "A claim the source does not carry at all.", ref: "S01.b", quote: "NOTHING FOUND", ruling: "unsupported", note: "the excerpt is about something else entirely" },
+    ]);
+    writeCritique(root, chapter.id);
+
+    const result = recordVerdicts(root, SLUG, clock);
+    const audit = frontmatterOf(root, chapter).audit;
+    expect(audit.faithfulness).toEqual({
+      verdict: "fail",
+      at: AT,
+      claims: 4,
+      supported: 3,
+      unsupported: 1,
+      overstated: 0,
+      contradicted: 0,
+      unreachable: 0,
+    });
+    // One unsupported claim is a failed chapter, whatever anyone would have preferred.
+    expect(at(result.chapters, 0).status).toBe("draft");
+    expect(frontmatterOf(root, chapter).status).toBe("draft");
+  });
+
+  it("verifies a chapter when both agents pass it", () => {
+    const root = makeRoot();
+    const plan = auditable(root);
+    const chapter = at(plan.chapters, 0);
+    writeAudit(root, chapter.id, supported(5));
+    writeCritique(root, chapter.id, [
+      { severity: "advisory", kind: "example-missing", detail: "the second section would land better with a worked example after the definition" },
+    ]);
+
+    recordVerdicts(root, SLUG, clock);
+    const front = frontmatterOf(root, chapter);
+    expect(front.status).toBe("verified");
+    expect(front.audit.faithfulness.verdict).toBe("pass");
+    expect(front.audit.critique.verdict).toBe("pass");
+    // Advisory findings are recorded and do not block.
+    expect(front.audit.critique.notes).toMatch(/0 blocking, 1 advisory/);
+  });
+
+  it("fails a chapter on a blocking critique finding, however clean the citations", () => {
+    const root = makeRoot();
+    const plan = auditable(root);
+    const chapter = at(plan.chapters, 0);
+    writeAudit(root, chapter.id, supported(5));
+    writeCritique(root, chapter.id, [
+      { severity: "blocking", kind: "prerequisite-gap", detail: "the chapter uses inverse document frequency before anything has defined it" },
+    ]);
+
+    recordVerdicts(root, SLUG, clock);
+    expect(frontmatterOf(root, chapter).status).toBe("draft");
+    expect(frontmatterOf(root, chapter).audit.critique.verdict).toBe("fail");
+  });
+
+  it("refuses a supported ruling that found nothing", () => {
+    // The schema is what makes "supported" cost something. Without it, an auditor that
+    // never opened the source can still type the word.
+    const root = makeRoot();
+    const plan = auditable(root);
+    const chapter = at(plan.chapters, 0);
+    writeAudit(root, chapter.id, [
+      { claim: "Something the auditor did not actually check.", ref: "S01.a", quote: "NOTHING FOUND", ruling: "supported" },
+    ]);
+    writeCritique(root, chapter.id);
+
+    const result = recordVerdicts(root, SLUG, clock);
+    expect(result.problems.join(" ")).toMatch(/cannot quote NOTHING FOUND/);
+    expect(frontmatterOf(root, chapter).status).not.toBe("verified");
+  });
+
+  it("catches a span that does not appear in the excerpt it cites", () => {
+    // The failure the judge literature rates worst for a citation auditor: a fluent
+    // quotation of something the source never said. A prompt cannot close this. The
+    // recorder resolves the marker and looks.
+    const root = makeRoot();
+    const plan = auditable(root);
+    const chapter = at(plan.chapters, 0);
+    writeAudit(root, chapter.id, [
+      {
+        claim: "A claim resting on a quotation nobody wrote.",
+        ref: "S01.a",
+        quote: "the shroud is torqued to eleven newton metres before the spine is seated",
+        ruling: "supported",
+      },
+    ]);
+    writeCritique(root, chapter.id);
+
+    const result = recordVerdicts(root, SLUG, clock);
+    expect(result.problems.join(" ")).toMatch(/does not appear in S01\.a/);
+    // And nothing is stamped, because an audit with one invented quote is not an audit.
+    expect(frontmatterOf(root, chapter).audit).toBeUndefined();
+  });
+
+  it("accepts a span re-wrapped across lines, and rejects a paraphrase", () => {
+    const root = makeRoot();
+    const plan = auditable(root);
+    const chapter = at(plan.chapters, 0);
+    const rewrapped = { claim: "A claim quoted across a line break.", ref: "S01.a", quote: "The shroud\n  carries   no load", ruling: "supported" as const };
+    writeAudit(root, chapter.id, [rewrapped]);
+    writeCritique(root, chapter.id);
+    expect(recordVerdicts(root, SLUG, clock).problems).toEqual([]);
+
+    writeAudit(root, chapter.id, [
+      { claim: "A claim resting on a paraphrase.", ref: "S01.a", quote: "the shroud does not bear any load", ruling: "supported" },
+    ]);
+    expect(recordVerdicts(root, SLUG, clock).problems.join(" ")).toMatch(/does not appear/);
+  });
+
+  it("counts an overstated claim as its own ruling and fails the chapter", () => {
+    // The source says a range, the chapter says a rule. This is the error a no-hedging
+    // house style manufactures, and the measured judge literature folds it into
+    // "supported" and therefore never sees it.
+    const root = makeRoot();
+    const plan = auditable(root);
+    const chapter = at(plan.chapters, 0);
+    writeAudit(root, chapter.id, [
+      ...supported(2),
+      {
+        claim: "Every flange bolt in service is torqued to nine newton metres.",
+        ref: "S02.a",
+        quote: "An M6 flange bolt is rated to 9 newton metres",
+        ruling: "overstated",
+        note: "the source rates one fastener type; the chapter generalises it to every bolt in service",
+      },
+    ]);
+    writeCritique(root, chapter.id);
+
+    recordVerdicts(root, SLUG, clock);
+    const audit = frontmatterOf(root, chapter).audit;
+    expect(audit.faithfulness.overstated).toBe(1);
+    expect(audit.faithfulness.supported).toBe(2);
+    expect(audit.faithfulness.verdict).toBe("fail");
+  });
+
+  it("stamps nothing until both agents have ruled", () => {
+    const root = makeRoot();
+    const plan = auditable(root);
+    const chapter = at(plan.chapters, 0);
+    writeAudit(root, chapter.id, supported(3));
+
+    const result = recordVerdicts(root, SLUG, clock);
+    expect(at(result.chapters, 0).critique).toBe("pending");
+    expect(result.stamped).toEqual([]);
+    expect(frontmatterOf(root, chapter).audit).toBeUndefined();
+  });
+
+  it("rejects a verdict file that reports on a different chapter", () => {
+    const root = makeRoot();
+    const plan = auditable(root);
+    const chapter = at(plan.chapters, 0);
+    const other = at(plan.chapters, 1);
+    writeFileSync(
+      paths.auditFile(root, SLUG, chapter.id),
+      json({ planVersion: PLAN_VERSION, chapter: other.id, auditedAt: AT, claims: supported(2) }),
+    );
+    writeCritique(root, chapter.id);
+
+    expect(recordVerdicts(root, SLUG, clock).problems.join(" ")).toMatch(/reports on chapter/);
+  });
+
+  it("leaves a topic that never passed the validator alone", () => {
+    // Statuses move in one direction, and verified sits above validated. Two agents
+    // liking the prose is not a route around the mechanical check.
+    const root = makeRoot();
+    const plan = auditable(root);
+    for (const chapter of plan.chapters) {
+      writeAudit(root, chapter.id, supported(3));
+      writeCritique(root, chapter.id);
+    }
+
+    const result = recordVerdicts(root, SLUG, clock);
+    expect(result.chapters.every((row) => row.status === "verified")).toBe(true);
+    expect(result.topicStatus).toBe("draft");
+    expect(result.problems.join(" ")).toMatch(/run npm run forge -- promote/);
+  });
+
+  it("promotes the topic to verified once it is validated and every chapter passes", () => {
+    const root = makeRoot();
+    const plan = auditable(root);
+    expect(promoteToValidated(root, SLUG).promoted).toBe(true);
+    for (const chapter of plan.chapters) {
+      writeAudit(root, chapter.id, supported(3));
+      writeCritique(root, chapter.id);
+    }
+
+    const result = recordVerdicts(root, SLUG, clock);
+    expect(result.topicStatus).toBe("verified");
+    // And the stamped material still satisfies the contract, which is the check that
+    // ties this to the validator's own rule about what a verified chapter must carry.
+    expect(validateTopic(paths.topicDir(root, SLUG), true).findings).toEqual([]);
   });
 });

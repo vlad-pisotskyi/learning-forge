@@ -1,5 +1,5 @@
 {
-  "contractVersion": 2,
+  "contractVersion": 3,
   "id": "c01",
   "title": "Validate a widget build order",
   "afterChapter": "ch02",
