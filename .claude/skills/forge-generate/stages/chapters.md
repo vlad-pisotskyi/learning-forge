@@ -27,14 +27,14 @@ and only it:
 - the concept blurbs for everything it teaches
 - the titles and taught concepts of earlier chapters, so it can build on them without
   reading them
-- the quiz path it owes
+- the two quiz paths it owes, the visible questions and the hidden answer key
 
 The writer has no web search, no fetch, and no shell. It cannot look anything up and
 it cannot run the validator, so every claim rests on an excerpt already in
 `sources.json` and the checking between batches is yours.
 
-Launch at most three at once. Each writer owns exactly one chapter file and one quiz
-file, so parallel writers never touch the same file. The chapter file on disk is the
+Launch at most three at once. Each writer owns exactly one chapter file, one quiz file,
+and one answer key, so parallel writers never touch the same file. The chapter file on disk is the
 checkpoint — a writer that dies costs one chapter. Run `npm run forge -- status <slug>`
 after each batch to read the remaining worklist back.
 

@@ -154,10 +154,12 @@ isolated context that returns a verdict and nothing else. Deciding to look is th
 learner's to make deliberately; it should never happen because a model was asked a
 leading question.
 
-The read boundary is currently stated in each role's own instructions rather than
-enforced by the harness. Tool lists restrict tools, not paths, so "no reading
-`.hidden/`" becomes real in Phase 5, as a hook. What is already mechanical is the
-Helper having no write tools and the graders running in isolated contexts.
+That boundary is enforced by a hook, not by asking nicely. Tool lists restrict tools
+and not paths, so `tools/src/guard.ts` runs on every file and search call and denies
+reads of `topics/**/.hidden/**` to everything except the two graders and the two
+authoring agents. The same hook denies any agent writing under
+`topics/*/challenges/*/work/`, which is the mechanical form of "the repo never solves".
+It has known limits, written down in `.claude/rules/guardrails.md`, and it is tested.
 
 ## The repo is public
 

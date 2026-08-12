@@ -71,13 +71,26 @@ frontmatter and leave the frontmatter exactly as you found it.
 
 ## The quiz
 
-Write the quiz at the path you were given. Three to eight questions, at least one per
-concept the chapter teaches, and at least one question that is not `recall`.
+The quiz is two files, and you write both.
+
+`quizzes/<chapterId>.quiz.json` holds the questions. Three to eight of them, at least one
+per concept the chapter teaches, and at least one that is not `recall`. It holds no
+answers at all, and the schema rejects an `answer` field rather than trusting anyone to
+leave it out.
+
+`quizzes/.hidden/<chapterId>.key.json` holds the answers, one entry per question id, same
+count and same ids. The Teacher asks the questions and cannot read this file. A grader
+that never saw your chapter reads it and scores the learner cold, which is the only way a
+quiz measures whether the prose taught anything rather than whether the Teacher was
+willing to accept a near miss.
+
+So the two files have to line up exactly. A question with no matching answer, or an answer
+with no matching question, fails validation.
 
 `accept` entries name the points a passing answer contains, not the words it uses. The
-Teacher grades against those points, so an entry like "mentions that the weight
-approaches zero" is usable and "IDF drives the weight toward zero" is a sentence
-pretending to be a criterion.
+grader scores against those points, so an entry like "mentions that the weight approaches
+zero" is usable and "IDF drives the weight toward zero" is a sentence pretending to be a
+criterion.
 
 Use `discrimination` questions to separate two things a learner is likely to conflate.
 That is the shape of question a recall question sails past.

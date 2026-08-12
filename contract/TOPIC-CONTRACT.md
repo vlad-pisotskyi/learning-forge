@@ -50,6 +50,7 @@ topics/<slug>/
   corpus/                        data the challenges run against
   .state/
     progress.json                learner progress (local-only, gitignored)
+    help-log.md                  the Helper's continuity log (local-only, gitignored)
   .claude/skills/
     teach/SKILL.md               the topic's Teacher
     help/SKILL.md                the topic's Helper
@@ -532,6 +533,21 @@ is.
 
 The file is optional. A topic with no progress file is a topic nobody has started,
 and the Teacher creates it on first use.
+
+### `.state/help-log.md`
+
+Every exchange with the Helper for this topic, oldest first, each entry the challenge
+id, an instant, and the two lines the Helper ended its reply with. Also local-only and
+gitignored.
+
+The Helper runs in a forked context that is discarded when it replies, so this log is
+the only way it knows what it already said. It does not write the log itself; a
+SubagentStop hook does, from the Helper's own closing summary. That is not a detail of
+convenience. The Helper has no write tools so that it cannot write the learner's code,
+and a role that could append to a file could append to theirs.
+
+The validator does not check this file. It is prose written by a hook, it holds nothing a
+generated topic owes, and a topic with no help log is a topic where nobody got stuck.
 
 ---
 
