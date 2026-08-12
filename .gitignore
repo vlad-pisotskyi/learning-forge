@@ -1,0 +1,18 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Learner state and learner work are local-only. Everything a learner
+# produces stays on their machine so the repo stays reusable by the next
+# person who clones it. To keep your own attempts in git, un-ignore a
+# specific path in .git/info/exclude rather than editing this file.
+topics/*/.state/
+topics/*/challenges/*/work/
+
+# Generator checkpoints. Intermediate research shards, resumable but not
+# meaningful history.
+.forge-cache/
