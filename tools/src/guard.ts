@@ -122,6 +122,12 @@ const WORK_REASON =
   "repo teaches and grades; it never solves. Explain the concept, point at the chapter, " +
   "or say what their code actually does, and let them make the edit.";
 
+const NAMED_REASON =
+  "Denied: this pattern enumerates a topic's hidden material by name. Nothing has been " +
+  "read yet, so this is a cheap mistake to correct: search what the learner can see. If " +
+  "you were checking whether a hidden file exists, the answer does not change what you " +
+  "should say to them.";
+
 const SEARCH_REASON =
   "Denied: a search rooted here would read a topic's hidden material, and results come " +
   "back as file contents. Narrow the search to what the learner can see, for example a " +
@@ -170,10 +176,11 @@ export function decide(input: GuardInput, projectDir: string): Decision {
     if (mayRead) return ALLOW;
 
     // A pattern that names `.hidden` is asking for it outright, whichever field it
-    // arrived in.
+    // arrived in. It gets its own message: a glob has read nothing yet, and telling an
+    // agent it leaked an answer key when it matched a path teaches it the wrong lesson.
     for (const name of ["pattern", "glob", "path"]) {
       const value = field(input, name);
-      if (value?.includes(".hidden")) return { deny: true, reason: HIDDEN_READ_REASON };
+      if (value?.includes(".hidden")) return { deny: true, reason: NAMED_REASON };
     }
 
     // Glob returns paths and not contents, and the hidden filenames are pinned in the

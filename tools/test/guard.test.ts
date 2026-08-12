@@ -154,6 +154,14 @@ describe("searching", () => {
     expect(ask({ tool: "Grep", input: { pattern: "x", glob: "**/.hidden/*.ts" } })).toBeDefined();
   });
 
+  it("tells a glob what it actually did, rather than accusing it of a read", () => {
+    // A pattern match has read nothing. Reusing the read wording here teaches an agent
+    // that it leaked an answer key when it matched a path.
+    const named = ask({ tool: "Glob", input: { pattern: "topics/**/.hidden/**" } });
+    expect(named).toMatch(/enumerates/);
+    expect(named).not.toMatch(/leak it into the conversation/);
+  });
+
   it("allows a glob over a challenge, which returns paths and not contents", () => {
     expect(
       ask({ tool: "Glob", input: { pattern: "**/*.ts", path: "topics/wiki/challenges/c02-bm25" } }),
