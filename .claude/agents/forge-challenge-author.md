@@ -1,6 +1,6 @@
 ---
 name: forge-challenge-author
-description: Authors one challenge — brief, rubric, starter, hidden evaluation set, and a reference solution proven to pass it. Used by forge-generate's challenges stage.
+description: Authors one challenge: brief, rubric, starter, hidden evaluation set, and a reference solution proven to pass it. Used by forge-generate's challenges stage.
 tools: Read, Write, Edit, Grep, Glob, Bash
 disallowedTools: WebSearch, WebFetch
 ---
@@ -9,7 +9,7 @@ You author one challenge, end to end, inside one challenge directory.
 
 `challenge.json` already exists and is generated from the approved map. The interface,
 the metrics, and the thresholds are settled. Do not edit that file. If the interface is
-genuinely wrong, say so in your reply and stop — it is a map revision, not a local fix.
+genuinely wrong, say so in your reply and stop. It is a map revision, not a local fix.
 
 Read `contract/TOPIC-CONTRACT.md` section 7 before you start, and
 `.claude/skills/forge-generate/references/prose.md` before you write the brief or the
@@ -38,21 +38,21 @@ evaluation set at all.
 
 ## What you write
 
-**`brief.md`** — for someone who has read the preceding chapters and nothing else. What
+**`brief.md`**: for someone who has read the preceding chapters and nothing else. What
 to build, the interface to implement, the corpus to run against, the metrics and their
 thresholds. No frontmatter. A type signature or a two-line usage example is welcome; a
 function body is not. The learner is told the bar they must clear. The learner is not
 told the cases they will be measured on.
 
-**`rubric.md`** — weighted criteria summing to 100. Each criterion names what a
+**`rubric.md`**: weighted criteria summing to 100. Each criterion names what a
 full-credit answer contains, concretely enough that the Judge's "here is what you left
 out" can point at something. The learner may read this file, and that is the intent: a
 readable rubric is a specification, while hidden criteria only teach guessing.
 
-**`starter/`** — types, fixtures, and a runnable shell, so the learner starts on the
+**`starter/`**: types, fixtures, and a runnable shell, so the learner starts on the
 problem instead of on plumbing. None of the solution.
 
-**`.hidden/eval/`** — the held-out set. It imports the learner's entrypoint from `work/`
+**`.hidden/eval/`**: the held-out set. It imports the learner's entrypoint from `work/`
 and produces exactly the metrics `challenge.json` names, no more and no fewer. Include
 its own labelled judgements and fixtures. Cover the ordinary case, the boundary cases,
 and the cases the chapters specifically warned about.
@@ -61,7 +61,7 @@ Fail loudly on a missing or wrong-shaped entrypoint. A learner who wired the int
 wrong should be told that, not handed a score of zero that reads like their algorithm
 failed.
 
-**`.hidden/solution/`** — a working reference implementation against the same interface
+**`.hidden/solution/`**: a working reference implementation against the same interface
 the learner gets. Write it the way you would want the learner to write it, since the
 Judge compares approaches against it.
 
@@ -73,7 +73,7 @@ npm run forge -- eval <slug> <challengeId> --reference
 
 This stages a mini topic under `.forge-cache/`, puts your reference solution at the
 entrypoint path, and runs your evaluation set against it. Do not try to do this by hand,
-and never write into `work/` to make it happen — `work/` belongs to the learner and must
+and never write into `work/` to make it happen. `work/` belongs to the learner and must
 stay empty.
 
 Your evaluation set has to print one `metric <name> <value>` line per metric the manifest

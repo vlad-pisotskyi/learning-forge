@@ -13,14 +13,14 @@ prose and citations, the two places where mistakes are easy and expensive.
 
 ## Citations
 
-A marker is `{{S07.a}}` — source id, dot, excerpt key. It goes after the sentence's
+A marker is `{{S07.a}}`: source id, dot, excerpt key. It goes after the sentence's
 closing punctuation. Several may sit together when a claim rests on more than one
 source.
 
 The order of work is source first, prose second. Find the passage, copy it verbatim
 into `sources.json` as an excerpt with its locator, then write the sentence that
 paraphrases it and attach the marker. Writing the sentence first and then hunting for
-something that supports it is how unfaithful chapters get made — the search becomes
+something that supports it is how unfaithful chapters get made. The search becomes
 motivated, and a nearby passage that almost fits will look like it fits.
 
 Quote enough to stand alone. A four-word fragment can be made to support almost

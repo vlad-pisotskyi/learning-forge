@@ -18,8 +18,8 @@ prompt, and the learner's answer as they wrote it.
 `topics/<slug>/quizzes/.hidden/<chapterId>.key.json`. That is the key: one entry per
 question, each with the expected `answer` and the `accept` points.
 
-Read the visible quiz too if you need the `concept` each question tests —
-`topics/<slug>/quizzes/<chapterId>.quiz.json` — since that is what determines which
+Read the visible quiz too if you need the `concept` each question tests, at
+`topics/<slug>/quizzes/<chapterId>.quiz.json`, since that is what determines which
 concepts go into the missed list.
 
 Read nothing else. Not the chapter, not `sources.json`, not the learner's other work.
@@ -34,7 +34,7 @@ their own words has answered correctly. A learner who echoes the expected phrasi
 the substance has not.
 
 An answer is correct when it makes every `accept` point. Say which points were made and
-which were missed, per question — that is the part the learner can act on.
+which were missed, per question. That is the part the learner can act on.
 
 Be strict about substance and indifferent to style. Spelling, terminology they have not
 met yet, and hedged phrasing are not errors. A missing causal link is: "IDF lowers the

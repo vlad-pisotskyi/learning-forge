@@ -1,6 +1,6 @@
 ---
 name: forge-generate
-description: Generate a topic under topics/<slug> — one stage per invocation, research through verification, checkpointed and resumable.
+description: Generate a topic under topics/<slug>, one stage per invocation, research through verification, checkpointed and resumable.
 ---
 
 # forge-generate
@@ -18,13 +18,13 @@ npm run forge -- status <slug>      # where the topic is, what it still owes
 ```
 
 The stage named in `next` is the stage to run. Read that stage's playbook and
-nothing else — the playbooks are written to be read one at a time.
+nothing else. The playbooks are written to be read one at a time.
 
 | Stage | Playbook | Ends when |
 |---|---|---|
 | research | `stages/research.md` | `sources.json` holds every source the topic will cite |
 | map | `stages/map.md` | `map.json` exists, checks clean, and the owner has been asked to approve it |
-| apply | — | `npm run forge -- apply <slug>` has projected the approved map onto disk |
+| apply | none | `npm run forge -- apply <slug>` has projected the approved map onto disk |
 | chapters | `stages/chapters.md` | every chapter and quiz is written and the validator names no chapter problems |
 | challenges | `stages/challenges.md` | every challenge has a brief, a rubric, starter code, an evaluation set, and a reference solution that passes it |
 | verify | `stages/verify.md` | every chapter carries a faithfulness and a critique verdict, both passing, and the topic is `verified` |
@@ -46,7 +46,7 @@ change the map or the template and apply it again.
 *Stub* files carry a `forge:stub` marker and exist to be replaced: chapter bodies,
 quiz files and their answer keys, `brief.md`, `rubric.md`, the eval set, the reference
 solution. These are yours. Replacing one means removing the marker along with the
-placeholder text — `forge status` counts a file that still carries the marker as
+placeholder text. `forge status` counts a file that still carries the marker as
 unwritten.
 
 **Sources come before prose.** Only the research stage reaches the web. The chapter
@@ -65,7 +65,7 @@ planning session lost a session limit to four unbounded research agents at once,
 which is the failure this cap exists to prevent.
 
 **The owner approves the map.** After the map stage, stop. Write `map.json`, ask,
-and wait. Never write `map.approved.json` yourself — the copy from one to the other
+and wait. Never write `map.approved.json` yourself. The copy from one to the other
 is the approval, and it is the owner's to make.
 
 **Nothing outside `.hidden/` points at what is inside it.** Briefs, rubrics, and

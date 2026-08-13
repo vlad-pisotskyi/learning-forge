@@ -14,7 +14,7 @@ than remembered, so a session that died mid-stage resumes correctly with no spec
 handling.
 
 Read `.forge-cache/<slug>/map.approved.json` for the plan. Do not read finished
-chapters — the map carries what a writer needs to know about them.
+chapters. The map carries what a writer needs to know about them.
 
 ## 2. Write chapters, three at a time
 
@@ -33,10 +33,10 @@ The writer has no web search, no fetch, and no shell. It cannot look anything up
 it cannot run the validator, so every claim rests on an excerpt already in
 `sources.json` and the checking between batches is yours.
 
-Launch at most three at once. Each writer owns exactly one chapter file, one quiz file,
-and one answer key, so parallel writers never touch the same file. The chapter file on disk is the
-checkpoint — a writer that dies costs one chapter. Run `npm run forge -- status <slug>`
-after each batch to read the remaining worklist back.
+Launch at most three at once. Each writer owns exactly one chapter file, one quiz
+file, and one answer key, so parallel writers never touch the same file. The chapter
+file on disk is the checkpoint. A writer that dies costs one chapter. Run `npm run
+forge -- status <slug>` after each batch to read the remaining worklist back.
 
 ## 3. Check the batch
 

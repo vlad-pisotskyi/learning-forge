@@ -34,7 +34,7 @@ to the plan is a regression even when it is convenient.
 The three role skills are stamped, not authored per topic:
 `.claude/skills/forge-generate/templates/{teach,help,judge}.md` with `<<SLUG>>` and
 `<<TITLE>>` substituted by `stampTemplate`, written on every apply. Keep the
-substitution set tiny — a template that embedded the chapter list would go stale the
+substitution set tiny. A template that embedded the chapter list would go stale the
 first time the map changed, so the roles read `topic.json` at runtime instead.
 `UNSTAMPED` catches a placeholder nobody substituted, which is otherwise a silent bug
 in generated material.
@@ -78,9 +78,10 @@ strings, and a real run produced four entries for two documents.
 Keep it narrow. Folding two genuinely different sources into one is a worse failure
 than leaving a duplicate visible on the page, so only spellings that name the same
 document by construction collapse. `reconcile` then settles the disagreements
-mechanically — more precise date, later retrieval, the less flattering `primary` — so
-that a shard disagreeing about whether a source is primary surfaces as the validator
-warning it should be, rather than being decided by which shard sorted first.
+mechanically, taking the more precise date, the later retrieval, the less flattering
+`primary`, so that a shard disagreeing about whether a source is primary surfaces as
+the validator warning it should be, rather than being decided by which shard sorted
+first.
 
 ## Two conventions the code depends on
 
@@ -96,7 +97,7 @@ separating a file an author owes from a file an author finished.
 ## What apply is allowed to overwrite
 
 Plan-derived files are rewritten on every apply, because the plan is their only
-source of truth. Authored files are never overwritten once they hold content — the
+source of truth. Authored files are never overwritten once they hold content. The
 most `apply` does to a written chapter is refresh its frontmatter and leave the prose
 alone. `generatedAt`, `topic.json.status`, and a chapter's `status` and `audit` block
 are carried through from what is already on disk, because none of them are the plan's

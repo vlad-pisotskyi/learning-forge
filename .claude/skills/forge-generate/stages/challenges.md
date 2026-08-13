@@ -10,8 +10,8 @@ thresholds the manifest pins.
 npm run forge -- status <slug>
 ```
 
-Outstanding challenge ids are the worklist. The manifests already exist — `apply`
-wrote them from the approved map — so the interface, the metrics, and the thresholds
+Outstanding challenge ids are the worklist. The manifests already exist, because `apply`
+wrote them from the approved map, so the interface, the metrics, and the thresholds
 are settled and are not open for renegotiation here.
 
 ## 2. Author challenges, three at a time
@@ -45,34 +45,34 @@ rubric.md
 
 The last one is a fixed mapping: `.hidden/solution/` mirrors `work/`, so an entrypoint
 of `work/src/index.ts` puts the reference at `.hidden/solution/src/index.ts`. That is
-what lets the evaluation set be run against the reference at all — see step 5.
+what lets the evaluation set be run against the reference at all. See step 5.
 
 `starter/` must also hold at least one file.
 
 ## 4. What each file contains
 
-**`brief.md`** — written for someone who has read the preceding chapters and nothing
+**`brief.md`**: written for someone who has read the preceding chapters and nothing
 else. States what to build, the interface to implement, the corpus to run against,
 and the metrics with their thresholds. The learner is told the bar. The learner is not
 told the cases. A type signature or a two-line usage example is fine; a function body
 is not.
 
-**`rubric.md`** — weighted criteria summing to 100, each naming what a full-credit
+**`rubric.md`**: weighted criteria summing to 100, each naming what a full-credit
 answer contains. The learner may read this, and that is intended: a rubric the learner
 can read is a specification, and hidden criteria would only teach them to guess.
 
-**`starter/`** — types, fixtures, and a runnable shell. Enough that the learner starts
+**`starter/`**: types, fixtures, and a runnable shell. Enough that the learner starts
 on the problem rather than on plumbing. No part of the solution.
 
-**`.hidden/eval/`** — the held-out set, with its own labelled judgements. It imports
+**`.hidden/eval/`**: the held-out set, with its own labelled judgements. It imports
 the learner's entrypoint and prints one `metric <name> <value>` line for each metric the
-manifest names, no more and no fewer — that convention is how a score gets read back out
+manifest names, no more and no fewer. That convention is how a score gets read back out
 of any runner. It must
 fail loudly on a missing or wrong-shaped entrypoint rather than scoring zero silently,
 because a learner who wired the interface wrong deserves to be told that instead of
 being told they scored nothing.
 
-**`.hidden/solution/`** — a working reference implementation, written against the same
+**`.hidden/solution/`**: a working reference implementation, written against the same
 interface the learner gets.
 
 ## 5. Prove the challenge is solvable

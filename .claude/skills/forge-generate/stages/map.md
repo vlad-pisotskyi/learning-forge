@@ -9,8 +9,8 @@ twelve chapters exist costs twelve chapters; found here it costs a paragraph.
 ## 1. Read the sources
 
 Read `topics/<slug>/sources.json` in full. This is the one place in the run where
-reading everything is correct — the map allocates excerpts, and an excerpt cannot be
-allocated without knowing what it says.
+reading everything is correct, because the map allocates excerpts, and an excerpt
+cannot be allocated without knowing what it says.
 
 Read `.forge-cache/<slug>/shards.md` too, including anything a shard left unresolved.
 

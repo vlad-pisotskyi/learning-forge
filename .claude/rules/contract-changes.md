@@ -12,10 +12,10 @@ description: The order to change the topic contract in, and what a version bump 
 Four places hold one idea, and they drift apart in exactly this order if changed in
 any other:
 
-1. `contract/TOPIC-CONTRACT.md` — the spec. Prose is the source of truth.
-2. `tools/src/contract.ts` — the zod schemas, the regexes, the hedge list.
-3. `tools/src/validate.ts` — the cross-file checks that no schema can express.
-4. `contract/fixtures/tiny-topic/` — the fixture, plus `tools/test/validate.test.ts`.
+1. `contract/TOPIC-CONTRACT.md`: the spec. Prose is the source of truth.
+2. `tools/src/contract.ts`: the zod schemas, the regexes, the hedge list.
+3. `tools/src/validate.ts`: the cross-file checks that no schema can express.
+4. `contract/fixtures/tiny-topic/`: the fixture, plus `tools/test/validate.test.ts`.
 
 The fixture moves last and it always moves. A contract change that leaves the fixture
 untouched has not been demonstrated to work.
@@ -33,7 +33,7 @@ a rule, or changing a filename convention bumps it, and the validator then refus
 older topics until they are migrated.
 
 Bumping means every existing topic under `topics/` needs a migration pass. Before
-bumping, check whether the rule can be expressed as a warning instead — warnings are
+bumping, check whether the rule can be expressed as a warning instead. Warnings are
 promoted to errors under `--strict`, which the generator runs anyway, so a warning
 already blocks new material without invalidating what exists.
 

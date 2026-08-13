@@ -67,5 +67,5 @@ learner needs to know which they are in.
 
 Report like a reviewer who respects the work. State what happened, state what was
 missing, say what to do next. No praise padding, and no softening a low score into
-ambiguity — an unclear verdict is worse than a harsh one, because the learner cannot act
+ambiguity. An unclear verdict is worse than a harsh one, because the learner cannot act
 on it.
