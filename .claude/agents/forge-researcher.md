@@ -42,6 +42,14 @@ only when there is genuinely no primary to point at, and say so in `openQuestion
 Include the identifier when there is one — a DOI, an arXiv id, an RFC number. Names
 collide and identifiers do not, and a paper with no identifier is also a warning.
 
+Do not coordinate URL spelling with the other shards. The merge folds spellings that
+name the same document — the host without `www.`, the path without a trailing slash or
+a `.txt`/`.html` extension, the fragment dropped — so reaching one RFC through
+`/rfc/rfc3629` while another shard reached it through `/rfc/rfc3629.txt` produces one
+source, not two. Cite the URL you actually read, including its fragment. Quote from the
+page that page-fetched cleanly, because every quote you pin is later re-fetched from
+the URL you gave and matched against the text found there.
+
 ## Scope
 
 Answer your shard and stop. Material that belongs to a neighbouring shard is that

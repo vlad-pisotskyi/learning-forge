@@ -49,12 +49,16 @@ npm run forge -- sources <slug>
 ```
 
 This folds every shard into `sources.json`, hands out source ids in shard order, and
-folds duplicate excerpts from different shards into one entry. A merge that finds a
-problem writes nothing and names the shard responsible, so `sources.json` either does
-not exist or is trustworthy.
+folds duplicate excerpts from different shards into one entry. It also folds URL
+spellings that name the same document: the host without `www.`, the path without a
+trailing slash or a `.txt`/`.html` extension, the fragment dropped. Two shards reaching
+one RFC through `/rfc/rfc3629` and `/rfc/rfc3629.txt` found one source, not two, and the
+merge says so. A merge that finds a problem writes nothing and names the shard
+responsible, so `sources.json` either does not exist or is trustworthy.
 
 Read the summary it prints, not the file. It reports the source count, the excerpt
-count, and how many of the sources are primary.
+count, how many of the sources are primary, and how many entries were folded into one
+document each. A folded count is expected when shards overlap and is not a defect.
 
 ## 4. Check the quotes against the documents
 

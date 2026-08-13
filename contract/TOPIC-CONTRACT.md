@@ -1,6 +1,6 @@
 # The topic contract
 
-Version 2.
+Version 3.
 
 Every topic the Forge generates satisfies this contract. The contract exists so a
 generated topic can be checked by a program instead of by reading it, and so that
@@ -95,7 +95,7 @@ Nothing outside a `.hidden/` directory may reveal hidden material. `brief.md`,
 
 ```json
 {
-  "contractVersion": 2,
+  "contractVersion": 3,
   "slug": "wiki-retrieval",
   "title": "Retrieval over Wikipedia",
   "summary": "Building and evaluating retrieval systems over encyclopedic text, from lexical scoring through reranking.",
@@ -110,7 +110,7 @@ Nothing outside a `.hidden/` directory may reveal hidden material. `brief.md`,
 
 | Field | Rule |
 |---|---|
-| `contractVersion` | Must be `2`. |
+| `contractVersion` | Must be `3`. |
 | `slug` | Kebab-case; equals the directory name. |
 | `title` | 4–80 characters. |
 | `summary` | 1–2 sentences, 20–400 characters. |
@@ -135,7 +135,7 @@ a human can answer. With it, that check is arithmetic.
 
 ```json
 {
-  "contractVersion": 2,
+  "contractVersion": 3,
   "concepts": [
     { "id": "term-frequency", "label": "Term frequency", "blurb": "How often a term occurs in a document." },
     { "id": "idf", "label": "Inverse document frequency", "blurb": "How much a term's rarity across the corpus raises its weight." }
@@ -246,7 +246,7 @@ What the Teacher reads and the learner may read.
 
 ```json
 {
-  "contractVersion": 2,
+  "contractVersion": 3,
   "chapter": "ch03",
   "questions": [
     {
@@ -280,7 +280,7 @@ What the quiz grader reads, and nothing else does.
 
 ```json
 {
-  "contractVersion": 2,
+  "contractVersion": 3,
   "chapter": "ch03",
   "answers": [
     {
@@ -322,7 +322,7 @@ One file, `sources.json`, for the whole topic.
 
 ```json
 {
-  "contractVersion": 2,
+  "contractVersion": 3,
   "sources": [
     {
       "id": "S07",
@@ -400,7 +400,7 @@ challenges/c02-bm25-from-scratch/
 
 ```json
 {
-  "contractVersion": 2,
+  "contractVersion": 3,
   "id": "c02",
   "title": "BM25 from scratch",
   "afterChapter": "ch05",
@@ -543,7 +543,7 @@ Teacher and the Judge, read by all three roles.
 
 ```json
 {
-  "contractVersion": 2,
+  "contractVersion": 3,
   "topic": "wiki-retrieval",
   "updated": "2026-08-12T09:31:00Z",
   "chapters": {

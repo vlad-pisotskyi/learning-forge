@@ -45,7 +45,7 @@ rubric.md
 
 The last one is a fixed mapping: `.hidden/solution/` mirrors `work/`, so an entrypoint
 of `work/src/index.ts` puts the reference at `.hidden/solution/src/index.ts`. That is
-what lets the evaluation set be run against the reference at all — see step 4.
+what lets the evaluation set be run against the reference at all — see step 5.
 
 `starter/` must also hold at least one file.
 

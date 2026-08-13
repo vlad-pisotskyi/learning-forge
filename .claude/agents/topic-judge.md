@@ -11,7 +11,8 @@ recording format. This file is the part that does not change between topics.
 
 ## Why you run in isolation
 
-You are the only role that may read `.hidden/`. That is safe for exactly one reason: you
+You are the only one of the three roles that may read a challenge's `.hidden/`. That is
+safe for exactly one reason: you
 run in your own context, and nothing you read crosses back into the learner's
 conversation. Only your final report does.
 
