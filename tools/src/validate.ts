@@ -3,7 +3,7 @@
  * The CLI wrapper is validate-topic.ts; this module is what the tests import.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { basename, join, relative, resolve } from "node:path";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
 import { isStub, referenceEntrypoint } from "./forge-plan.ts";
@@ -160,6 +160,18 @@ function walk(dir: string): string[] {
     return entry.isDirectory() ? walk(full) : [full];
   });
 }
+
+/**
+ * A path under `corpus/` named by a challenge file. At least one segment has to follow
+ * the directory name, so prose that mentions `corpus/` without naming a file in it is
+ * not a reference and is not checked.
+ *
+ * Each segment is built as name-then-extensions rather than as a character class
+ * containing `.`, so a path ending a sentence does not swallow the full stop. Writing
+ * it the loose way reported `corpus/rows.json.` as missing, which is a false error
+ * against a file that is there.
+ */
+const CORPUS_REF = /(?<![\w-])corpus(?:\/[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*)+/g;
 
 /* ---------------------------------------------------------------- the checks */
 
@@ -594,11 +606,18 @@ export function validateTopic(topicDir: string, strictFlag: boolean): Report {
           `does not import ${challenge.interface.entrypoint}, so it is not scoring the submission`,
         );
       }
+      // Whether the metric is actually printed is settled by running the thing:
+      // `forge eval` fails a challenge whose evaluation set reports no value for a
+      // declared metric. So this asks the weaker question the source text can answer,
+      // which is whether the evaluation set knows the metric exists at all. Matching
+      // the literal `metric <name>` instead warned on every metric of a correct
+      // evaluation set that printed them through a helper taking the name as an
+      // argument, which is checking spelling rather than behaviour.
       for (const metric of challenge.eval.metrics) {
-        if (!spec.includes(`metric ${metric.name}`)) {
+        if (!spec.includes(metric.name)) {
           report.warn(
             specPath,
-            `never prints "metric ${metric.name} <value>", which is how the runner reports a declared metric`,
+            `never mentions the declared metric "${metric.name}", so it cannot be printing "metric ${metric.name} <value>" for the runner to read`,
           );
         }
       }
@@ -617,6 +636,28 @@ export function validateTopic(topicDir: string, strictFlag: boolean): Report {
         report.error(file, "mentions .hidden; learner-facing files must not point at hidden material");
       }
     }
+
+    // A corpus is optional. A challenge whose input is an argument has nothing to load
+    // from disk, and an empty corpus/ is the right state for that topic. What is not
+    // optional is that a corpus file a challenge names actually exists, so the check is
+    // on the reference rather than on the directory being non-empty.
+    const corpusRefs = new Map<string, string>();
+    for (const file of [
+      join(dir, challenge.brief),
+      join(dir, challenge.rubric),
+      ...walk(join(dir, "starter")),
+      ...walk(join(dir, dirname(challenge.eval.spec))),
+    ]) {
+      if (!existsSync(file) || statSync(file).isDirectory()) continue;
+      for (const [ref] of readFileSync(file, "utf8").matchAll(CORPUS_REF)) {
+        if (!corpusRefs.has(ref)) corpusRefs.set(ref, file);
+      }
+    }
+    for (const [ref, file] of corpusRefs) {
+      if (!existsSync(join(topicDir, ref))) {
+        report.error(file, `names ${ref}, which does not exist`);
+      }
+    }
   }
   for (const id of manifest.challenges) {
     if (!foundChallengeIds.has(id)) {
@@ -628,11 +669,6 @@ export function validateTopic(topicDir: string, strictFlag: boolean): Report {
   for (const role of ROLE_SKILLS) {
     const path = join(topicDir, ".claude", "skills", role, "SKILL.md");
     if (!existsSync(path)) report.error(path, `the topic's ${role} skill is missing`);
-  }
-
-  /* --- corpus ------------------------------------------------------------ */
-  if (!isNonEmptyDir(join(topicDir, "corpus"))) {
-    report.warn(join(topicDir, "corpus"), "no corpus; challenges have nothing to run against");
   }
 
   /* --- progress (optional) ---------------------------------------------- */

@@ -70,7 +70,7 @@ metadata.
 ### What is committed
 
 Everything above is committed except `work/` and `.state/`, which are gitignored.
-Hidden evaluation sets, answer keys, and reference solutions **are** committed — they
+Hidden evaluation sets, answer keys, and reference solutions **are** committed. They
 are the material, and the repo is only useful with them. The guarantee is not that a
 human cannot find them; it is that no agent surfaces them.
 
@@ -112,8 +112,8 @@ Nothing outside a `.hidden/` directory may reveal hidden material. `brief.md`,
 |---|---|
 | `contractVersion` | Must be `3`. |
 | `slug` | Kebab-case; equals the directory name. |
-| `title` | 4–80 characters. |
-| `summary` | 1–2 sentences, 20–400 characters. |
+| `title` | 4 to 80 characters. |
+| `summary` | 1 to 2 sentences, 20 to 400 characters. |
 | `generatedAt` | `YYYY-MM-DD`, not in the future. |
 | `generator` | Which skill produced this, and at what version. |
 | `language` | Primary language for challenges. `typescript` for now. |
@@ -123,7 +123,7 @@ Nothing outside a `.hidden/` directory may reveal hidden material. `brief.md`,
 
 The `chapters` and `challenges` arrays must match the files on disk exactly in both
 directions: every listed id has a file, and every file is listed. An unlisted
-chapter file is an error, not a draft — park drafts outside the topic directory.
+chapter file is an error, not a draft. Park drafts outside the topic directory.
 
 ---
 
@@ -143,8 +143,8 @@ a human can answer. With it, that check is arithmetic.
 }
 ```
 
-Ids are kebab-case and unique. `label` is 3–60 characters, `blurb` is one sentence,
-10–200 characters.
+Ids are kebab-case and unique. `label` is 3 to 60 characters, `blurb` is one sentence,
+10 to 200 characters.
 
 Every concept must be taught by at least one chapter. A concept nothing teaches is
 an error: either a chapter is missing or the concept is noise.
@@ -175,12 +175,12 @@ status: draft
 | Field | Rule |
 |---|---|
 | `id` | `^ch\d{2}$`, unique, matches the filename prefix. |
-| `title` | 4–80 characters. |
+| `title` | 4 to 80 characters. |
 | `order` | Positive integer; matches this chapter's index in `topic.json.chapters`, 1-based. |
 | `requires` | Chapter ids that must come earlier in the order. May be empty. No cycles, no forward references. |
 | `teaches` | Non-empty list of concept ids from `concepts.json`. |
 | `quiz` | Path from the topic root to this chapter's quiz. Must exist. |
-| `estimatedMinutes` | Integer, 5–120. |
+| `estimatedMinutes` | Integer, 5 to 120. |
 | `status` | `draft` or `verified`. `verified` requires a passing `audit` block. |
 | `audit` | Optional; written by the verification agents. See section 9. |
 
@@ -195,7 +195,7 @@ never decided where it belongs.
 excerpt key. Several may sit together, `{{S07.a}}{{S12.b}}`, when a claim rests on
 more than one source. Every marker must resolve to an excerpt that exists in
 `sources.json`. Every excerpt in `sources.json` must be cited by at least one
-marker, in some chapter — an uncited excerpt means research was done and then not
+marker, in some chapter. An uncited excerpt means research was done and then not
 used, which the faithfulness auditor cannot distinguish from research that was
 misplaced.
 
@@ -211,8 +211,8 @@ blockquotes: `may`, `might`, `perhaps`, `possibly`, `probably`, `arguably`,
 
 Two escapes exist. Quoted source text inside a blockquote is exempt, since it is
 someone else's wording. And a paragraph may carry `<!-- allow-hedge: reason -->`
-when the hedge is the point — reporting that a question is genuinely open, for
-instance. The reason is required and the auditor reads it.
+when the hedge is the point, such as reporting that a question is genuinely open.
+The reason is required and the auditor reads it.
 
 Contested material is stated as contested: "X and Y disagree on Z. X argues A
 {{S04.a}}; Y argues B {{S11.c}}." That is a fact about the field, not a hedge.
@@ -263,11 +263,11 @@ What the Teacher reads and the learner may read.
 | Field | Rule |
 |---|---|
 | `chapter` | The owning chapter id. Must match the filename and an existing chapter. |
-| `questions` | 3–8 questions. |
+| `questions` | 3 to 8 questions. |
 | `questions[].id` | `^q\d+$`, unique within the file. |
 | `questions[].concept` | A concept id that the owning chapter `teaches`. |
 | `questions[].kind` | `recall`, `application`, or `discrimination`. |
-| `questions[].prompt` | 15–500 characters, ends with `?`. |
+| `questions[].prompt` | 15 to 500 characters, ends with `?`. |
 | `passing.atLeast` | Integer, at least 2, at most the number of questions. |
 
 The passing bar is visible on purpose, for the same reason a challenge's thresholds
@@ -297,8 +297,8 @@ What the quiz grader reads, and nothing else does.
 |---|---|
 | `chapter` | Must match the visible quiz and the filename. |
 | `answers` | Exactly one entry per question in the visible file, same ids, no extras. |
-| `answers[].answer` | The expected answer as prose, 10–800 characters. |
-| `answers[].accept` | 1–5 points a passing answer must contain. The grader scores against these, not against exact wording. |
+| `answers[].answer` | The expected answer as prose, 10 to 800 characters. |
+| `answers[].accept` | 1 to 5 points a passing answer must contain. The grader scores against these, not against exact wording. |
 | `answers[].sourceRefs` | Optional excerpt refs (`S07.a`) backing the answer. Must resolve. |
 
 Every concept the chapter `teaches` is covered by at least one question, and at
@@ -306,8 +306,8 @@ least one question is `application` or `discrimination`. A quiz made only of
 `recall` questions tests whether the chapter was read, not whether it was
 understood.
 
-`discrimination` questions ask the learner to tell two things apart — the shape of
-question that catches a confusion a recall question sails past.
+`discrimination` questions ask the learner to tell two things apart, which is the
+shape of question that catches a confusion a recall question sails past.
 
 The split is what lets the Teacher quiz without being able to lead. It asks the
 prompts, collects the answers, and hands both to a grader that never saw the lesson.
@@ -350,7 +350,7 @@ One file, `sources.json`, for the whole topic.
 |---|---|
 | `id` | `^S\d{2,3}$`, unique. |
 | `kind` | `paper`, `docs`, `spec`, `book`, `dataset`, `code`, or `standard`. |
-| `title` | 4–300 characters. |
+| `title` | 4 to 300 characters. |
 | `authors` | Non-empty for `paper` and `book`; optional otherwise. |
 | `published` | `YYYY`, `YYYY-MM`, or `YYYY-MM-DD`. Record the precision the source states and no more. |
 | `url` | Absolute `http`/`https`. |
@@ -359,7 +359,7 @@ One file, `sources.json`, for the whole topic.
 | `primary` | Whether this is a primary source. |
 | `excerpts` | Non-empty. |
 | `excerpts[].key` | `^[a-z]{1,3}$`, unique within the source. |
-| `excerpts[].quote` | 20–1500 characters, verbatim. |
+| `excerpts[].quote` | 20 to 1500 characters, verbatim. |
 | `excerpts[].locator` | Where in the source: section, page, heading, or line range. |
 
 `primary: false` is a warning, not an error. A blog post explaining a paper is
@@ -367,7 +367,7 @@ sometimes the clearest thing to point a learner at, but a topic where most sourc
 are secondary has not done its reading.
 
 The excerpt is the entire basis of the guarantee. It must be copied verbatim, not
-reconstructed from memory, and it must be long enough to stand on its own — a
+reconstructed from memory, and it must be long enough to stand on its own. A
 four-word fragment can be made to support almost anything. When a claim needs
 context that one sentence does not carry, quote the surrounding sentences too.
 
@@ -376,8 +376,8 @@ excerpts are still in it. It is advisory rather than a validator rule, because a
 rendered page differs from its own text in ways an honest quotation cannot avoid:
 list numbering comes from a stylesheet, tables carry rules a quotation omits, and a
 quote copied from a rendered page carries typographic marks the source never had. It
-is worth running anyway, because the failure it does catch cleanly — a quote pinned to
-a URL whose document does not contain it — is the one failure that survives every
+is worth running anyway, because the failure it does catch cleanly, a quote pinned to
+a URL whose document does not contain it, is the one failure that survives every
 other check in this repo.
 
 ---
@@ -442,7 +442,7 @@ challenges/c02-bm25-from-scratch/
 | `afterChapter` | The chapter the learner must finish first. Must exist. |
 | `exercises` | Non-empty concept ids. **Every one must be taught by a chapter at or before `afterChapter`.** |
 | `language` | Matches `topic.json.language` unless deliberately different. |
-| `estimatedHours` | Number, 0.5–40. |
+| `estimatedHours` | Number, 0.5 to 40. |
 | `brief`, `rubric` | Paths relative to the challenge directory. Must exist and be non-empty. |
 | `interface.entrypoint` | Path under `work/` that the eval set imports. |
 | `interface.exports` | Non-empty. Name, signature, and one-line description for each. |
@@ -470,7 +470,7 @@ against, and the metrics that will be measured with their thresholds. Learners a
 told the bar. They are not told the test cases.
 
 No frontmatter. Must not mention `.hidden`. Must not contain a working
-implementation — a type signature or a two-line usage example is fine, a function
+implementation. A type signature or a two-line usage example is fine, a function
 body is not.
 
 ### `rubric.md`
@@ -506,8 +506,12 @@ evaluation set that asserts its own thresholds has put the bar in two places, an
 will disagree.
 
 The validator checks that the spec imports the entrypoint and that it names each
-declared metric. It cannot check that the numbers mean anything, which is why the
-dry run below exists.
+declared metric somewhere in its source. It deliberately does not look for the literal
+`metric <name>` text, because an evaluation set that prints its lines through a helper
+taking the name as an argument is correct and would fail that reading. Whether the
+lines are printed at all is settled by running the thing, which is what the dry run
+below does: `forge eval` fails a challenge whose evaluation set reports no value for a
+declared metric. Neither check can tell whether the numbers mean anything.
 
 ### `.hidden/solution/`
 
@@ -533,6 +537,28 @@ starter provides, and only the entrypoint has to be duplicated.
 The reference is never staged when a learner's submission is being scored. Nothing
 forces an evaluation set to import `work/` rather than whatever sits nearest to it, so
 the answer is simply not present in the tree.
+
+### `corpus/`
+
+Shared data the challenges run against, at the topic root rather than inside any one
+challenge, because a corpus built for an early challenge is usually the same corpus a
+later one needs.
+
+A corpus is optional. Some subjects hand a challenge its input as an argument: a
+function that classifies an integer, parses a string, or implements an algorithm over
+values the evaluation set constructs has nothing to load from disk, and an empty
+`corpus/` is the correct state for that topic. Requiring a file there would only
+produce one written to satisfy a checker.
+
+What the validator does check is that a challenge pointing at corpus data finds it. A
+brief, a starter file, or an evaluation set that names a path under `corpus/` when no
+such file exists is an error, because the challenge cannot be attempted. The check is
+on the reference, not on the directory: a corpus nobody names is silent, and a name
+that resolves to nothing is a defect no matter how full the directory is.
+
+Corpus files are committed. When one challenge builds a corpus another will reuse, the
+second reads it rather than rewriting it, and a challenge building its own names the
+files `<challengeId>-*.json` so that two authors working at once cannot collide.
 
 ---
 
@@ -602,13 +628,13 @@ generated topic owes, and a topic with no help log is a topic where nobody got s
 
 Three statuses, and they move in one direction.
 
-**`draft`** — generated, not yet checked. The generator writes this.
+**`draft`**: generated, not yet checked. The generator writes this.
 
-**`validated`** — `npm run validate -- topics/<slug> --strict` passes with no errors
+**`validated`**: `npm run validate -- topics/<slug> --strict` passes with no errors
 and no warnings. This is mechanical and says nothing about whether the material is
 any good.
 
-**`verified`** — both verification agents have passed every chapter. The critique
+**`verified`**: both verification agents have passed every chapter. The critique
 agent rules on pedagogical quality: ordering, prerequisite gaps, whether challenges
 exercise what preceded them. The faithfulness auditor rules claim by claim on
 whether each cited excerpt actually supports the claim it is attached to.
@@ -644,22 +670,22 @@ never gets to write the word.
 
 ### The five rulings
 
-`supported` — the cited excerpt carries the claim.
+`supported`: the cited excerpt carries the claim.
 
-`overstated` — the excerpt supports a weaker version of it. The source says "often"
+`overstated`: the excerpt supports a weaker version of it. The source says "often"
 and the chapter says "always", or the source rates one case and the chapter
 generalises. This is a separate ruling and not a shade of `supported` because a house
 style that forbids hedging manufactures exactly this error, and because the graders
 that fold it into `supported` are measurably the ones that never catch it.
 
-`unsupported` — the excerpt says nothing on the point.
+`unsupported`: the excerpt says nothing on the point.
 
-`contradicted` — the excerpt says the opposite. Worth stating plainly that this is the
+`contradicted`: the excerpt says the opposite. Worth stating plainly that this is the
 ruling models are worst at, and that the documented failure is grading a contradiction
 as support, so an auditor reporting zero contradictions across a whole topic has not
 demonstrated there are none.
 
-`unreachable` — the source could not be read. It exists so that unchecked is recorded
+`unreachable`: the source could not be read. It exists so that unchecked is recorded
 as unchecked rather than being pushed into whichever of pass or fail is more
 comfortable.
 

@@ -361,14 +361,35 @@ describe("hidden material", () => {
     expect(matching(errorsOf(dir), "evaluation set is still a stub").length).toBe(1);
   });
 
-  it("warns when the evaluation set never prints a metric the manifest declares", () => {
+  it("warns when the evaluation set never mentions a metric the manifest declares", () => {
     const dir = copyFixture();
     const spec = join(dir, "challenges/c01-assemble-widget/.hidden/eval/c01.eval.ts");
-    patch(spec, "metric false-positive-rate", "score false-positive-rate");
+    const raw = readFileSync(spec, "utf8");
+    writeFileSync(spec, raw.replaceAll("false-positive-rate", "some-other-number"));
     const report = validateTopic(dir, false);
-    expect(matching(report.warnings.map((w) => w.message), 'never prints "metric false-positive-rate').length).toBe(1);
+    const needle = 'never mentions the declared metric "false-positive-rate"';
+    expect(matching(report.warnings.map((w) => w.message), needle).length).toBe(1);
     // And the warning is what blocks new material, because the generator runs strict.
-    expect(matching(errorsOf(dir), 'never prints "metric false-positive-rate').length).toBe(1);
+    expect(matching(errorsOf(dir), needle).length).toBe(1);
+  });
+
+  it("accepts an evaluation set that names its metrics only as helper arguments", () => {
+    const dir = copyFixture();
+    // Correct at runtime and the literal "metric <name>" never appears in the source.
+    // Whether the lines are really printed is `forge eval`'s question, not this one.
+    writeFileSync(
+      join(dir, "challenges/c01-assemble-widget/.hidden/eval/c01.eval.ts"),
+      `import { expect, it } from "vitest";\n` +
+        `import { checkBuild } from "../../work/src/index.ts";\n` +
+        `const emit = (name: string, value: number) => console.log(\`metric \${name} \${value}\`);\n` +
+        `it("scores the submission", () => {\n` +
+        `  emit("detection-rate", checkBuild([]).length === 0 ? 1 : 0);\n` +
+        `  emit("false-positive-rate", 0);\n` +
+        `  expect(true).toBe(true);\n` +
+        `});\n`,
+    );
+    const report = validateTopic(dir, false);
+    expect(matching(report.warnings.map((w) => w.message), "declared metric")).toEqual([]);
   });
 });
 
@@ -450,5 +471,55 @@ describe("structural agreement", () => {
     const lenient = validateTopic(dir, false);
     expect(lenient.errors).toEqual([]);
     expect(matching(lenient.warnings.map((w) => w.message), "local-only").length).toBe(1);
+  });
+});
+
+describe("corpus", () => {
+  it("rejects a challenge naming a corpus file that is not there", () => {
+    const dir = copyFixture();
+    patch(join(dir, "challenges/c01-assemble-widget/brief.md"), "corpus/builds.json", "corpus/absent.json");
+    expect(matching(errorsOf(dir), "corpus/absent.json").length).toBe(1);
+  });
+
+  it("finds the reference in an evaluation set as readily as in a brief", () => {
+    const dir = copyFixture();
+    patch(
+      join(dir, "challenges/c01-assemble-widget/.hidden/eval/c01.eval.ts"),
+      "corpus/builds.json",
+      "corpus/absent.json",
+    );
+    expect(matching(errorsOf(dir), "corpus/absent.json").length).toBe(1);
+  });
+
+  it("does not swallow the full stop when a path ends a sentence", () => {
+    const dir = copyFixture();
+    patch(
+      join(dir, "challenges/c01-assemble-widget/brief.md"),
+      "Fastener ratings are in\n`corpus/fasteners.json`.",
+      "Fastener ratings are in corpus/fasteners.json.",
+    );
+    expect(matching(errorsOf(dir), "corpus/fasteners.json")).toEqual([]);
+  });
+
+  it("reports one error per distinct missing file, not one per mention", () => {
+    const dir = copyFixture();
+    const challenge = join(dir, "challenges/c01-assemble-widget");
+    patch(join(challenge, "brief.md"), "corpus/fasteners.json", "corpus/absent.json");
+    patch(join(challenge, "rubric.md"), "corpus/fasteners.json", "corpus/absent.json");
+    expect(matching(errorsOf(dir), "corpus/absent.json").length).toBe(1);
+  });
+
+  it("says nothing about a topic whose challenges load no corpus at all", () => {
+    const dir = copyFixture();
+    const challenge = join(dir, "challenges/c01-assemble-widget");
+    patch(
+      join(challenge, "brief.md"),
+      "The corpus of build records lives in `corpus/builds.json`. Fastener ratings are in\n`corpus/fasteners.json`.",
+      "Build records and fastener ratings are handed to your function as arguments.",
+    );
+    patch(join(challenge, "rubric.md"), "`corpus/fasteners.json`", "the ratings it is handed");
+    patch(join(challenge, ".hidden/eval/c01.eval.ts"), "`corpus/builds.json`", "the published build records");
+    rmSync(join(dir, "corpus"), { recursive: true, force: true });
+    expect(matching(errorsOf(dir), "corpus")).toEqual([]);
   });
 });
