@@ -67,6 +67,21 @@ reorder them for tidiness.
 appears in that excerpt. That check is the reason this layer is worth anything, so it fails
 loudly: one invented quote discards the whole chapter's audit rather than that one claim.
 
+## Source identity is the document, not the URL string
+
+`sourceKey` in `forge-scaffold.ts` is what the merge folds on: host without `www.`,
+path without a trailing slash or a `.txt`/`.html` extension, fragment dropped. Two
+shards reaching one RFC through `/rfc/rfc3629` and `/rfc/rfc3629.txt`, or one living
+standard through two anchors, found one source. Before this the merge compared URL
+strings, and a real run produced four entries for two documents.
+
+Keep it narrow. Folding two genuinely different sources into one is a worse failure
+than leaving a duplicate visible on the page, so only spellings that name the same
+document by construction collapse. `reconcile` then settles the disagreements
+mechanically — more precise date, later retrieval, the less flattering `primary` — so
+that a shard disagreeing about whether a source is primary surfaces as the validator
+warning it should be, rather than being decided by which shard sorted first.
+
 ## Two conventions the code depends on
 
 `.hidden/solution/` mirrors `work/`, so `referenceEntrypoint` can map an entrypoint to

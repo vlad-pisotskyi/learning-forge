@@ -352,7 +352,7 @@ One file, `sources.json`, for the whole topic.
 | `kind` | `paper`, `docs`, `spec`, `book`, `dataset`, `code`, or `standard`. |
 | `title` | 4–300 characters. |
 | `authors` | Non-empty for `paper` and `book`; optional otherwise. |
-| `published` | `YYYY` or `YYYY-MM-DD`. |
+| `published` | `YYYY`, `YYYY-MM`, or `YYYY-MM-DD`. Record the precision the source states and no more. |
 | `url` | Absolute `http`/`https`. |
 | `identifier` | Optional DOI, arXiv id, RFC number, ISBN. Recommended for papers. |
 | `retrieved` | `YYYY-MM-DD`, not in the future. |
@@ -370,6 +370,15 @@ The excerpt is the entire basis of the guarantee. It must be copied verbatim, no
 reconstructed from memory, and it must be long enough to stand on its own — a
 four-word fragment can be made to support almost anything. When a claim needs
 context that one sentence does not carry, quote the surrounding sentences too.
+
+`npm run forge -- sources <slug> --verify` re-fetches every source and reports which
+excerpts are still in it. It is advisory rather than a validator rule, because a
+rendered page differs from its own text in ways an honest quotation cannot avoid:
+list numbering comes from a stylesheet, tables carry rules a quotation omits, and a
+quote copied from a rendered page carries typographic marks the source never had. It
+is worth running anyway, because the failure it does catch cleanly — a quote pinned to
+a URL whose document does not contain it — is the one failure that survives every
+other check in this repo.
 
 ---
 

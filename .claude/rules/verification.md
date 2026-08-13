@@ -5,6 +5,7 @@ paths:
   - ".claude/skills/forge-generate/stages/verify.md"
   - "tools/src/forge-plan.ts"
   - "tools/src/forge-scaffold.ts"
+  - "tools/src/source-check.ts"
 description: Which parts of the verification design rest on measured evidence, which are folk practice, and the failure modes the design is aimed at.
 ---
 
@@ -104,6 +105,25 @@ the chance-corrected figure, or a stable and biased checker will certify itself.
 Related: bias is markedly worse on subjective comparison than on fact-checking, so the
 critic is the less reliable of the two agents and its own instructions say so. They are not
 interchangeable and should not be presented to the owner as equally trustworthy.
+
+## The root of the chain
+
+The span check in `recordVerdicts` confirms an auditor quoted an excerpt correctly. It
+cannot confirm the excerpt was ever in the source, and for a long time nothing did.
+That is the one link where a fabrication enters and is then trusted by everything
+downstream, including the check that exists to catch fabrication.
+
+`forge sources --verify` closes it, in `tools/src/source-check.ts`: re-fetch each
+source, rule on each excerpt as `verbatim`, `verbatim apart from formatting`, or
+`not found`. It is advisory, and deliberately so. The first run against a real topic
+produced misses on quotes that were perfectly honest — ordered-list numbers that a
+stylesheet generates and the document text never contains, the rule line inside an
+ASCII table, entity-encoded punctuation. A gate with that false-alarm rate would be
+switched off within a week, and a check nobody reads is worth nothing.
+
+What it catches cleanly is the case worth catching: a quote pinned to a URL whose
+document does not contain it. On its first run that was a source pinned to a 2.4KB
+summary page which could not have held the passage quoted from it.
 
 ## The one load-bearing guess
 

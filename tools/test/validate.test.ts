@@ -86,6 +86,26 @@ describe("citations", () => {
   });
 });
 
+describe("source dates", () => {
+  it("accepts month precision, which is what most standards carry", () => {
+    const dir = copyFixture();
+    editJson(join(dir, "sources.json"), (data) => {
+      data.sources[1].published = "2024-03";
+    });
+    expect(validateTopic(dir, true).findings).toEqual([]);
+  });
+
+  it("rejects a published date that is not one of the three precisions", () => {
+    for (const bad of ["2024-3", "2024-03-", "202403", "24-03", "March 2024"]) {
+      const dir = copyFixture();
+      editJson(join(dir, "sources.json"), (data) => {
+        data.sources[1].published = bad;
+      });
+      expect(matching(errorsOf(dir), "published"), bad).not.toEqual([]);
+    }
+  });
+});
+
 describe("no hedging", () => {
   it("rejects a hedge in prose", () => {
     const dir = copyFixture();

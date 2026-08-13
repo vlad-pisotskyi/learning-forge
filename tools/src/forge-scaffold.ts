@@ -191,8 +191,53 @@ export type MergeResult = {
   primary: number;
   excerpts: number;
   merged: number;
+  folded: number;
   problems: string[];
 };
+
+/**
+ * The identity of a source is the document, not the string a researcher happened to
+ * type. Two shards reaching the same RFC through `/rfc/rfc3629` and
+ * `/rfc/rfc3629.txt`, or the same living standard through two anchors, found one
+ * source and not two. A fragment is a position inside a document, which is what the
+ * `locator` field already records.
+ *
+ * Deliberately narrow: only spellings that name the same document by construction
+ * collapse. Folding two genuinely different sources into one is a worse failure than
+ * leaving a duplicate on the page where a reader can see it.
+ */
+export function sourceKey(url: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return url.trim().toLowerCase();
+  }
+  const host = parsed.host.toLowerCase().replace(/^www\./, "");
+  const path = parsed.pathname.replace(/\/+$/, "").replace(/\.(?:txt|html?)$/i, "");
+  return `${host}${path}${parsed.search}`;
+}
+
+/**
+ * Two shards describing one document rarely describe it identically. Nothing here is
+ * a judgement call: take the more precise date, the later retrieval, and the less
+ * flattering `primary`, so a disagreement about whether a source is primary surfaces
+ * as the validator warning it should be rather than being resolved by shard order.
+ */
+function reconcile(
+  held: SourcesFile["sources"][number],
+  draft: Omit<SourcesFile["sources"][number], "id">,
+) {
+  if (draft.published.startsWith(held.published)) held.published = draft.published;
+  if (draft.retrieved > held.retrieved) held.retrieved = draft.retrieved;
+  if (!draft.primary) held.primary = false;
+  if (!held.identifier && draft.identifier) held.identifier = draft.identifier;
+  // A fragment names a position, and two shards pointing at different positions agree
+  // only about the document. Keep the pointer that is true of both of them.
+  if (held.url.includes("#") && draft.url !== held.url) {
+    held.url = draft.url.includes("#") ? held.url.slice(0, held.url.indexOf("#")) : draft.url;
+  }
+}
 
 /**
  * Folds every research shard into one `sources.json`, handing out ids in shard
@@ -208,6 +253,7 @@ export function mergeSources(root: string, slug: string, clock: Clock = systemCl
   const problems: string[] = [];
   const byUrl = new Map<string, { entry: SourcesFile["sources"][number]; quotes: Set<string> }>();
   let merged = 0;
+  let folded = 0;
 
   for (const file of files) {
     const parsed = researchShardSchema.safeParse(readJsonFile(join(dir, file)));
@@ -221,14 +267,18 @@ export function mergeSources(root: string, slug: string, clock: Clock = systemCl
       problems.push(`${file}: shard name "${parsed.data.shard}" does not match the filename`);
     }
     for (const draft of parsed.data.sources) {
-      const existing = byUrl.get(draft.url);
+      const key = sourceKey(draft.url);
+      const existing = byUrl.get(key);
       if (!existing) {
-        byUrl.set(draft.url, {
+        byUrl.set(key, {
           entry: { ...draft, id: "S00", excerpts: [] },
           quotes: new Set(),
         });
+      } else {
+        folded++;
+        reconcile(existing.entry, draft);
       }
-      const target = byUrl.get(draft.url)!;
+      const target = byUrl.get(key)!;
       for (const excerpt of draft.excerpts) {
         if (target.quotes.has(excerpt.quote)) {
           merged++;
@@ -273,6 +323,7 @@ export function mergeSources(root: string, slug: string, clock: Clock = systemCl
     primary: sources.filter((s) => s.primary).length,
     excerpts: sources.reduce((n, s) => n + s.excerpts.length, 0),
     merged,
+    folded,
     problems,
   };
 }

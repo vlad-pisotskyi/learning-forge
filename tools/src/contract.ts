@@ -194,7 +194,7 @@ export const sourcesFileSchema = z
             kind: z.enum(["paper", "docs", "spec", "book", "dataset", "code", "standard"]),
             title: z.string().min(4).max(300),
             authors: z.array(z.string().min(2)).optional(),
-            published: z.string().regex(/^\d{4}(-\d{2}-\d{2})?$/),
+            published: z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/),
             url: httpUrl,
             identifier: z.string().min(3).optional(),
             retrieved: isoDay,

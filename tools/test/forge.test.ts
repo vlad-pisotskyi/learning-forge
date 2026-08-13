@@ -248,6 +248,81 @@ describe("forge sources", () => {
     expect(at(written.sources, 1).excerpts.map((e) => e.key)).toEqual(["a"]);
   });
 
+  it("folds two spellings of one document into one source", () => {
+    const root = makeRoot();
+    initTopic(root, SLUG, clock);
+    writeFileSync(
+      join(paths.researchDir(root, SLUG), "a-encoding.json"),
+      JSON.stringify(
+        shard("a-encoding", [
+          draft("https://www.rfc-editor.org/rfc/rfc3629", ["The octet values C0, C1, F5 to FF never appear in UTF-8."]),
+          draft("https://encoding.spec.whatwg.org/#utf-8-encoder", ["The encoder emits the bytes for one scalar value."]),
+          draft("https://www.rfc-editor.org/rfc/rfc9839", ["A different document that shares a host and a path prefix."]),
+        ]),
+      ),
+    );
+    writeFileSync(
+      join(paths.researchDir(root, SLUG), "b-decoding.json"),
+      JSON.stringify(
+        shard("b-decoding", [
+          draft("https://rfc-editor.org/rfc/rfc3629.txt", ["Implementations MUST protect against decoding invalid sequences."]),
+          draft("https://encoding.spec.whatwg.org/#utf-8-decoder", ["The decoder emits U+FFFD when the byte is out of range."]),
+        ]),
+      ),
+    );
+
+    const result = mergeSources(root, SLUG, clock);
+    expect(result.problems).toEqual([]);
+    expect(result.folded).toBe(2);
+    expect(result.sources).toBe(3);
+
+    const written = sourcesFileSchema.parse(
+      JSON.parse(readFileSync(join(paths.topicDir(root, SLUG), "sources.json"), "utf8")),
+    );
+    expect(at(written.sources, 0).excerpts.map((e) => e.key)).toEqual(["a", "b"]);
+    expect(at(written.sources, 2).excerpts).toHaveLength(1);
+  });
+
+  it("takes the more precise date, the later retrieval, and the honest primary flag", () => {
+    const root = makeRoot();
+    initTopic(root, SLUG, clock);
+    const quote = "A quote long enough to satisfy the contract's floor.";
+    writeFileSync(
+      join(paths.researchDir(root, SLUG), "a-first.json"),
+      JSON.stringify(
+        shard("a-first", [
+          { ...draft("https://example.com/doc#one", [quote]), published: "2003", retrieved: "2026-01-01" },
+        ]),
+      ),
+    );
+    writeFileSync(
+      join(paths.researchDir(root, SLUG), "b-second.json"),
+      JSON.stringify(
+        shard("b-second", [
+          {
+            ...draft("https://example.com/doc", ["The second shard reached the same document by another route."]),
+            published: "2003-11",
+            retrieved: "2026-02-02",
+            primary: false,
+            identifier: "RFC 3629",
+          },
+        ]),
+      ),
+    );
+
+    expect(mergeSources(root, SLUG, clock).problems).toEqual([]);
+    const written = sourcesFileSchema.parse(
+      JSON.parse(readFileSync(join(paths.topicDir(root, SLUG), "sources.json"), "utf8")),
+    );
+    expect(written.sources).toHaveLength(1);
+    const only = at(written.sources, 0);
+    expect(only.published).toBe("2003-11");
+    expect(only.retrieved).toBe("2026-02-02");
+    expect(only.primary).toBe(false);
+    expect(only.identifier).toBe("RFC 3629");
+    expect(only.url).toBe("https://example.com/doc");
+  });
+
   it("is deterministic: the same shards produce the same file", () => {
     const root = makeRoot();
     initTopic(root, SLUG, clock);
