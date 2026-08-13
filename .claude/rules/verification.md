@@ -116,7 +116,7 @@ downstream, including the check that exists to catch fabrication.
 `forge sources --verify` closes it, in `tools/src/source-check.ts`: re-fetch each
 source, rule on each excerpt as `verbatim`, `verbatim apart from formatting`, or
 `not found`. It is advisory, and deliberately so. The first run against a real topic
-produced misses on quotes that were perfectly honest — ordered-list numbers that a
+produced misses on quotes that were perfectly honest: ordered-list numbers that a
 stylesheet generates and the document text never contains, the rule line inside an
 ASCII table, entity-encoded punctuation. A gate with that false-alarm rate would be
 switched off within a week, and a check nobody reads is worth nothing.
@@ -137,3 +137,49 @@ longer and richer.
 
 Treat it as unproven. If the auditor turns out to miss things a chapter obviously gets
 wrong, the shape of the pass is the first thing to suspect, not the wording.
+
+## Measured here, on 2026-08-13
+
+The first end-to-end run put one chapter through three audit and critique passes. The
+chapter was revised between passes, each time on the findings the previous pass named, and
+it validated under `--strict` before every pass. The numbers:
+
+| pass | claims | overstated | unsupported | faithfulness |
+|---|---|---|---|---|
+| 1 | 32 | 1 | 0 | fail |
+| 2 | 36 | 2 | 1 | fail |
+| 3 | 40 | 0 | 3 | fail |
+
+**Decomposition is not stable.** The claim count rose 32, 36, 40 across passes on text that
+changed in one passage each time. A chapter does not have a fixed number of claims in it; it
+has as many as a given pass chooses to cut it into. Any per-claim rate computed off a single
+pass inherits that, so the ruling distribution the stage playbook asks for is a description
+of one pass and not a property of the chapter.
+
+**Later passes found things earlier passes missed.** Two of pass two's three findings sat in
+places the revision had barely touched, so they were most likely present and uncaught in
+pass one. Passing an audit is weak evidence. Failing one is strong evidence.
+
+**The critic is less stable than the auditor, which the earlier sections already predicted.**
+Pass one examined `octet`, `code unit`, and `abstract character`, said each was glossed in
+place by the sentence carrying it, and explicitly declined to raise them. Pass three made
+those same terms its leading finding, on the grounds that they arrive cold. Same section,
+opposite rulings, no intervening edit to that part of the chapter.
+
+**The two agents can demand incompatible things.** This is the finding that matters most,
+because it is structural rather than statistical. Pass two's critic asked for the
+correspondence between the leading and trailing surrogate vocabulary and the high and low
+vocabulary to be stated, since a quiz question turned on it. A writer added it, citing the
+two nearest excerpts. Pass three's auditor ruled the addition `unsupported`, because nothing
+pinned gives the numeric boundary under Unicode's names. The critic asked for material the
+sources cannot carry, the writer wrote it, and the auditor failed it.
+
+Nothing in this design arbitrates that, and the loop it creates has no fixed point. The
+sound resolution is not to pick a winner between the agents. It is that a critic asking for
+new material is asking for a claim, and a claim needs a source before it needs prose. Where
+the research never covered the point, the honest outcomes are to go back to the research
+stage or to cut the quiz question, not to write the sentence and hope.
+
+Two consequences are now in `stages/verify.md`: revision rounds are capped, and a critic
+finding that calls for new material is checked against `sources.json` before a writer acts
+on it.

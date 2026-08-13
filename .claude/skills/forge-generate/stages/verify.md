@@ -106,6 +106,24 @@ is wrong.
 After revising, delete that chapter's verdict files and run both agents again. A stale
 verdict describing a chapter that no longer exists is worse than no verdict.
 
+### Two rules that come from watching this loop fail to converge
+
+**Cap it at three rounds per chapter.** The first run of this stage put one chapter through
+three passes. It failed all three, on a different set of claims each time, while the claim
+count rose from 32 to 40 on text that changed in one passage per round. A fourth round was
+not going to land somewhere the first three had not. When a chapter fails a third pass, stop
+revising and report it to the owner with all three verdicts, because at that point the
+finding is about the material or the sources rather than about the prose.
+
+**A critic asking for new material is asking for a claim.** The same run produced this in
+one loop: the critic asked for a correspondence to be stated because a quiz question turned
+on it, a writer added the sentence citing the nearest excerpts, and the next auditor ruled
+it `unsupported` because nothing pinned actually carried it. Before acting on a critique
+finding that calls for something new to be said, check `sources.json` for an excerpt that
+carries it. If none does, the honest options are to go back to the research stage or to cut
+the quiz question that depends on it. Writing the sentence and hoping produces a chapter
+that fails the next audit, which is how a loop like this stops converging.
+
 ## Done
 
 `forge verify` reports every chapter verified and the topic at `verified`. Re-run the
