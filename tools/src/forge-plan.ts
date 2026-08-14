@@ -46,6 +46,28 @@ export const STAGES = [
 export type Stage = (typeof STAGES)[number];
 
 const planVersion = z.literal(PLAN_VERSION);
+
+/** Named for the same reason as the enums in `contract.ts`: the drift test reads them. */
+export const auditRuling = z.enum([
+  "supported",
+  "overstated",
+  "unsupported",
+  "contradicted",
+  "unreachable",
+]);
+
+export const critiqueFindingKind = z.enum([
+  "prerequisite-gap",
+  "ordering",
+  "concept-not-taught",
+  "concept-not-exercised",
+  "unexplained-term",
+  "example-missing",
+  "quiz-mismatch",
+  "prose",
+]);
+
+export const findingSeverity = z.enum(["blocking", "advisory"]);
 const isoDay = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "expected YYYY-MM-DD");
 const fileSlug = z.string().regex(/^[a-z][a-z0-9-]{1,60}$/, "expected kebab-case");
 
@@ -121,13 +143,7 @@ export const chapterAuditSchema = z
              * field order, so the field order is the intervention.
              */
             quote: z.string().min(1).max(1200),
-            ruling: z.enum([
-              "supported",
-              "overstated",
-              "unsupported",
-              "contradicted",
-              "unreachable",
-            ]),
+            ruling: auditRuling,
             /** Why, for anything that is not plainly supported. */
             note: z.string().min(10).max(600).optional(),
           })
@@ -162,23 +178,14 @@ export const chapterCritiqueSchema = z
     findings: z.array(
       z
         .object({
-          kind: z.enum([
-            "prerequisite-gap",
-            "ordering",
-            "concept-not-taught",
-            "concept-not-exercised",
-            "unexplained-term",
-            "example-missing",
-            "quiz-mismatch",
-            "prose",
-          ]),
+          kind: critiqueFindingKind,
           detail: z.string().min(20).max(1200),
           /**
            * Last on purpose, for the same reason `quote` precedes `ruling` in an audit:
            * naming the problem before grading its weight is the one mitigation in the
            * judge literature with a clean measured effect.
            */
-          severity: z.enum(["blocking", "advisory"]),
+          severity: findingSeverity,
         })
         .strict(),
     ),

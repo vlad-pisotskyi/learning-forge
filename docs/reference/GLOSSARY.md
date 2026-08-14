@@ -153,6 +153,7 @@ people trust it.
 | span | The passage from the cited excerpt that carries the claim, quoted verbatim. Required for `supported` and refused for every other ruling. |
 | the span check | `forge verify` resolving each marker and confirming the quoted span really appears in that excerpt. Arithmetic, and the load-bearing part of the layer. |
 | finding | One thing the critic says is wrong, carrying a kind and a severity. |
+| finding kind | Which of eight things is wrong. `prerequisite-gap`: the chapter needs a concept no earlier chapter taught. `ordering`: a concept is used before it is introduced. `concept-not-taught`: the frontmatter claims a concept the prose never covers. `concept-not-exercised`: a concept is taught and no challenge ever makes the learner use it. `unexplained-term`: a term appears cold. `example-missing`: a claim that needs a worked case does not get one. `quiz-mismatch`: a question tests something the chapter did not teach. `prose`: it reads as machine output. |
 | severity | `blocking` or `advisory`. One blocking finding fails the critique. |
 | verdict | `pass`, `fail`, or `pending`. Derived by the CLI from rulings and findings, never written by the agent that produced them. |
 | verdict file | Where an agent leaves its rulings: `.forge-cache/<slug>/verdicts/<chapterId>.{audit,critique}.json`. One per chapter per agent. |
@@ -167,6 +168,20 @@ people trust it.
 | `draft` | Generated, not yet checked. |
 | `validated` | Passes the validator under `--strict`. Mechanical, and says nothing about whether the material is any good. |
 | `verified` | Every chapter carries a passing faithfulness verdict and a passing critique verdict. |
+
+## Learner progress
+
+Local-only, gitignored, and never committed. Listed here because all three roles read it.
+
+| term | definition |
+|---|---|
+| `unread` | Chapter progress. The learner has not opened it. |
+| `in-progress` | Chapter or challenge progress. Started and not finished. |
+| `passed` | Chapter progress means the quiz cleared its bar. Challenge progress means the evaluation set and the rubric both cleared theirs. |
+| `needs-review` | Chapter progress. The quiz was taken and missed the bar, so the chapter is owed a second pass. |
+| `not-started` | Challenge progress. The starting state, and distinct from a missing entry only in that the topic has been begun. |
+| `submitted` | Challenge progress. Attempted and judged, but not yet passing. |
+| `weakConcepts` | The union of missed concepts across chapters, minus anything since re-quizzed clean. The only cross-chapter state the Teacher loads. |
 
 ## Enforcement
 

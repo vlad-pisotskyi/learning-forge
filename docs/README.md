@@ -40,6 +40,7 @@ document is maintenance. Correcting a plan is vandalism.
 **plans/**
 
 - [HANDOFF.md](plans/HANDOFF.md). The original plan of record, from the planning session that preceded any code. Lists every phase. Frozen.
+- [DRIFT-GUARDS.md](plans/DRIFT-GUARDS.md). Why instruction files go stale, the four options that were on the table, which of them got built and at what strength, and what was left out on purpose. Frozen.
 
 ## Not here
 

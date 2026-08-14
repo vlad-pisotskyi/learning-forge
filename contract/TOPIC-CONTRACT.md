@@ -420,8 +420,9 @@ that is not a weakness in the topic. It is what the subject looks like.
 paper is sometimes the clearest thing to point a learner at, and a subject whose
 defaults come from practitioners rather than papers has to cite the practitioners
 to teach honestly. The question is asked of the topic instead: when more than half
-the sources are secondary, the validator warns once and names them, because a topic
-built mostly on secondary material has not done its reading.
+the sources are secondary, the validator warns once, reports how many of them are
+not primary and names which, because a topic built mostly on secondary material has
+not done its reading.
 
 The per-source form of this was a warning on every secondary entry, and `promote`
 runs `--strict`, so it made `primary: false` unusable. A flag that cannot be set
@@ -752,7 +753,10 @@ A chapter with `status: verified` must carry both verdicts as `pass`. A topic wi
 Neither verdict is the auditing agent's to write. An agent hands over rulings, one per
 claim, and `npm run forge -- verify <slug>` derives the verdict and every count from
 them. Faithfulness passes when every claim is `supported`. Critique passes when no
-finding is `blocking`. This is the same arrangement as the quiz split: an agent cannot
+finding is `blocking`. A dimension nobody has audited yet is `pending`, which is a
+third verdict rather than a `fail`, because a chapter that was never checked and a
+chapter that failed its check are different situations and collapsing them loses the
+one piece of information that says what to do next. This is the same arrangement as the quiz split: an agent cannot
 report a pass over a chapter it also reported three unsupported claims in, because it
 never gets to write the word.
 
@@ -776,6 +780,35 @@ demonstrated there are none.
 `unreachable`: the source could not be read. It exists so that unchecked is recorded
 as unchecked rather than being pushed into whichever of pass or fail is more
 comfortable.
+
+### The eight finding kinds
+
+A critique finding carries a kind and a severity. The kinds are fixed, for the same
+reason the rulings are: a critic writing free-form prose produces findings nobody can
+count, and a fixed set makes "six of these are unexercised concepts" a fact rather than
+an impression.
+
+`prerequisite-gap`: the chapter needs a concept that no earlier chapter taught.
+
+`ordering`: a concept is used before the chapter introduces it.
+
+`concept-not-taught`: the frontmatter claims a concept the prose never covers.
+
+`concept-not-exercised`: a concept is taught and no challenge ever makes the learner
+use it. This is the one that catches a topic teaching more than it tests.
+
+`unexplained-term`: a term appears cold, with no definition and no citation.
+
+`example-missing`: a claim that needs a worked case to land does not get one.
+
+`quiz-mismatch`: a question tests something the chapter did not teach.
+
+`prose`: it reads as machine output. The three mechanical tells are the validator's;
+this covers what only a reader can see.
+
+Severity is `blocking` or `advisory`, and it comes last in the schema for the same
+reason `ruling` comes after `quote`. Naming the problem before grading its weight is
+the one mitigation in the judge literature with a clean measured effect.
 
 ### Every quoted span is checked
 

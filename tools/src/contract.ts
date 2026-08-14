@@ -57,8 +57,38 @@ const chapterId = z.string().regex(CHAPTER_ID);
 const excerptRef = z.string().regex(EXCERPT_REF);
 const httpUrl = z.string().url().startsWith("http");
 
+/**
+ * The enums below are exported and named rather than written inline, because
+ * `tools/test/docs-drift.test.ts` reads their members and asserts each one is documented
+ * in the contract and the glossary. Inline members are invisible to that check, so a new
+ * one could ship undocumented. Adding a member here means adding a glossary row.
+ */
 export const topicStatus = z.enum(["draft", "validated", "verified"]);
 export const chapterStatus = z.enum(["draft", "verified"]);
+
+export const questionKind = z.enum(["recall", "application", "discrimination"]);
+
+/**
+ * `report` is measured work published outside a venue: a company technical report, a lab
+ * write-up. Separate from `paper` because the identifier warning is scoped to the kinds
+ * that have an identifier to record, and separate from `docs` because a report says what
+ * somebody found rather than how to use something.
+ */
+export const sourceKind = z.enum([
+  "paper",
+  "report",
+  "docs",
+  "spec",
+  "book",
+  "dataset",
+  "code",
+  "standard",
+]);
+
+export const evalRunner = z.enum(["vitest", "node", "python"]);
+export const thresholdDirection = z.enum(["gte", "lte"]);
+export const chapterProgress = z.enum(["unread", "in-progress", "passed", "needs-review"]);
+export const challengeProgress = z.enum(["not-started", "in-progress", "submitted", "passed"]);
 
 export const topicManifestSchema = z
   .object({
@@ -94,7 +124,7 @@ export const conceptsFileSchema = z
   })
   .strict();
 
-const auditVerdict = z.enum(["pass", "fail", "pending"]);
+export const auditVerdict = z.enum(["pass", "fail", "pending"]);
 
 export const chapterFrontmatterSchema = z
   .object({
@@ -151,7 +181,7 @@ export const quizFileSchema = z
           .object({
             id: z.string().regex(QUESTION_ID),
             concept: conceptId,
-            kind: z.enum(["recall", "application", "discrimination"]),
+            kind: questionKind,
             prompt: z.string().min(15).max(500).endsWith("?"),
           })
           .strict(),
@@ -191,14 +221,7 @@ export const sourcesFileSchema = z
         z
           .object({
             id: z.string().regex(SOURCE_ID),
-            /**
-             * `report` is measured work published outside a venue: a company technical
-             * report, a lab write-up. It is separate from `paper` because the identifier
-             * warning below is scoped to the kinds that have an identifier to record, and
-             * separate from `docs` because a report says what somebody found rather than
-             * how to use something.
-             */
-            kind: z.enum(["paper", "report", "docs", "spec", "book", "dataset", "code", "standard"]),
+            kind: sourceKind,
             title: z.string().min(4).max(300),
             authors: z.array(z.string().min(2)).optional(),
             published: z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/),
@@ -253,7 +276,7 @@ export const challengeManifestSchema = z
       .strict(),
     eval: z
       .object({
-        runner: z.enum(["vitest", "node", "python"]),
+        runner: evalRunner,
         spec: z.string().startsWith(".hidden/"),
         metrics: z
           .array(
@@ -261,7 +284,7 @@ export const challengeManifestSchema = z
               .object({
                 name: z.string().min(1),
                 threshold: z.number(),
-                direction: z.enum(["gte", "lte"]),
+                direction: thresholdDirection,
               })
               .strict(),
           )
@@ -281,7 +304,7 @@ export const progressFileSchema = z
       chapterId,
       z
         .object({
-          status: z.enum(["unread", "in-progress", "passed", "needs-review"]),
+          status: chapterProgress,
           quizScore: z.number().int().nonnegative().optional(),
           quizOf: z.number().int().positive().optional(),
           missedConcepts: z.array(conceptId).optional(),
@@ -294,7 +317,7 @@ export const progressFileSchema = z
       z.string().regex(CHALLENGE_ID),
       z
         .object({
-          status: z.enum(["not-started", "in-progress", "submitted", "passed"]),
+          status: challengeProgress,
           attempts: z.number().int().nonnegative(),
           best: z.record(z.string(), z.number()).optional(),
           rubricScore: z.number().min(0).max(100).optional(),
