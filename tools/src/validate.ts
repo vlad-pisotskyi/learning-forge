@@ -327,9 +327,6 @@ export function validateTopic(topicDir: string, strictFlag: boolean): Report {
       if (Date.parse(source.retrieved) > Date.now()) {
         report.error(path, `${source.id}: retrieved ${source.retrieved} is in the future`);
       }
-      if (!source.primary) {
-        report.warn(path, `${source.id} is not a primary source; the sourcing rule prefers primary`);
-      }
       if (source.kind === "paper" || source.kind === "book") {
         if (!source.authors?.length) report.error(path, `${source.id}: ${source.kind} needs authors`);
         if (!source.identifier) report.warn(path, `${source.id}: no DOI/arXiv identifier`);
@@ -340,6 +337,21 @@ export function validateTopic(topicDir: string, strictFlag: boolean): Report {
         seenKeys.add(excerpt.key);
         excerptRefs.add(`${source.id}.${excerpt.key}`);
       }
+    }
+
+    // Asked of the topic, not of each source, because that is what the rule says: a topic
+    // where most sources are secondary has not done its reading. Warning per source said
+    // something different and worse. `promote` runs `--strict`, so a warning on every
+    // secondary entry made `primary: false` unusable, and a topic that has to teach what
+    // practitioners recommend has to cite the practitioners. The flag exists to be set.
+    const secondary = sources.sources.filter((source) => !source.primary);
+    if (secondary.length * 2 > sources.sources.length) {
+      report.warn(
+        path,
+        `${secondary.length} of ${sources.sources.length} sources are not primary (${secondary
+          .map((source) => source.id)
+          .join(", ")}); a topic built mostly on secondary material has not done its reading`,
+      );
     }
   }
 

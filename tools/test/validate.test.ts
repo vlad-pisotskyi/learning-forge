@@ -106,6 +106,34 @@ describe("source dates", () => {
   });
 });
 
+describe("primary sources", () => {
+  it("says nothing about a single secondary source among primary ones", () => {
+    // The flag exists to be set. A topic that teaches what practitioners recommend has
+    // to cite the practitioners, and `promote` runs `--strict`, so a warning here is a
+    // hard block rather than advice.
+    const dir = copyFixture();
+    editJson(join(dir, "sources.json"), (data) => {
+      data.sources[1].primary = false;
+    });
+    expect(validateTopic(dir, true).findings).toEqual([]);
+  });
+
+  it("warns once, naming them, when most of the sources are secondary", () => {
+    const dir = copyFixture();
+    editJson(join(dir, "sources.json"), (data) => {
+      for (const source of data.sources) source.primary = false;
+    });
+    const warnings = matching(
+      validateTopic(dir, false).warnings.map((w) => w.message),
+      "has not done its reading",
+    );
+    expect(warnings.length).toBe(1);
+    expect(warnings[0]).toContain("S01, S02");
+    // And it still blocks new material, because the generator runs strict.
+    expect(matching(errorsOf(dir), "has not done its reading").length).toBe(1);
+  });
+});
+
 describe("no hedging", () => {
   it("rejects a hedge in prose", () => {
     const dir = copyFixture();

@@ -402,9 +402,16 @@ One file, `sources.json`, for the whole topic.
 | `excerpts[].quote` | 20 to 1500 characters, verbatim. |
 | `excerpts[].locator` | Where in the source: section, page, heading, or line range. |
 
-`primary: false` is a warning, not an error. A blog post explaining a paper is
-sometimes the clearest thing to point a learner at, but a topic where most sources
-are secondary has not done its reading.
+`primary: false` on one source is not a finding at all. A blog post explaining a
+paper is sometimes the clearest thing to point a learner at, and a subject whose
+defaults come from practitioners rather than papers has to cite the practitioners
+to teach honestly. The question is asked of the topic instead: when more than half
+the sources are secondary, the validator warns once and names them, because a topic
+built mostly on secondary material has not done its reading.
+
+The per-source form of this was a warning on every secondary entry, and `promote`
+runs `--strict`, so it made `primary: false` unusable. A flag that cannot be set
+without blocking the topic is not a flag.
 
 The excerpt is the entire basis of the guarantee. It must be copied verbatim, not
 reconstructed from memory, and it must be long enough to stand on its own. A
