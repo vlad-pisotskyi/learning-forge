@@ -55,6 +55,14 @@ sides. That is a fact about the field, not a hedge.
 reporting a genuinely open question. The reason is required and an auditor reads it.
 Reaching for it because a source is thin is the wrong move; cut the claim instead.
 
+The other sanctioned use is unmeasured practice, and it is worth knowing because some
+subjects are full of it. A number everybody uses and nobody has measured cannot be
+stated as a finding, because the auditor will rule it unsupported, and it cannot be
+hedged, because the validator rejects that. State it as what it is: the practice, a
+citation for who recommends it, and a plain sentence saying it was never measured. The
+reason on the escape names the gap. The contract's hedging section has the exact form.
+This is only for a field that has no answer, never for research that came back thin.
+
 ## Shape
 
 Follow the outline you were given: those are the `##` headings, in that order. At least

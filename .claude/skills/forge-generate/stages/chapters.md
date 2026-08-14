@@ -65,6 +65,13 @@ cite both sides.
 A chapter that meets the floor by attaching markers to sentences they do not support
 passes the validator and fails the audit.
 
+**A number everybody uses and nobody measured.** Some subjects are full of these, and
+they cannot be written as findings or as hedges. The contract's hedging section gives
+the sanctioned form: state the practice, cite who recommends it, and say that the cited
+recommendation carries no measurement. Keep the absence claim scoped to the source. A
+sentence saying nobody has ever measured it is a claim about the whole literature, and
+the auditor rules it unsupported.
+
 ## 4. Finish the stage
 
 When the worklist is empty and the validator names no chapter problems, report the

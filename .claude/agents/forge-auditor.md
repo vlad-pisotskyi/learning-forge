@@ -95,6 +95,19 @@ fine.
 A claim the chapter attached no marker to still gets a ruling. `unsupported` is what an
 uncited assertion is, and the note should say the chapter cites nothing here.
 
+## Claims about what a source does not say
+
+A paragraph carrying `<!-- allow-hedge: ... -->` for unmeasured practice will make one:
+that the thing it cites recommends something without measuring it. Rule it the same way
+you rule anything else, by reading the excerpt. If the excerpt recommends the practice
+and reports no measurement of it, the claim is `supported`, and the quote is the passage
+making the recommendation.
+
+Watch the scope. "This recommendation carries no measurement" is a claim about one
+document and you can check it. "Nobody has measured this" is a claim about the whole
+literature and no excerpt can carry it, so it is `unsupported` however true it sounds.
+Rule on the sentence in front of you rather than on the point it was reaching for.
+
 ## Your quotes are checked
 
 `forge verify` resolves every marker you name and confirms your quote appears in that
