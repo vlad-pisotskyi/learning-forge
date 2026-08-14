@@ -44,11 +44,15 @@ map stage works without it.
 Do not read the shard files into this context. The merge step reads them, and the
 map stage reads the merged result.
 
-One instruction worth putting in every shard prompt: when a paper is on arXiv, pin the
-abstract page. The merge folds the abstract page, the PDF, and the ar5iv full-text
-renders onto one identifier, so reaching a different mirror is not a defect. The
-abstract page is still the one that carries the arXiv id the validator wants and the one
-a reader can navigate from.
+One instruction worth putting in every shard prompt: the arXiv id belongs in `identifier`,
+and the `url` is the page the quote was actually read from. Those are two different jobs
+and running them together is a defect this repo has already paid for. An abstract page may
+carry excerpts quoted from the abstract and nothing else, because a locator naming Section
+5.1 against a page holding only the abstract can never be checked, and the contract asks
+for a locator precise enough to find the passage again. Quote from the full-text render
+and cite it. The merge folds the abstract page, the PDF, and the ar5iv renders onto one
+identifier, so a full-text URL costs the topic nothing: it still resolves to one source
+carrying the id the validator wants.
 
 ## 3. Merge
 
@@ -88,10 +92,13 @@ up as `not found` or as `verbatim apart from formatting` and neither is a defect
 
 What to act on:
 
-- **A source where nothing at all was found.** Either the quote is not that document's
-  or the URL points somewhere the text does not live. A URL that resolves to a summary
-  page is the common case and it is a real defect: the contract requires a locator
-  precise enough to find the passage again, and one that leads to the wrong page is not.
+- **A source where almost nothing was found.** Not only the ones that scored zero. A
+  source that verified one excerpt out of thirteen has a wrong URL just as surely, and it
+  reads as a partial success only because one quote happened to come from the page that
+  was pinned. Either the quotes are not that document's or the URL points somewhere the
+  text does not live. A URL that resolves to a summary page is the common case and it is a
+  real defect: the contract requires a locator precise enough to find the passage again,
+  and one that leads to the wrong page is not.
 - **A source that could not be fetched.** Pin something a reader can reach.
 
 Fix these by re-running the shard that produced the source, not by editing
@@ -100,13 +107,25 @@ Fix these by re-running the shard that produced the source, not by editing
 ## 5. Report and stop
 
 Report the shard count, the source count, the excerpt count, how many sources are
-primary, and any shard left unresolved. Two things need flagging by name. Any `paper` or
-`book` with no DOI or arXiv identifier is a validator warning, and `promote` runs
-`--strict`, so the topic cannot reach `validated` while one remains. And count the
-secondary sources against the total: the warning fires when more than half of them are
-secondary, so one `primary: false` entry is fine and a majority is not. Better to replace a
-secondary source with the primary it describes now than after twelve chapters cite it.
-Then stop. The map stage is a separate invocation.
+primary, and any shard left unresolved.
+
+Then run the validator over the topic and report its warnings as it words them:
+
+```
+npm run validate -- topics/<slug> --strict
+```
+
+Do not decide by eye which sources would trip a rule. The validator holds the conditions,
+they have moved before, and a report derived from the tool is still right on the day the
+tool changes. `promote` runs `--strict`, so anything warned about is something the topic
+cannot reach `validated` while carrying.
+
+Two of them concern this stage, and both are cheaper to fix now than after twelve chapters
+cite the source. One asks for an identifier on the kinds of source that have one. The other
+asks whether the topic's reading leans too heavily on secondary material, which is a
+question about the balance and not about any single `primary: false` entry. When either
+fires, the fix is to replace the source or correct its kind. Then stop. The map stage is a
+separate invocation.
 
 ## What counts as done
 

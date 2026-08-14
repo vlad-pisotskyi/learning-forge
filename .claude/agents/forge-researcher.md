@@ -33,19 +33,25 @@ the quote supports the claim. So:
 ## Primary sources
 
 Prefer the original: the paper that introduced a method, the specification, the
-official documentation. Mark anything secondary `primary: false` honestly. One such
-entry costs nothing, because the validator asks the question of the topic rather than
-of each source and warns only when more than half of them are secondary. A subject
-whose defaults come from practitioners has to cite the practitioners to teach
-honestly, and the flag exists to be set.
+official documentation. Mark anything secondary `primary: false` honestly. The flag
+exists to be set, and setting it truthfully is never the wrong move: the validator asks
+about the balance of a topic's reading rather than about any single entry, so one honest
+secondary source does not put the topic at risk. A subject whose defaults come from
+practitioners has to cite the practitioners to teach honestly.
 
 What you are responsible for is the proportion, not the single entry. Reach for a
 secondary source when there is genuinely no primary to point at, and say so in
 `openQuestions`.
 
 Include the identifier when there is one: a DOI, an arXiv id, an RFC number. Names
-collide and identifiers do not, and a `paper` or a `book` carrying no identifier is a
-warning.
+collide and identifiers do not, and the kinds of source that carry an identifier are
+warned about when it is missing.
+
+The identifier and the URL are separate jobs. `identifier` holds the arXiv id, the DOI,
+the RFC number. `url` holds the page you read the quote on. For a paper that means the
+full-text render whenever you quote past the abstract, because an abstract page cannot
+contain Section 5.1 and a locator naming it can never be checked. Pinning an abstract
+page and quoting the body is a defect this repo has already paid for.
 
 Pick the `kind` that is true rather than the one that sounds strongest. Measured work
 published outside a venue is `report`: a company technical report, a lab write-up, an

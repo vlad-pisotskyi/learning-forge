@@ -20,3 +20,6 @@ topics/*/challenges/*/work/
 # Personal Claude Code overrides. .claude/settings.json is committed, because the
 # guardrail hooks are part of the repo; local overrides are not.
 .claude/settings.local.json
+
+# Rendered exports of docs/. Derived from the .md files, so they go stale silently.
+docs/**/*.pdf

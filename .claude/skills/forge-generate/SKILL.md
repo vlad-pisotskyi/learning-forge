@@ -91,13 +91,20 @@ verification agents and is not this skill's to hand out.
 A `validated` topic is still not audited: the faithfulness auditor and the critique
 agent have not run. Say that when reporting a finished run.
 
-`--strict` promotes warnings to errors, and `promote` always runs strict. Two warnings
-bite here in particular. A `paper` or a `book` carrying no DOI or arXiv identifier is one;
-record the identifier, or when the work genuinely has none, file it as the kind it actually
-is. The other is asked of the topic rather than of each source: when more than half the
-sources are secondary, the validator warns once and names them, so a topic built mostly on
-secondary material cannot be promoted until it has done its reading. A single
-`primary: false` entry is not a finding.
+`--strict` promotes warnings to errors, and `promote` always runs strict, so any warning
+blocks promotion. Do not carry the conditions around in your head. Run
+
+```
+npm run validate -- topics/<slug> --strict
+```
+
+and report what it says: each message names the file, the rule, and what it counted. Two
+warnings come up often enough to know the shape of. One asks for a DOI or arXiv identifier
+on the kinds of source that have one, and the fix is to record it or to file the work as
+the kind it actually is. The other is asked of the topic rather than of each source, so it
+is about the balance of the reading and not about any single entry, and a lone
+`primary: false` is not a finding. The sources section of `contract/TOPIC-CONTRACT.md`
+holds the exact conditions for both, which is where they change.
 
 ## Where the work is kept
 
