@@ -25,7 +25,9 @@ produce surveys, and a survey cannot be pinned to a quote.
 
 Name the shards so their alphabetical order matches their teaching order where that
 is natural. Source ids are handed out in shard order, so `S01` then lands in the
-early material and the numbering reads sensibly.
+early material and the numbering reads sensibly. A two-digit prefix is the plainest
+way to get that, as in `01-rag-formulation`, and the shard name may open with it.
+Whatever the name is, it has to match the filename, which the merge checks.
 
 ## 2. Run the shards, three at a time
 

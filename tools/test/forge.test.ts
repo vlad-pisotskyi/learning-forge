@@ -385,6 +385,21 @@ describe("forge sources", () => {
     );
     expect(mergeSources(root, SLUG, clock).problems.join(" ")).toMatch(/does not match the filename/);
   });
+
+  // The playbook asks for shard names that sort into teaching order, and a numeric prefix
+  // is how that gets done. Every other test here names its shards `a-something`, which is
+  // why the slug rule could reject a leading digit for as long as it did.
+  it("accepts a shard whose name opens with its ordering prefix", () => {
+    const root = makeRoot();
+    initTopic(root, SLUG, clock);
+    writeFileSync(
+      join(paths.researchDir(root, SLUG), "01-first-question.json"),
+      JSON.stringify(shard("01-first-question", [draft("https://example.com/one", ["A quote long enough to satisfy the floor."])])),
+    );
+    const result = mergeSources(root, SLUG, clock);
+    expect(result.problems).toEqual([]);
+    expect(result.sources).toBe(1);
+  });
 });
 
 describe("forge apply", () => {

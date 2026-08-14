@@ -1,0 +1,1685 @@
+{
+  "contractVersion": 3,
+  "sources": [
+    {
+      "kind": "paper",
+      "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+      "authors": [
+        "Patrick Lewis",
+        "Ethan Perez",
+        "Aleksandra Piktus",
+        "Fabio Petroni",
+        "Vladimir Karpukhin",
+        "Naman Goyal",
+        "Heinrich Kuttler",
+        "Mike Lewis",
+        "Wen-tau Yih",
+        "Tim Rocktaschel",
+        "Sebastian Riedel",
+        "Douwe Kiela"
+      ],
+      "published": "2020-05",
+      "url": "https://ar5iv.labs.arxiv.org/html/2005.11401",
+      "identifier": "arXiv:2005.11401",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, sentences 5 to 6",
+          "quote": "We introduce RAG models where the parametric memory is a pre-trained seq2seq model and the non-parametric memory is a dense vector index of Wikipedia, accessed with a pre-trained neural retriever. We compare two RAG formulations, one which conditions on the same retrieved passages across the whole generated sequence, and another which can use different passages per token."
+        },
+        {
+          "key": "b",
+          "locator": "Abstract, final two sentences",
+          "quote": "We fine-tune and evaluate our models on a wide range of knowledge-intensive NLP tasks and set the state of the art on three open domain QA tasks, outperforming parametric seq2seq models and task-specific retrieve-and-extract architectures. For language generation tasks, we find that RAG models generate more specific, diverse and factual language than a state-of-the-art parametric-only seq2seq baseline."
+        },
+        {
+          "key": "c",
+          "locator": "Section 1 Introduction, opening paragraph",
+          "quote": "Pre-trained neural language models have been shown to learn a substantial amount of in-depth knowledge from data. They can do so without any access to an external memory, as a parameterized implicit knowledge base. While this development is exciting, such models do have downsides: They cannot easily expand or revise their memory, can't straightforwardly provide insight into their predictions, and may produce \"hallucinations\"."
+        },
+        {
+          "key": "d",
+          "locator": "Section 1 Introduction, paragraph introducing the RAG models",
+          "quote": "We build RAG models where the parametric memory is a pre-trained seq2seq transformer, and the non-parametric memory is a dense vector index of Wikipedia, accessed with a pre-trained neural retriever."
+        },
+        {
+          "key": "e",
+          "locator": "Section 1 Introduction, on training the two components together",
+          "quote": "We jointly train the retriever and generator components without any direct supervision on what document should be retrieved."
+        },
+        {
+          "key": "f",
+          "locator": "Section 2 Methods, opening sentence",
+          "quote": "We explore RAG models, which use the input sequence x to retrieve text documents z and use them as additional context when generating the target sequence y."
+        },
+        {
+          "key": "g",
+          "locator": "Section 2 Methods, the retriever component named",
+          "quote": "a retriever pη(z|x) with parameters η that returns (top-K truncated) distributions over text passages given a query x"
+        },
+        {
+          "key": "h",
+          "locator": "Section 2.1 RAG-Sequence Model, first two sentences",
+          "quote": "The RAG-Sequence model uses the same retrieved document to generate the complete sequence. Technically, it treats the retrieved document as a single latent variable that is marginalized to get the seq2seq probability p(y|x) via a top-K approximation."
+        },
+        {
+          "key": "i",
+          "locator": "Section 2.2 RAG-Token Model, first two sentences",
+          "quote": "In the RAG-Token model we can draw a different latent document for each target token and marginalize accordingly. This allows the generator to choose content from several documents when producing an answer."
+        },
+        {
+          "key": "j",
+          "locator": "Section 2, closing remark on the two formulations",
+          "quote": "Finally, we note that RAG can be used for sequence classification tasks by considering the target class as a target sequence of length one, in which case RAG-Sequence and RAG-Token are equivalent."
+        },
+        {
+          "key": "k",
+          "locator": "Section 2.4 Decoding at Test Time, on RAG-Sequence",
+          "quote": "For RAG-Sequence, the likelihood p(y|x) does not break into a conventional per-token likelihood, hence we cannot solve it with a single beam search."
+        },
+        {
+          "key": "l",
+          "locator": "Section 4.1 Open-domain Question Answering, on the baselines compared against",
+          "quote": "We compare RAG to the popular extractive QA paradigm, where answers are extracted spans from retrieved documents, relying primarily on non-parametric knowledge. We also compare to \"Closed-Book QA\" approaches, which, like RAG, generate answers, but which do not exploit retrieval, instead relying purely on parametric knowledge."
+        },
+        {
+          "key": "m",
+          "locator": "Section 4 Results, Open-domain QA paragraph",
+          "quote": "On all four open-domain QA tasks, RAG sets a new state of the art (only on the T5-comparable split for TQA). RAG combines the generation flexibility of the \"closed-book\" (parametric only) approaches and the performance of \"open-book\" retrieval-based approaches. Unlike REALM and T5+SSM, RAG enjoys strong results without expensive, specialized \"salient span masking\" pre-training."
+        },
+        {
+          "key": "n",
+          "locator": "Section 4 Results, Open-domain QA paragraph, on the DPR comparison",
+          "quote": "RAG compares favourably to the DPR QA system, which uses a BERT-based \"cross-encoder\" to re-rank documents, along with an extractive reader. RAG demonstrates that neither a re-ranker nor extractive reader is necessary for state-of-the-art performance."
+        },
+        {
+          "key": "o",
+          "locator": "Section 4 Results, Open-domain QA paragraph, on answers absent from the retrieved set",
+          "quote": "Furthermore, RAG can generate correct answers even when the correct answer is not in any retrieved document, achieving 11.8% accuracy in such cases for NQ, where an extractive model would score 0%."
+        },
+        {
+          "key": "p",
+          "locator": "Table 1 caption",
+          "quote": "Open-Domain QA Test Scores. For TQA, left column uses the standard test set for Open-Domain QA, right column uses the TQA-Wiki test set."
+        }
+      ],
+      "id": "S01"
+    },
+    {
+      "kind": "paper",
+      "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (NeurIPS 2020 version of record)",
+      "authors": [
+        "Patrick Lewis",
+        "Ethan Perez",
+        "Aleksandra Piktus",
+        "Fabio Petroni",
+        "Vladimir Karpukhin",
+        "Naman Goyal",
+        "Heinrich Kuttler",
+        "Mike Lewis",
+        "Wen-tau Yih",
+        "Tim Rocktaschel",
+        "Sebastian Riedel",
+        "Douwe Kiela"
+      ],
+      "published": "2020-12",
+      "url": "https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, sentences 3 to 5",
+          "quote": "Additionally, providing provenance for their decisions and updating their world knowledge remain open research problems. Pre-trained models with a differentiable access mechanism to explicit non-parametric memory can overcome this issue, but have so far been only investigated for extractive downstream tasks. We explore a general-purpose fine-tuning recipe for retrieval-augmented generation (RAG) -- models which combine pre-trained parametric and non-parametric memory for language generation."
+        },
+        {
+          "key": "b",
+          "locator": "Abstract, sentence 7",
+          "quote": "We compare two RAG formulations, one which conditions on the same retrieved passages across the whole generated sequence, the other can use different passages per token."
+        }
+      ],
+      "id": "S02"
+    },
+    {
+      "kind": "paper",
+      "title": "Dense Passage Retrieval for Open-Domain Question Answering (arXiv abstract page, v3)",
+      "authors": [
+        "Vladimir Karpukhin",
+        "Barlas Oguz",
+        "Sewon Min",
+        "Patrick Lewis",
+        "Ledell Wu",
+        "Sergey Edunov",
+        "Danqi Chen",
+        "Wen-tau Yih"
+      ],
+      "published": "2020-04",
+      "url": "https://arxiv.org/abs/2004.04906",
+      "identifier": "arXiv:2004.04906",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, as listed on the arXiv abstract page for v3 (submitted 30 Sep 2020)",
+          "quote": "Open-domain question answering relies on efficient passage retrieval to select candidate contexts, where traditional sparse vector space models, such as TF-IDF or BM25, are the de facto method. In this work, we show that retrieval can be practically implemented using dense representations alone, where embeddings are learned from a small number of questions and passages by a simple dual-encoder framework. When evaluated on a wide range of open-domain QA datasets, our dense retriever outperforms a strong Lucene-BM25 system largely by 9%-19% absolute in terms of top-20 passage retrieval accuracy, and helps our end-to-end QA system establish new state-of-the-art on multiple open-domain QA benchmarks."
+        },
+        {
+          "key": "b",
+          "locator": "Section 5.1, Main Results, discussion of Table 2 (top-k retrieval accuracy)",
+          "quote": "With the exception of SQuAD, DPR performs consistently better than BM25 on all datasets. The gap is especially large when k is small (e.g., 78.4% vs. 59.1% for top-20 accuracy on Natural Questions)."
+        },
+        {
+          "key": "c",
+          "locator": "Section 5.1, Main Results, the paragraph explaining DPR's weaker result on SQuAD",
+          "quote": "We conjecture that the lower performance on SQuAD is due to two reasons. First, the annotators wrote questions after seeing the passage. As a result, there is a high lexical overlap between passages and questions, which gives BM25 a clear advantage. Second, the data was collected from only 500+ Wikipedia articles and thus the distribution of training examples is extremely biased."
+        },
+        {
+          "key": "d",
+          "locator": "Section 5, experimental setup for the retriever used in the main experiments",
+          "quote": "The DPR model used in our main experiments is trained using the in-batch negative setting (Section 3.2) with a batch size of 128 and one additional BM25 negative passage per question."
+        },
+        {
+          "key": "e",
+          "locator": "Section 5.2, ablation on the number of training examples (discussion of the low-resource figure)",
+          "quote": "As is shown, a dense passage retriever trained using only 1,000 examples already outperforms BM25. This suggests that with a general pretrained language model, it is possible to train a high-quality dense retriever with a small number of question-passage pairs."
+        },
+        {
+          "key": "f",
+          "locator": "Section 5.1, Main Results, the multi-dataset encoder paragraph",
+          "quote": "While it is good to have the flexibility to adapt the retriever to each dataset, it would also be desirable to obtain a single retriever that works well across the board. To this end, we train a multi-dataset encoder by combining training data from all datasets excluding SQuAD."
+        },
+        {
+          "key": "g",
+          "locator": "Section 5.1, Main Results, the sentence on combining DPR with BM25",
+          "quote": "Results can be improved further in some cases by combining DPR with BM25 in both single- and multi-dataset settings."
+        }
+      ],
+      "id": "S03"
+    },
+    {
+      "kind": "paper",
+      "title": "BEIR: A Heterogenous Benchmark for Zero-shot Evaluation of Information Retrieval Models (arXiv abstract page, v4)",
+      "authors": [
+        "Nandan Thakur",
+        "Nils Reimers",
+        "Andreas Ruckle",
+        "Abhishek Srivastava",
+        "Iryna Gurevych"
+      ],
+      "published": "2021-04",
+      "url": "https://arxiv.org/abs/2104.08663",
+      "identifier": "arXiv:2104.08663",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, as listed on the arXiv abstract page for v4 (submitted 21 Oct 2021)",
+          "quote": "We leverage a careful selection of 18 publicly available datasets from diverse text retrieval tasks and domains and evaluate 10 state-of-the-art retrieval systems including lexical, sparse, dense, late-interaction and re-ranking architectures on the BEIR benchmark. Our results show BM25 is a robust baseline and re-ranking and late-interaction-based models on average achieve the best zero-shot performances, however, at high computational costs. In contrast, dense and sparse-retrieval models are computationally more efficient but often underperform other approaches, highlighting the considerable room for improvement in their generalization capabilities."
+        },
+        {
+          "key": "b",
+          "locator": "Results and analysis section, the finding headed \"In-domain performance is not a good indicator for out-of-domain generalization\"",
+          "quote": "In-domain performance is not a good indicator for out-of-domain generalization. We observe BM25 heavily underperforms neural approaches by 7-18 points on in-domain MS MARCO. However, beir reveals it to be a strong baseline for generalization and generally outperforming many other, more complex approaches."
+        },
+        {
+          "key": "c",
+          "locator": "Results and analysis section, on dense retrieval models across the benchmark",
+          "quote": "Dense retrieval models (esp. ANCE and TAS-B), that map queries and documents independently to vector spaces, perform strongly on certain datasets, while on many other datasets perform significantly worse than BM25."
+        },
+        {
+          "key": "d",
+          "locator": "Models section, description of the lexical baseline",
+          "quote": "BM25 is a commonly-used bag-of-words retrieval function based on token-matching between two high-dimensional sparse vectors with TF-IDF token weights."
+        },
+        {
+          "key": "e",
+          "locator": "Experimental setup section, on the training data of the evaluated systems",
+          "quote": "As the majority of the evaluated approaches are trained on the MS MARCO dataset, we also report performances on this dataset, but don't include the outcome in our zero-shot comparison."
+        },
+        {
+          "key": "f",
+          "locator": "Conclusion, closing assessment of the lexical baseline",
+          "quote": "Overall, BM25 remains a strong baseline for zero-shot text retrieval."
+        },
+        {
+          "key": "g",
+          "locator": "Results and analysis section, remark on DPR's generalization",
+          "quote": "DPR, the only non-MSMARCO trained dataset overall performs the worst in generalization on the benchmark."
+        },
+        {
+          "key": "h",
+          "locator": "Results and analysis / conclusion, on the gap between in-domain and benchmark performance",
+          "quote": "Many approaches that outperform BM25 on an in-domain evaluation, perform poorly on the beir datasets."
+        },
+        {
+          "key": "i",
+          "locator": "Section 3.3, Evaluation Metric, the full rationale paragraph",
+          "quote": "Depending upon the nature and requirements of real-world applications, retrieval tasks can be either be precision or recall focused. To obtain comparable results across models and datasets in beir, we argue that it is important to leverage a single evaluation metric that can be computed comparably across all tasks. Decision support metrics such as Precision and Recall which are both rank unaware are not suitable. Binary rank-aware metrics such as MRR (Mean Reciprocal Rate) and MAP (Mean Average Precision) fail to evaluate tasks with graded relevance judgements. We find that Normalised Cumulative Discount Gain (nDCG@k) provides a good balance suitable for both tasks involving binary and graded relevance judgements."
+        },
+        {
+          "key": "j",
+          "locator": "Section 3.3, Evaluation Metric, closing sentence naming the tool and the cutoff",
+          "quote": "For our experiments, we utilize the Python interface of the official TREC evaluation tool and compute nDCG@10 for all datasets."
+        },
+        {
+          "key": "k",
+          "locator": "Section 3, benchmark composition, sentence counting datasets and tasks",
+          "quote": "In total, we include 18 English zero-shot evaluation datasets from 9 heterogeneous retrieval tasks."
+        },
+        {
+          "key": "l",
+          "locator": "Section 3, description of the relevance judgements shipped with the datasets",
+          "quote": "A majority of datasets contain binary relevancy judgements, i.e. relevant or non-relevant, and a few contain fine-grained relevancy judgements."
+        },
+        {
+          "key": "m",
+          "locator": "Appendix G, heading \"Capped Recall@k Score\", first sentence. The HTML edition renders the math variable k as the doubled token \"kk\"; the printed paper shows a single italic k.",
+          "quote": "Recall at kk is calculated as the fraction of the relevant documents that are successfully retrieved within the top kk extracted documents."
+        }
+      ],
+      "id": "S04"
+    },
+    {
+      "kind": "code",
+      "title": "trec_eval, m_ndcg.c: the nDCG, DCG and ideal DCG measures of the official TREC evaluation tool",
+      "authors": [
+        "Chris Buckley",
+        "National Institute of Standards and Technology"
+      ],
+      "published": "2008",
+      "url": "https://raw.githubusercontent.com/usnistgov/trec_eval/main/m_ndcg.c",
+      "identifier": "usnistgov/trec_eval:m_ndcg.c",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "the TREC_MEAS te_meas_ndcg descriptor, help string, immediately after the comment \"/* See trec_eval.h for definition of TREC_MEAS */\". The literal \\n\\ sequences are the C line continuations as they appear in the file.",
+          "quote": "    Normalized Discounted Cumulative Gain\\n\\\n    Compute a traditional nDCG measure according to Jarvelin and\\n\\\n    Kekalainen (ACM ToIS v. 20, pp. 422-446, 2002)\\n\\\n    Gain values are set to the appropriate relevance level by default."
+        },
+        {
+          "key": "b",
+          "locator": "function te_calc_ndcg, the accumulation loop over retrieved documents",
+          "quote": "    for (i = 0; i < res_rels.num_ret && ideal_gain > 0.0; i++) {\n        /* Calculate change in results dcg */\n        results_gain = get_gain(res_rels.results_rel_list[i], &gains);\n        if (results_gain != 0)\n            /* Note: i+2 since doc i has rank i+1 */\n            results_dcg += results_gain / log2((double) (i + 2));"
+        },
+        {
+          "key": "c",
+          "locator": "function te_calc_ndcg, the ideal gain accumulation at the end of the same loop",
+          "quote": "        if (ideal_gain > 0.0)\n            ideal_dcg += ideal_gain / log2((double) (i + 2));"
+        },
+        {
+          "key": "d",
+          "locator": "function te_calc_ndcg, the block after the loop that stores the measure value",
+          "quote": "    if (strcmp(tm->name, \"ndcg\") == 0) {\n        /* Compare sum to ideal NDCG */\n        if (ideal_dcg > 0.0) {\n            eval->values[tm->eval_index].value = results_dcg / ideal_dcg;\n        }\n    } else if (strcmp(tm->name, \"dcg\") == 0) {\n        eval->values[tm->eval_index].value = results_dcg;\n    } else if (strcmp(tm->name, \"ideal_dcg\") == 0) {\n        eval->values[tm->eval_index].value = ideal_dcg;"
+        }
+      ],
+      "id": "S05"
+    },
+    {
+      "kind": "code",
+      "title": "trec_eval, m_recall.c: the recall at cutoffs measure of the official TREC evaluation tool",
+      "authors": [
+        "Chris Buckley",
+        "National Institute of Standards and Technology"
+      ],
+      "published": "2008",
+      "url": "https://raw.githubusercontent.com/usnistgov/trec_eval/main/m_recall.c",
+      "identifier": "usnistgov/trec_eval:m_recall.c",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "the TREC_MEAS te_meas_recall descriptor, help string, immediately after the comment \"/* See trec_eval.h for definition of TREC_MEAS */\". The literal \\n\\ sequences are the C line continuations as they appear in the file; \"REcall\" is the file's own typo.",
+          "quote": "    Recall at cutoffs\\n\\\n    Recall (relevant retrieved / relevant) measured at various doc level\\n\\\n    cutoffs in the ranking. If the cutoff is larger than the number of docs\\n\\\n    retrieved, then it is assumed nonrelevant docs fill in the rest.\\n\\\n    REcall is a fine single topic measure, but does not average well.\\n\\\n    Cutoffs must be positive without duplicates\\n\\\n    Default param: -m recall.5,10,15,20,30,100,200,500,1000\\n"
+        },
+        {
+          "key": "b",
+          "locator": "file preamble, the default cutoff array declared above the measure descriptor",
+          "quote": "static long long_cutoff_array[] = { 5, 10, 15, 20, 30, 100, 200, 500, 1000 };"
+        }
+      ],
+      "id": "S06"
+    },
+    {
+      "kind": "code",
+      "title": "trec_eval, m_recip_rank.c: the reciprocal rank measure of the official TREC evaluation tool",
+      "authors": [
+        "Chris Buckley",
+        "National Institute of Standards and Technology"
+      ],
+      "published": "2008",
+      "url": "https://raw.githubusercontent.com/usnistgov/trec_eval/main/m_recip_rank.c",
+      "identifier": "usnistgov/trec_eval:m_recip_rank.c",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "the TREC_MEAS te_meas_recip_rank descriptor, help string, immediately after the comment \"/* See trec_eval.h for definition of TREC_MEAS */\". The literal \\n\\ sequences are the C line continuations as they appear in the file.",
+          "quote": "    Reciprocal Rank of the first relevant retrieved doc.\\n\\\n    Measure is most useful for tasks in which there is only one relevant\\n\\\n    doc, or the user only wants one relevant doc.\\n"
+        },
+        {
+          "key": "b",
+          "locator": "function te_calc_recip_rank, the loop that finds the first document at or above the relevance level and the assignment that follows it",
+          "quote": "    for (i = 0; i < res_rels.num_ret; i++) {\n        if (res_rels.results_rel_list[i] >= epi->relevance_level)\n            break;\n    }\n    if (i < res_rels.num_ret)\n        eval->values[tm->eval_index].value = (double) 1.0 / (double) (i + 1);"
+        }
+      ],
+      "id": "S07"
+    },
+    {
+      "kind": "book",
+      "title": "Introduction to Information Retrieval, chapter 8, Evaluation of unranked retrieval sets",
+      "authors": [
+        "Christopher D. Manning",
+        "Prabhakar Raghavan",
+        "Hinrich Schutze"
+      ],
+      "published": "2008",
+      "url": "https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-unranked-retrieval-sets-1.html",
+      "identifier": "ISBN 978-0-521-86571-5",
+      "retrieved": "2026-08-13",
+      "primary": false,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Chapter 8, section \"Evaluation of unranked retrieval sets\", opening sentence of the section body",
+          "quote": "The two most frequent and basic measures for information retrieval effectiveness are precision and recall."
+        },
+        {
+          "key": "b",
+          "locator": "Same section, the sentence defining recall. The HTML edition sets the symbol R as an image (img510.png), so the quote begins after the parenthesised symbol; the full sentence reads \"Recall (R) is the fraction of relevant documents that are retrieved\".",
+          "quote": "is the fraction of relevant documents that are retrieved"
+        },
+        {
+          "key": "c",
+          "locator": "Same section, the sentence defining precision, immediately before the recall sentence. The symbol P is an image (img115.png), so the quote begins after the parenthesised symbol.",
+          "quote": "is the fraction of retrieved documents that are relevant"
+        },
+        {
+          "key": "d",
+          "locator": "Same section, the sentence introducing the retrieved/relevant contingency table (the table itself is an image, img511.png)",
+          "quote": "These notions can be made clear by examining the following contingency table:"
+        }
+      ],
+      "id": "S08"
+    },
+    {
+      "kind": "paper",
+      "title": "Is Semantic Chunking Worth the Computational Cost?",
+      "authors": [
+        "Renyi Qu",
+        "Ruixuan Tu",
+        "Forrest Bao"
+      ],
+      "published": "2024-10",
+      "url": "https://arxiv.org/html/2410.13070v1",
+      "identifier": "arXiv:2410.13070",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, complete text",
+          "quote": "Recent advances in Retrieval-Augmented Generation (RAG) systems have popularized semantic chunking, which aims to improve retrieval performance by dividing documents into semantically coherent segments. Despite its growing adoption, the actual benefits over simpler fixed-size chunking, where documents are split into consecutive, fixed-size segments, remain unclear. This study systematically evaluates the effectiveness of semantic chunking using three common retrieval-related tasks: document retrieval, evidence retrieval, and retrieval-based answer generation. The results show that the computational costs associated with semantic chunking are not justified by consistent performance gains. These findings challenge the previous assumptions about semantic chunking and highlight the need for more efficient chunking strategies in RAG systems."
+        },
+        {
+          "key": "b",
+          "locator": "Section 2, Chunking Strategies, definition of the fixed-size baseline",
+          "quote": "Fixed-size Chunker splits a document sequentially into fixed-size chunks, based on a predefined or user-specified number of sentences per chunk."
+        },
+        {
+          "key": "c",
+          "locator": "Section 4.3, Evidence Retrieval, results comparing the fixed-size baseline against the two semantic chunkers",
+          "quote": "Fixed-size Chunker performed best on 3 out of 5 datasets, indicating a slight edge in capturing core evidence sentences."
+        },
+        {
+          "key": "d",
+          "locator": "Section 4.3, Evidence Retrieval, the sentence qualifying the size of the gap",
+          "quote": "However, the performance differences between the Fixed-size Chunker and the two semantic chunkers were minimal, suggesting no clear advantage for any specific chunking strategy."
+        },
+        {
+          "key": "e",
+          "locator": "Section 4.2, Document Retrieval, on why the semantic chunker's advantage shrinks",
+          "quote": "as document length increased, fewer documents were stitched together, reducing topic diversity. This diminished the advantage of Breakpoint-based Semantic Chunker."
+        },
+        {
+          "key": "f",
+          "locator": "Section 5, Conclusion, the qualified positive result and its qualification",
+          "quote": "Semantic chunking occasionally improved performance, particularly on stitched datasets with high topic diversity. However, these benefits were highly context-dependent and did not consistently justify the additional computational cost."
+        },
+        {
+          "key": "g",
+          "locator": "Conclusion, closing recommendation drawn from the measurements",
+          "quote": "Overall, our results suggest that fixed-size chunking remains a more efficient and reliable choice for practical RAG applications."
+        },
+        {
+          "key": "h",
+          "locator": "Limitations, first item, headed \"Sentence-level Chunking\"",
+          "quote": "Sentence-level Chunking Our study focuses on sentence-level chunking, where documents are split into individual sentences, and each sentence is treated as a segment for grouping."
+        }
+      ],
+      "id": "S09"
+    },
+    {
+      "kind": "paper",
+      "title": "Lost in the Middle: How Language Models Use Long Contexts",
+      "authors": [
+        "Nelson F. Liu",
+        "Kevin Lin",
+        "John Hewitt",
+        "Ashwin Paranjape",
+        "Michele Bevilacqua",
+        "Fabio Petroni",
+        "Percy Liang"
+      ],
+      "published": "2023-07-06",
+      "url": "https://arxiv.org/html/2307.03172v3",
+      "identifier": "arXiv:2307.03172",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, the two sentences stating the position effect",
+          "quote": "In particular, we observe that performance is often highest when relevant information occurs at the beginning or end of the input context, and significantly degrades when models must access relevant information in the middle of long contexts, even for explicitly long-context models. Our analysis provides a better understanding of how language models use their input context and provides new evaluation protocols for future long-context language models."
+        },
+        {
+          "key": "b",
+          "locator": "Section 5, open-domain QA case study, the sentence quantifying the gain beyond 20 documents",
+          "quote": "Using more than 20 retrieved documents only marginally improves reader performance (∼1.5% for GPT-3.5-Turbo and ∼1% for Claude-1.3), while significantly increasing the input context length (and thus latency and cost)."
+        },
+        {
+          "key": "c",
+          "locator": "Section 5, open-domain QA case study, the saturation observation",
+          "quote": "We see that reader model performance saturates long before retriever performance saturates, indicating that readers are not effectively using the extra context."
+        },
+        {
+          "key": "d",
+          "locator": "Figure 11, complete caption",
+          "quote": "Retriever recall and model performance as a function of the number of retrieved documents. Model performance saturates long before retriever recall, indicating that the models have difficulty making use of the extra retrieved documents."
+        },
+        {
+          "key": "e",
+          "locator": "Abstract, final result sentence (search: \"performance is often highest\")",
+          "quote": "In particular, we observe that performance is often highest when relevant information occurs at the beginning or end of the input context, and significantly degrades when models must access relevant information in the middle of long contexts, even for explicitly long-context models."
+        },
+        {
+          "key": "f",
+          "locator": "§2.1 Experimental Setup, multi-document QA task definition (search: \"we adjust the order of the documents\")",
+          "quote": "we adjust the order of the documents to change the position of the document that contains the answer"
+        },
+        {
+          "key": "g",
+          "locator": "§2.1 Experimental Setup, sentence on context length control (search: \"we control (i) the input context length\")",
+          "quote": "we control (i) the input context length by changing the number of documents in the input context"
+        },
+        {
+          "key": "h",
+          "locator": "§2.1 Experimental Setup, sentence on document provenance (search: \"chunks of at most 100 tokens\")",
+          "quote": "We use passages (chunks of at most 100 tokens) from Wikipedia as documents within our input contexts."
+        },
+        {
+          "key": "i",
+          "locator": "§2.3 Results and Discussion, sentence stating the sizes tested (search: \"10, 20, and 30 total documents\")",
+          "quote": "We experiment with input contexts containing 10, 20, and 30 total documents."
+        },
+        {
+          "key": "j",
+          "locator": "§2.2 Models, first sentence of the \"Open models\" paragraph",
+          "quote": "We experiment with MPT-30B-Instruct, which has a maximum context length of 8192 tokens."
+        },
+        {
+          "key": "k",
+          "locator": "§2.2 Models, first sentence of the \"Closed models\" paragraph",
+          "quote": "We use the OpenAI API to experiment with GPT-3.5-Turbo and GPT-3.5-Turbo (16K)."
+        },
+        {
+          "key": "l",
+          "locator": "§2.3 Results and Discussion (search: \"can drop by more than 20%\")",
+          "quote": "For example, GPT-3.5-Turbo's multi-document QA performance can drop by more than 20%—in the worst case, performance in 20- and 30-document settings is lower than performance without any input documents"
+        },
+        {
+          "key": "m",
+          "locator": "§1 Introduction (search: \"the closed-book setting; 56.1%\")",
+          "quote": "when relevant information is placed in the middle of its input context, GPT-3.5-Turbo's performance on the multi-document question task is lower than its performance when predicting without any documents (i.e., the closed-book setting; 56.1%)"
+        },
+        {
+          "key": "n",
+          "locator": "§3.1 key-value retrieval task setup (search: \"string-serialized JSON object\")",
+          "quote": "the inputs are (i) a string-serialized JSON object with k key-value pairs, where each of the keys and values are unique, randomly-generated UUIDs."
+        },
+        {
+          "key": "o",
+          "locator": "§3.1 key-value retrieval task setup (search: \"75, 140, and 300 key-value pairs\")",
+          "quote": "We experiment with input contexts containing 75, 140, and 300 key-value pairs."
+        },
+        {
+          "key": "p",
+          "locator": "§3.2 key-value retrieval results (search: \"do nearly perfectly on all evaluated input context lengths\")",
+          "quote": "Claude-1.3 and Claude-1.3 (100K) do nearly perfectly on all evaluated input context lengths, but other models struggle."
+        },
+        {
+          "key": "q",
+          "locator": "§4.2 query-aware contextualization, key-value retrieval result (search: \"dramatically improves performance on the key-value retrieval task\")",
+          "quote": "query-aware contextualization dramatically improves performance on the key-value retrieval task—all models achieve near-perfect performance."
+        },
+        {
+          "key": "r",
+          "locator": "§4.2 query-aware contextualization, multi-document QA result (search: \"minimally affects performance trends\")",
+          "quote": "query-aware contextualization minimally affects performance trends in the multi-document question answering task."
+        },
+        {
+          "key": "s",
+          "locator": "§4.1 effect of model architecture, Flan-UL2 within its training-time window (search: \"2048-token training-time context window\")",
+          "quote": "When Flan-UL2 is evaluated on sequences within its 2048-token training-time context window (Figure 8; left subplot), its performance is relatively robust to changes in the position of relevant information within the input context (1.9% absolute difference between best- and worst-case performance)."
+        },
+        {
+          "key": "t",
+          "locator": "§2.3 Results and Discussion, extended-context comparison (search: \"extended-context counterpart\")",
+          "quote": "When the input context fits in the context window of both a model and its extended-context counterpart, we see that performance between them is nearly identical."
+        },
+        {
+          "key": "u",
+          "locator": "§5 How Well Can Language Models Use More Context?, closing recommendation (search: \"effective reranking of retrieved documents\")",
+          "quote": "These results, coupled with the observation that models are often better at retrieving and using information at the start or end of the input contexts, suggest that effective reranking of retrieved documents (pushing relevant information closer to the start of the input context) or ranked list truncation (retrieving fewer documents when appropriate; Arampatzis et al. 2009) may be promising directions for improving how language-model-based readers use retrieved context."
+        }
+      ],
+      "id": "S10"
+    },
+    {
+      "kind": "paper",
+      "title": "Searching for Best Practices in Retrieval-Augmented Generation",
+      "published": "2024-07",
+      "url": "https://ar5iv.labs.arxiv.org/html/2407.01219",
+      "identifier": "arXiv:2407.01219",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section 3.2.1, Chunk Size, opening paragraph",
+          "quote": "Chunk size significantly impacts performance. Larger chunks provide more context, enhancing comprehension but increasing process time. Smaller chunks improve retrieval recall and reduce time but may lack sufficient context."
+        },
+        {
+          "key": "b",
+          "locator": "Section 3.2.1, Chunk Size, the sentences naming the metrics the trade-off is measured on",
+          "quote": "Finding the optimal chunk size involves a balance between some metrics such as faithfulness, and relevancy. Faithfulness measures whether the response is hallucinated or matches the retrieved texts."
+        },
+        {
+          "key": "c",
+          "locator": "Section 3.2.1, Chunk Size, description of the corpus and query set used for the chunk size experiment",
+          "quote": "First sixty pages of the document lyft_2021 are used as corpus, then prompting LLMs to generate about one hundred and seventy queries according to chosen corpus."
+        },
+        {
+          "key": "d",
+          "locator": "Section 3.2.1, Chunk Size, the models used for generation and evaluation",
+          "quote": "We choose zephyr-7b-alpha and gpt-3.5-turbo as generation model and evaluation model respectively."
+        },
+        {
+          "key": "e",
+          "locator": "Section 3.2.1, Chunk Size, the overlap held constant across the chunk size sweep",
+          "quote": "The size of the chunk overlap is 20 tokens."
+        },
+        {
+          "key": "f",
+          "locator": "Table 3, caption",
+          "quote": "Comparison of different chunk sizes."
+        }
+      ],
+      "id": "S11"
+    },
+    {
+      "kind": "paper",
+      "title": "Evaluating Chunking Strategies for Retrieval",
+      "authors": [
+        "Brandon Smith",
+        "Anton Troynikov"
+      ],
+      "published": "2024-07-03",
+      "url": "https://www.trychroma.com/research/evaluating-chunking",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Introduction, the sentence stating the evaluation unit the report proposes",
+          "quote": "We propose a new evaluation strategy, evaluating retrieval performance at the token level."
+        },
+        {
+          "key": "b",
+          "locator": "Results discussion, the sentence on chunk overlap",
+          "quote": "Unsurprisingly, reducing chunk overlap improves IoU scores, as this metric penalizes redundant information."
+        },
+        {
+          "key": "c",
+          "locator": "Results discussion, the authors' speculation about why recall peaks at a middling chunk size",
+          "quote": "We speculate that recall could reach a maximum before relevant information is diluted within chunks, making it more difficult to retrieve, while chunks which are too small fail to capture necessary context within a single unit."
+        },
+        {
+          "key": "d",
+          "locator": "Conclusion, the finding on the fixed-size heuristic splitter",
+          "quote": "We find that the heuristic `RecursiveCharacterTextSplitter` with chunk size 200 and no overlap performs well."
+        },
+        {
+          "key": "e",
+          "locator": "Conclusion, the finding on the clustering semantic chunker",
+          "quote": "The `ClusterSemanticChunker`, with a max chunk size set to 400 tokens, achieves the second highest recall of 0.913."
+        },
+        {
+          "key": "f",
+          "locator": "Results discussion, the paragraph evaluating the published OpenAI Assistants default chunking configuration",
+          "quote": "According to their documentation, the default chunking strategy uses a chunk size of 800 tokens with an overlap of 400 tokens. Assuming the `TokenTextSplitter` method is employed, we observe that this setting results in slightly below-average recall and the lowest scores across all other metrics."
+        },
+        {
+          "key": "g",
+          "locator": "Methodology, on the library defaults the authors had to change to get a fair comparison",
+          "quote": "We found that it was necessary to alter some defaults to achieve fair results. By default, the `RecursiveCharacterTextSplitter` uses the following separators: `[\"\\n\\n\", \"\\n\", \" \", \"\"]`. We found this would commonly result in very short chunks, which performed poorly in comparison to `TokenTextSplitter` which produces chunks of a fixed length by default."
+        }
+      ],
+      "id": "S12"
+    },
+    {
+      "kind": "paper",
+      "title": "The Power of Noise: Redefining Retrieval for RAG Systems",
+      "authors": [
+        "Florin Cuconasu",
+        "Giovanni Trappolini",
+        "Federico Siciliano",
+        "Simone Filice",
+        "Cesare Campagnano",
+        "Yoelle Maarek",
+        "Nicola Tonellotto",
+        "Fabrizio Silvestri"
+      ],
+      "published": "2024-01",
+      "url": "https://arxiv.org/html/2401.14887v3",
+      "identifier": "arXiv:2401.14887",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section 5.5, the study's own answer to how many documents to retrieve",
+          "quote": "For the queries examined in this study, retrieving between 3 and 5 documents is the most effective choice."
+        },
+        {
+          "key": "b",
+          "locator": "Section 5.1, Impact of Related Documents, the central observation",
+          "quote": "A critical observation emerging from this investigation is a clear pattern of progressive accuracy degradation across all LLMs tested as the number of related documents included in the context increases."
+        },
+        {
+          "key": "c",
+          "locator": "Section 5.5, clause describing the configuration that gave the best trade-off. Quoted mid-sentence: the fetched text begins at \"optimal trade-off\".",
+          "quote": "optimal trade-off and accuracy are attained when a minimal set of documents is initially retrieved and then supplemented with irrelevant documents until the context limit is reached"
+        }
+      ],
+      "id": "S13"
+    },
+    {
+      "kind": "docs",
+      "title": "Chunk large documents for vector search solutions in Azure AI Search (Microsoft Learn)",
+      "authors": [
+        "Microsoft"
+      ],
+      "published": "2026-06-08",
+      "url": "https://learn.microsoft.com/en-us/azure/search/vector-search-how-to-chunk-documents",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section \"Content overlap considerations\", first paragraph. This is the page's headline recommendation and it is stated without any measurement on the page.",
+          "quote": "When you chunk data based on fixed size, overlapping a small amount of text between chunks can help maintain continuity and context. We recommend starting with a chunk size of 512 tokens (approximately 2,000 characters) and an initial overlap of 25%, which equals 128 tokens. This overlap ensures smoother transitions between chunks without excessive duplication."
+        },
+        {
+          "key": "b",
+          "locator": "Section \"Content overlap considerations\", second paragraph",
+          "quote": "The optimal overlap might vary depending on your content type and use case. For example, highly structured data might require less overlap, while conversational or narrative text might benefit from more."
+        },
+        {
+          "key": "c",
+          "locator": "Section \"Common chunking techniques\", table row \"Fixed-size chunks\", Usage column. Note that this overlap figure differs from the 25% recommended later on the same page.",
+          "quote": "Define a fixed size that's sufficient for semantically meaningful paragraphs (for example, 200 words or 600 characters) and allows for some overlap (for example, 10-15% of the content) can produce good chunks as input for embedding vector generators."
+        },
+        {
+          "key": "d",
+          "locator": "Section \"Text Split skill example\", sentence introducing the page's only results table",
+          "quote": "The following table shows how the choice of parameters affects the total chunk count from the Earth at Night e-book:"
+        },
+        {
+          "key": "e",
+          "locator": "Section \"Text Split skill example\", the recommended starting parameters, immediately preceding the table giving textSplitMode pages, maximumPageLength 2000, pageOverlapLength 500",
+          "quote": "The optimal choice of parameters depends on how the chunks are used. For most applications, it's recommended to start with the following default parameters, when using number of characters:"
+        },
+        {
+          "key": "f",
+          "locator": "Section \"LangChain data chunking example\", paragraph departing from the page's own recommendation for the sample document",
+          "quote": "Although you could use the standard recommendation of 2,000 characters with a 500 character overlap, in this case it makes sense to go lower given the token counts of the sample document. In fact, setting an overlap value that's too large can result in no overlap appearing at all."
+        }
+      ],
+      "id": "S14"
+    },
+    {
+      "kind": "docs",
+      "title": "Retrieval augmented generation (RAG) tutorial, LangChain documentation",
+      "authors": [
+        "LangChain"
+      ],
+      "published": "2025",
+      "url": "https://docs.langchain.com/oss/python/langchain/rag",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Splitting section, paragraph giving the reason for chunking",
+          "quote": "The loaded documentation is long with over 100k tokens total, which makes it too large to fit into the context window of many models. Even for those models that could fit the full corpus in their context window, models can struggle to find information in very long inputs. Using the context window for large amounts of content is also not token efficient."
+        },
+        {
+          "key": "b",
+          "locator": "Splitting section, the code block configuring the splitter. The two numbers are given with no accompanying justification anywhere in the tutorial.",
+          "quote": "text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)\nall_splits = text_splitter.split_documents(docs)"
+        },
+        {
+          "key": "c",
+          "locator": "Splitting section, sentence introducing the splitter",
+          "quote": "Use the `RecursiveCharacterTextSplitter` to recursively split the documents using common separators like new lines, until each chunk is the appropriate size."
+        },
+        {
+          "key": "d",
+          "locator": "Retrieval step, the similarity search call fixing the number of passages returned",
+          "quote": "retrieved_docs = vector_store.similarity_search(query, k=4)"
+        }
+      ],
+      "id": "S15"
+    },
+    {
+      "kind": "docs",
+      "title": "Chunking Strategies for LLM Applications (Pinecone)",
+      "authors": [
+        "Roie Schwaber-Cohen",
+        "Arjun Patel"
+      ],
+      "published": "2025-06-28",
+      "url": "https://www.pinecone.io/learn/chunking-strategies/",
+      "retrieved": "2026-08-13",
+      "primary": false,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section on fixed-size chunking, the article's headline recommendation. No experiment is reported anywhere in the article.",
+          "quote": "Fixed-sized chunking will be the best path in most cases, and we recommend starting here and iterating only after determining it insufficient."
+        },
+        {
+          "key": "b",
+          "locator": "Section \"Figuring out the best chunk size for your application\", the recommended sizes to sweep",
+          "quote": "Start by exploring a variety of chunk sizes, including smaller chunks (e.g., 128 or 256 tokens) for capturing more granular semantic information and larger chunks (e.g., 512 or 1024 tokens) for retaining more context."
+        },
+        {
+          "key": "c",
+          "locator": "Conclusion, the article's own statement of how general its advice is",
+          "quote": "there's no one-size-fits-all solution to chunking"
+        }
+      ],
+      "id": "S16"
+    },
+    {
+      "kind": "paper",
+      "title": "Counting-Stars: A Simple, Efficient, and Reasonable Strategy for Evaluating Long-Context Large Language Models",
+      "authors": [
+        "Mingyang Song",
+        "Mao Zheng",
+        "Xuan Luo"
+      ],
+      "published": "2024-03",
+      "url": "https://arxiv.org/html/2403.11802v2",
+      "identifier": "arXiv:2403.11802",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "§3.2 \"Lost in the Middle\" (search: \"can not strongly corroborate\")",
+          "quote": "Similar to Zhang et al. 2024, however, our findings can not strongly corroborate the lost-in-the-middle phenomenon."
+        },
+        {
+          "key": "b",
+          "locator": "§3.2 \"Lost in the Middle\" (search: \"lost-in-the-tail phenomenon\")",
+          "quote": "We discover that the bad cases usually appeared in the tail rather than the middle of the long context (the lost-in-the-tail phenomenon)."
+        },
+        {
+          "key": "c",
+          "locator": "§3.2 \"Lost in the Middle\", explanation of the divergence (search: \"at most 16K length contexts\")",
+          "quote": "One possible reason why we obtain different observations from Liu et al. 2023 is that they find the phenomenon via the test at most 16K length contexts, which is not long enough."
+        },
+        {
+          "key": "d",
+          "locator": "§2.2 Baselines and Experimental Settings (search: \"Two popular used LLMs are selected\")",
+          "quote": "Two popular used LLMs are selected for evaluation based on whether they can handle extremely long-context: (1) GPT-4-Turbo-128K, the gpt-4-1106-preview model with a 128K context window size from OpenAI. (2) Kimi-Chat, the Moonshot-v1-128K model with a 128K context window size from Moonshot AI."
+        }
+      ],
+      "id": "S17"
+    },
+    {
+      "kind": "paper",
+      "title": "Same Task, More Tokens: the Impact of Input Length on the Reasoning Performance of Large Language Models",
+      "authors": [
+        "Mosh Levy",
+        "Alon Jacoby",
+        "Yoav Goldberg"
+      ],
+      "published": "2024-02",
+      "url": "https://arxiv.org/html/2402.14848v1",
+      "identifier": "arXiv:2402.14848",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, headline result (search: \"even on input length of 3000 tokens\")",
+          "quote": "We show that LLMs quickly degrade in their reasoning capabilities, even on input length of 3000 tokens, which is much shorter than their technical maximum (on average over all tested models, a drop in accuracy from 0.92 to 0.68)."
+        },
+        {
+          "key": "b",
+          "locator": "§3.3 dataset construction (search: \"roughly 250, 500, 1000, 2000, and 3000 tokens\")",
+          "quote": "We expand each base instance to input lengths of roughly 250, 500, 1000, 2000, and 3000 tokens. To extend the inputs to those targets we add background text that is irrelevant to the question (\"padding\")."
+        },
+        {
+          "key": "c",
+          "locator": "§4.1 main results, effect of key-paragraph placement (search: \"regardless of where the key paragraphs are placed\")",
+          "quote": "Accuracy decreases as input length grows regardless of where the key paragraphs are placed within the input."
+        },
+        {
+          "key": "d",
+          "locator": "§4 Main Experiments, models evaluated (search: \"We evaluate five recent capable LLMs\")",
+          "quote": "We evaluate five recent capable LLMs: GPT4, GPT3.5, Gemini-Pro, Mistral 70B and Mixtral 8x7B."
+        }
+      ],
+      "id": "S18"
+    },
+    {
+      "kind": "paper",
+      "title": "Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization",
+      "authors": [
+        "Cheng-Yu Hsieh",
+        "Yung-Sung Chuang",
+        "Chun-Liang Li",
+        "Zifeng Wang",
+        "Long T. Le",
+        "Abhishek Kumar",
+        "James Glass",
+        "Alexander Ratner",
+        "Chen-Yu Lee",
+        "Ranjay Krishna",
+        "Tomas Pfister"
+      ],
+      "published": "2024-06",
+      "url": "https://arxiv.org/html/2406.16008v1",
+      "identifier": "arXiv:2406.16008",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, statement of the mechanism (search: \"U-shaped attention bias\")",
+          "quote": "LLMs exhibit an U-shaped attention bias where the tokens at the beginning and at the end of its input receive higher attention, regardless of their relevance."
+        },
+        {
+          "key": "b",
+          "locator": "§2.1 analysis of attention bias (search: \"randomly shuffling document order\")",
+          "quote": "The U-shaped pattern persists even after randomly shuffling document order, suggesting that this bias does not depend on the documents' actual content."
+        },
+        {
+          "key": "c",
+          "locator": "Abstract, headline improvement (search: \"up to 15 percentage points\")",
+          "quote": "Found-in-the-middle not only achieves better performance in locating relevant information within a long context, but also eventually leads to improved retrieval-augmented generation (RAG) performance across various tasks, outperforming existing methods by up to 15 percentage points."
+        },
+        {
+          "key": "d",
+          "locator": "§4.2 experimental setup (search: \"NaturalQuestion and SynthWiki\")",
+          "quote": "We conduct experiments on two multi-document question answering tasks (more details in Appendix A), NaturalQuestion and SynthWiki, with two models supporting different context window length: Vicuna-7b-v1.5-16k (Vicuna) and tulu-2-7b (Tulu) with 16k and 8k context window respectively."
+        }
+      ],
+      "id": "S19"
+    },
+    {
+      "kind": "paper",
+      "title": "Beyond Early-Token Bias: Model-Specific and Language-Specific Position Effects in Multilingual LLMs",
+      "authors": [
+        "Mikhail Menschikov",
+        "Alexander Kharitonov",
+        "Maiia Kotyga",
+        "Vadim Porvatov",
+        "Anna Zhukovskaya",
+        "David Kagramanyan",
+        "Egor Shvetsov",
+        "Evgeny Burnaev"
+      ],
+      "published": "2025-05-22",
+      "url": "https://arxiv.org/abs/2505.16134",
+      "identifier": "arXiv:2505.16134",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, findings (search: \"consistently favor late positions\")",
+          "quote": "Position bias is primarily model-driven but shows language-specific nuances. Notably, Qwen2.5-7B-Instruct, DeepSeek 7B Chat and Mistral 7B consistently favor late positions challenging the common assumption of universal early-token preference."
+        },
+        {
+          "key": "b",
+          "locator": "Abstract, findings on mid-context placement (search: \"drops most when relevant information appears in the middle\")",
+          "quote": "Accuracy consistently drops most when relevant information appears in the middle of the context, yet this is not reflected in a corresponding increase in output entropy, suggesting the model remains confident even when it fails to use mid-context cues."
+        }
+      ],
+      "id": "S20"
+    },
+    {
+      "kind": "paper",
+      "title": "A Structural Theory of Position Bias in Transformers",
+      "authors": [
+        "Hanna Herasimchyk",
+        "Robin Labryga",
+        "Tomislav Prusina",
+        "Sören Laue"
+      ],
+      "published": "2026-02-18",
+      "url": "https://arxiv.org/abs/2602.16837",
+      "identifier": "arXiv:2602.16837",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, central claim (search: \"can arise from the architecture of causal Transformers itself\")",
+          "quote": "This bias is closely connected to the Lost-in-the-Middle phenomenon, where models underutilize information placed in the middle of the context. We show that Lost-in-the-Middle-type behavior can arise from the architecture of causal Transformers itself."
+        },
+        {
+          "key": "b",
+          "locator": "Abstract, mechanism and empirical check (search: \"causal masking and residual connections induce\")",
+          "quote": "At finite depth, causal masking and residual connections induce broad, often U-shaped, influence profiles. At infinite depth, our framework resolves a discrepancy between prior attention-only collapse theory and practical Transformer behavior: residual connections fundamentally change cumulative attention dynamics. Empirically, the predicted profiles closely match measured input-token influence in pretrained language models."
+        }
+      ],
+      "id": "S21"
+    },
+    {
+      "kind": "paper",
+      "title": "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection",
+      "authors": [
+        "Akari Asai",
+        "Zeqiu Wu",
+        "Yizhong Wang",
+        "Avirup Sil",
+        "Hannaneh Hajishirzi"
+      ],
+      "published": "2023-10",
+      "url": "https://arxiv.org/html/2310.11511v1",
+      "identifier": "arXiv:2310.11511",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, second through fourth sentences. This is the paper's own statement of what fixed-step retrieval costs and what it replaces it with. The HTML render spells the system name as \"Self-Rag\" (small capitals in the printed paper).",
+          "quote": "However, indiscriminately retrieving and incorporating a fixed number of retrieved passages, regardless of whether retrieval is necessary, or passages are relevant, diminishes LM versatility or can lead to unhelpful response generation. We introduce a new framework called Self-Reflective Retrieval-Augmented Generation (Self-Rag) that enhances an LM's quality and factuality through retrieval and self-reflection. Our framework trains a single arbitrary LM that adaptively retrieves passages on-demand, and generates and reflects on retrieved passages and its own generations using special tokens, called reflection tokens."
+        },
+        {
+          "key": "b",
+          "locator": "Abstract, sentence following the definition of reflection tokens. This is an assertion about the mechanism, not a measurement.",
+          "quote": "Generating reflection tokens makes the LM controllable during the inference phase, enabling it to tailor its behavior to diverse task requirements."
+        },
+        {
+          "key": "c",
+          "locator": "Abstract, final two sentences, naming the models the paper claims to beat and the tasks.",
+          "quote": "Experiments show that Self-Rag (7B and 13B parameters) significantly outperforms state-of-the-art LLMs and retrieval-augmented models on a diverse set of tasks. Specifically, Self-Rag outperforms ChatGPT and retrieval-augmented Llama2-chat on Open-domain QA, reasoning and fact verification tasks, and it shows significant gains in improving factuality and citation accuracy for long-form generations relative to these models."
+        },
+        {
+          "key": "d",
+          "locator": "Introduction, the paragraph introducing the framework, sentence defining the two categories of reflection token, with the parenthetical pointing at Figure 1 right.",
+          "quote": "Reflection tokens are categorized into retrieval and critique tokens to indicate the need for retrieval and its generation quality respectively (Figure 1 right)."
+        },
+        {
+          "key": "e",
+          "locator": "Introduction, the walkthrough of the inference steps, the two sentences covering Step 1. States what the retrieval decision is conditioned on: the input prompt and the preceding generations.",
+          "quote": "In particular, given an input prompt and preceding generations, Self-Rag first determines if augmenting the continued generation with retrieved passages would be helpful. If so, it outputs a retrieval token that calls a retriever model on demand (Step 1)."
+        },
+        {
+          "key": "f",
+          "locator": "Introduction, the paragraph on training, first two sentences. How the reflection tokens are realised mechanically: as next-token prediction over an expanded vocabulary.",
+          "quote": "Self-Rag trains an arbitrary LM to generate text with reflection tokens by unifying them as the next token prediction from the expanded model vocabulary. We train our generator LM on a diverse collection of text interleaved with reflection tokens and retrieved passages."
+        },
+        {
+          "key": "g",
+          "locator": "Table 1 caption, in full. The caption names the four token types as a group and says which three are critique tokens; the table body itself (the Type / Input / Output / Definitions rows) did not survive markdown conversion and is not transcribed here.",
+          "quote": "Four types of reflection tokens used in Self-Rag. Each type uses several tokens to represent its output values. The bottom three rows are three types of Critique tokens, and the bold text indicates the most desirable critique tokens. x,y,d indicate input, output, and a relevant passage, respectively."
+        },
+        {
+          "key": "h",
+          "locator": "Section 3.3, Self-RAG Inference, the two sentences describing the per-step retrieval decision. The HTML render writes the preceding-generation variable as \"y<t\" where the printed paper sets it as y with a subscript less-than-t.",
+          "quote": "For every x and preceding generation y<t, the model decodes a retrieval token to evaluate the utility of retrieval. If retrieval is not required, the model predicts the next output segment, as it does in a standard LM."
+        },
+        {
+          "key": "i",
+          "locator": "Section 3.3, under the run-in heading \"Adaptive retrieval with threshold\". Quoted span begins after that heading. Corroborated across two separate fetches of the same page, character for character.",
+          "quote": "Self-Rag dynamically decides when to retrieve text passages by predicting Retrieve. Alternatively, our framework allows a threshold to be set. Specifically, if the probability of generating the Retrieve=Yes token normalized over all output tokens in Retrieve surpasses a designated threshold, we trigger retrieval."
+        },
+        {
+          "key": "j",
+          "locator": "Section 4.2, Baselines, the sentence describing the second category of baseline, the ones trained with retrieved passages.",
+          "quote": "The second category includes concurrent methods that are trained with retrieved text passages, i.e., SAIL (Luo et al. 2023) to instruction-tune an LM on the Alpaca instruction-tuning data with top retrieved documents inserted before instructions, and Toolformer (Schick et al. 2023) to pre-train an LM with API calls (e.g., Wikipedia APIs)."
+        },
+        {
+          "key": "k",
+          "locator": "Section 5.1, Main Results, under the run-in heading \"Comparison against baselines without retrieval\", first two sentences. The prose claim standing in for Table 2 (top), which is not transcribed.",
+          "quote": "Table 2 (top) presents the baselines without retrieval. Our Self-Rag (bottom two rows) demonstrates a substantial performance advantage over supervised fine-tuned LLMs in all tasks and even outperforms ChatGPT in PubHealth, PopQA, biography generations, and ASQA (Rouge and MAUVE)."
+        },
+        {
+          "key": "l",
+          "locator": "Section 5.1, Main Results, under the run-in heading \"Comparison against baselines with retrieval\", first two sentences. Records both the claim and the qualification the paper attaches to it. The prose claim standing in for Table 2 (bottom), which is not transcribed.",
+          "quote": "As shown in Tables 2 (bottom), our Self-Rag also outperforms existing RAG in many tasks, obtaining the best performance among non-proprietary LM-based models on all tasks. While our method outperforms other baselines, on PopQA or Bio, powerful instruction-tuned LMs with retrieval (e.g., LLama2-chat, Alpaca) show large gains from their non-retrieval baselines."
+        }
+      ],
+      "id": "S22"
+    },
+    {
+      "kind": "paper",
+      "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+      "authors": [
+        "Shunyu Yao",
+        "Jeffrey Zhao",
+        "Dian Yu",
+        "Nan Du",
+        "Izhak Shafran",
+        "Karthik Narasimhan",
+        "Yuan Cao"
+      ],
+      "published": "2022-10",
+      "url": "https://ar5iv.labs.arxiv.org/html/2210.03629",
+      "identifier": "arXiv:2210.03629",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, first two sentences. The paper's own statement of the interleaving idea and of what each half contributes to the other.",
+          "quote": "While large language models (LLMs) have demonstrated impressive performance across tasks in language understanding and interactive decision making, their abilities for reasoning (e.g. chain-of-thought prompting) and acting (e.g. action plan generation) have primarily been studied as separate topics. In this paper, we explore the use of LLMs to generate both reasoning traces and task-specific actions in an interleaved manner, allowing for greater synergy between the two: reasoning traces help the model induce, track, and update action plans as well as handle exceptions, while actions allow it to interface with and gather additional information from external sources such as knowledge bases or environments."
+        },
+        {
+          "key": "b",
+          "locator": "Section 2, ReAct: Synergizing Reasoning + Acting, the paragraph beginning \"The idea of ReAct is simple\". The quoted span starts mid-sentence, immediately after the math symbol naming the language-space action, because the ar5iv render and a second fetch of the same page disagreed on how that symbol is transcribed. The span itself was identical across both fetches.",
+          "quote": "which we will refer to as a thought or a reasoning trace, does not affect the external environment, thus leading to no observation feedback."
+        },
+        {
+          "key": "c",
+          "locator": "Introduction, the sentence enumerating the kinds of thought the method admits, referring to Figure 1. Quoted with the paper's own grammatical inconsistencies intact.",
+          "quote": "As shown in Figure 1, there could be various types of useful thoughts, e.g. decomposing task goals and create action plans, injecting commonsense knowledge relevant to task solving, extracting important parts from observations, track progress and transit action plans, handle exceptions and adjust action plans, and so on."
+        },
+        {
+          "key": "d",
+          "locator": "Introduction, the sentence describing the knowledge-intensive setup. This is the passage where the paper puts the choice of what to retrieve inside the model's reasoning rather than in a fixed pipeline step.",
+          "quote": "By interacting with a Wikipedia API, ReAct is able to retrieve information to support reasoning, while also use reasoning to target what to retrieve next, demonstrating a synergy of reasoning and acting."
+        },
+        {
+          "key": "e",
+          "locator": "Section 3.3, Results and Observations, under the run-in heading \"ReAct outperforms Act consistently\", first two sentences. The acting-only ablation. The numbers themselves are in Table 1, which is not transcribed.",
+          "quote": "Table 1 shows HotpotQA and Fever results using PaLM-540B as the base model with different prompting methods. We note that ReAct is better than Act on both tasks, demonstrating the value of reasoning to guide acting, especially for synthesizing the final answer"
+        },
+        {
+          "key": "f",
+          "locator": "Section 3.3, Results and Observations, the ReAct versus CoT comparison. The reasoning-only ablation, with the paper's own numbers stated in prose. Corroborated across two separate fetches of the same page, character for character.",
+          "quote": "On the other hand, ReAct outperforms CoT on Fever (60.9 vs. 56.3) and slightly lags behind CoT on HotpotQA (27.4 vs. 29.4)."
+        },
+        {
+          "key": "g",
+          "locator": "Section 3.3, Results and Observations, the failure-mode analysis of CoT against ReAct. Mixes a measured rate with the paper's interpretation of why the trajectories differ.",
+          "quote": "Hallucination is a serious problem for CoT, resulting in much higher false positive rate than ReAct (14% vs. 6%) in success mode, and make up its major failure mode (56%). In contrast, the problem solving trajectory of ReAct is more grounded, fact-driven, and trustworthy, thanks to the access of an external knowledge base."
+        },
+        {
+          "key": "h",
+          "locator": "Section 4, results on ALFWorld. The acting-only ablation on a decision-making benchmark, with numbers stated in prose.",
+          "quote": "On ALFWorld, the best ReAct trial achieves an average success rate of 71%, significantly outperforming the best Act (45%) and BUTLER (37%) trials."
+        },
+        {
+          "key": "i",
+          "locator": "Section 4, results on WebShop, two consecutive sentences. Notable because this is the one benchmark where the paper reports acting alone already matching the prior methods.",
+          "quote": "On Webshop, one-shot Act prompting already performs on par with IL and IL+RL methods. With additional sparse reasoning, ReAct achieves significantly better performance, with an absolute 10% improvement over the previous best success rate."
+        }
+      ],
+      "id": "S23"
+    },
+    {
+      "kind": "paper",
+      "title": "DocLayNet: A Large Human-Annotated Dataset for Document-Layout Analysis",
+      "authors": [
+        "Birgit Pfitzmann",
+        "Christoph Auer",
+        "Michele Dolfi",
+        "Ahmed S Nassar",
+        "Peter W J Staar"
+      ],
+      "published": "2022-06-02",
+      "url": "https://ar5iv.labs.arxiv.org/html/2206.01062",
+      "identifier": "arXiv:2206.01062",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, sentences on dataset size and label count (search: \"80863 manually annotated pages\")",
+          "quote": "It contains 80863 manually annotated pages from diverse data sources to represent a wide variability in layouts. For each PDF page, the layout annotations provide labelled bounding-boxes with a choice of 11 distinct classes."
+        },
+        {
+          "key": "b",
+          "locator": "Abstract, opening sentence",
+          "quote": "Accurate document layout analysis is a key requirement for high-quality PDF document conversion."
+        },
+        {
+          "key": "c",
+          "locator": "Abstract, sentence on redundant annotation (search: \"double- and triple-annotated\")",
+          "quote": "DocLayNet also provides a subset of double- and triple-annotated pages to determine the inter-annotator agreement."
+        },
+        {
+          "key": "d",
+          "locator": "Abstract, sentence comparing baselines against human agreement (search: \"approximately 10% behind\")",
+          "quote": "We also demonstrate that these models fall approximately 10% behind the inter-annotator agreement."
+        },
+        {
+          "key": "e",
+          "locator": "§1 Introduction, opening sentence",
+          "quote": "Despite the substantial improvements achieved with machine-learning (ML) approaches and deep neural networks in recent years, document conversion remains a challenging problem, as demonstrated by the numerous public competitions held on this topic."
+        },
+        {
+          "key": "f",
+          "locator": "§1 Introduction, sentence defining the core problem (search: \"A key problem in the process\")",
+          "quote": "A key problem in the process of document conversion is to understand the structure of a single document page, i.e. which segments of text should be grouped together in a unit."
+        },
+        {
+          "key": "g",
+          "locator": "§1 Introduction, sentences on the limits of PubLayNet and DocBank (search: \"limited variability in their layouts\")",
+          "quote": "Those scientific documents present a limited variability in their layouts, because they are typeset in uniform templates provided by the publishers."
+        },
+        {
+          "key": "h",
+          "locator": "§1 Introduction, consequence for models trained on scientific corpora (search: \"sub-par prediction quality\")",
+          "quote": "As a consequence, the layout predictions obtained from models trained on PubLayNet or DocBank is very reasonable when applied on scientific documents. However, for more artistic or free-style layouts, we see sub-par prediction quality from these models."
+        },
+        {
+          "key": "i",
+          "locator": "§1 Introduction, contribution list item (3) (search: \"Detailed Label Set\")",
+          "quote": "(3) Detailed Label Set: We define 11 class labels to distinguish layout features in high detail. PubLayNet provides 5 labels; DocBank provides 13, although not a superset of ours."
+        },
+        {
+          "key": "j",
+          "locator": "§1 Introduction, contribution list item (4) (search: \"Redundant Annotations\")",
+          "quote": "(4) Redundant Annotations: A fraction of the pages in the DocLayNet data set carry more than one human annotation. This enables experimentation with annotation uncertainty and quality control analysis."
+        },
+        {
+          "key": "k",
+          "locator": "§3 The DocLayNet Dataset, sentence naming the six categories",
+          "quote": "The pages in DocLayNet can be grouped into six distinct categories, namely Financial Reports, Manuals, Scientific Articles, Laws & Regulations, Patents and Government Tenders."
+        },
+        {
+          "key": "l",
+          "locator": "§3 The DocLayNet Dataset, sentence on category mix (search: \"two largest categories\")",
+          "quote": "The two largest categories (Financial Reports and Manuals) contain a large amount of free-style layouts in order to obtain maximum variability."
+        },
+        {
+          "key": "m",
+          "locator": "§3 The DocLayNet Dataset, sentences on document language (search: \"close to 95%\")",
+          "quote": "The vast majority of documents contained in DocLayNet (close to 95%) are published in English language. However, DocLayNet also contains a number of documents in other languages such as German (2.5%), French (1.0%) and Japanese (1.0%)."
+        },
+        {
+          "key": "n",
+          "locator": "§3 The DocLayNet Dataset, sentences on redundant annotation counts (search: \"7059 carry two instances\")",
+          "quote": "Among these, 7059 carry two instances of human annotations, and 1591 carry three. This amounts to 91104 total annotation instances."
+        },
+        {
+          "key": "o",
+          "locator": "§3 The DocLayNet Dataset, third reason for human annotation (search: \"natural upper bound for segmentation accuracy\")",
+          "quote": "This natural upper bound for segmentation accuracy can be found by annotating the same pages multiple times by different people and evaluating the inter-annotator agreement."
+        },
+        {
+          "key": "p",
+          "locator": "§3 The DocLayNet Dataset, sentence on ambiguous layouts (search: \"equally acceptable layout interpretations\")",
+          "quote": "As we will show in Section 4, certain documents featuring complex layouts can have different but equally acceptable layout interpretations."
+        },
+        {
+          "key": "q",
+          "locator": "§3 The DocLayNet Dataset, sentence on the use of the consistency baseline (search: \"base-line consistency evaluation\")",
+          "quote": "Such a base-line consistency evaluation is very useful to define expectations for a good target accuracy in trained deep neural network models and avoid overfitting."
+        },
+        {
+          "key": "r",
+          "locator": "§3 The DocLayNet Dataset, sentence weighing human against automated ground truth (search: \"cost-intense and far less scalable\")",
+          "quote": "Despite being cost-intense and far less scalable than automation, human annotation has several benefits over automated ground-truth generation."
+        },
+        {
+          "key": "s",
+          "locator": "§3 The DocLayNet Dataset, sentence on split boundaries (search: \"full-document boundaries\")",
+          "quote": "that subsets are only split on full-document boundaries. This avoids that pages of the same document are spread over train, test and validation set, which can give an undesired evaluation advantage to models and lead to overestimation of their prediction accuracy."
+        },
+        {
+          "key": "t",
+          "locator": "§4 Annotation Campaign, Phase 1, page sampling (search: \"selective subsampling\")",
+          "quote": "The desired balance of pages between the different document categories was achieved by selective subsampling of pages with certain desired properties."
+        },
+        {
+          "key": "u",
+          "locator": "§4 Annotation Campaign, Phase 1, page sampling bias (search: \"title page of each document\")",
+          "quote": "For example, we made sure to include the title page of each document and bias the remaining page selection to those with figures or tables."
+        },
+        {
+          "key": "v",
+          "locator": "§4 Annotation Campaign, Phase 1, how the sampling was implemented (search: \"pre-trained object detection models from PubLayNet\")",
+          "quote": "was achieved by leveraging pre-trained object detection models from PubLayNet, which helped us estimate how many figures and tables a given page contains."
+        },
+        {
+          "key": "w",
+          "locator": "§4 Annotation Campaign, Phase 2, definition of the label set",
+          "quote": "This was achieved by identifying recurrent layout elements and lead us to the definition of 11 distinct class labels. These 11 class labels are Caption, Footnote, Formula, List-item, Page-footer, Page-header, Picture, Section-header, Table, Text, and Title."
+        },
+        {
+          "key": "x",
+          "locator": "§4 Annotation Campaign, Phase 2, criteria for choosing labels (search: \"Critical factors\")",
+          "quote": "Critical factors that were considered for the choice of these class labels were (1) the overall occurrence of the label, (2) the specificity of the label, (3) recognisability on a single page (i.e. no need for context from previous or next page) and (4) overall coverage of the page."
+        },
+        {
+          "key": "y",
+          "locator": "§4 Annotation Campaign, Phase 2, labels deliberately excluded (search: \"Author and Affiliation\")",
+          "quote": "Labels such as Author and Affiliation, as seen in DocBank, are often only distinguishable by discriminating on the textual content of an element, which goes beyond visual layout recognition, in particular outside the Scientific Articles category."
+        },
+        {
+          "key": "z",
+          "locator": "§4 Annotation Campaign, Phase 2, observed annotator disagreement (search: \"different annotation styles\")",
+          "quote": "during early trial-runs in the core team, we observed many cases in which annotators use different annotation styles, especially for documents with challenging layouts."
+        },
+        {
+          "key": "aa",
+          "locator": "§4 Annotation Campaign, Phase 2, worked example of the disagreement (search: \"subfigures\")",
+          "quote": "For example, if a figure is presented with subfigures, one annotator might draw a single figure bounding-box, while another might annotate each subfigure separately."
+        },
+        {
+          "key": "ab",
+          "locator": "§4 Annotation Campaign, Phase 2, effect of the guideline (search: \"perfect consistency across 40 annotation staff\")",
+          "quote": "While perfect consistency across 40 annotation staff members is clearly not possible to achieve, we saw a huge improvement in annotation consistency after the introduction of our annotation guideline."
+        },
+        {
+          "key": "ac",
+          "locator": "§4 Annotation Campaign, Phase 2, guideline highlight (1) (search: \"Every list-item is an individual object instance\")",
+          "quote": "(1) Every list-item is an individual object instance with class label List-item. This definition is different from PubLayNet and DocBank, where all list-items are grouped together into one List object."
+        },
+        {
+          "key": "ad",
+          "locator": "§4 Annotation Campaign, Phase 2, guideline highlight (3) (search: \"For every Caption\")",
+          "quote": "(3) For every Caption, there must be exactly one corresponding Picture or Table."
+        },
+        {
+          "key": "ae",
+          "locator": "§4 Annotation Campaign, Phase 2, size of the guideline (search: \"over 100 pages long\")",
+          "quote": "The complete annotation guideline is over 100 pages long and a detailed description is obviously out of scope for this paper."
+        },
+        {
+          "key": "af",
+          "locator": "§4 Annotation Campaign, Phase 3 Training, reference annotation (search: \"974 pages were reference-annotated\")",
+          "quote": "974 pages were reference-annotated by one proficient core team member."
+        },
+        {
+          "key": "ag",
+          "locator": "§4 Annotation Campaign, Phase 3 Training, blinded comparison (search: \"blinded from the reference\")",
+          "quote": "Annotation staff were then given the task to annotate the same subsets (blinded from the reference)."
+        },
+        {
+          "key": "ah",
+          "locator": "§4 Annotation Campaign, Phase 3 Training, admission bar (search: \"two exam levels\")",
+          "quote": "Only after passing two exam levels with high annotation quality, staff were admitted into the production phase."
+        },
+        {
+          "key": "ai",
+          "locator": "§4 Annotation Campaign, Phase 3 Training, attrition (search: \"did not pass the bar\")",
+          "quote": "Practice iterations were carried out over a timeframe of 12 weeks, after which 8 of the 40 initially allocated annotators did not pass the bar."
+        },
+        {
+          "key": "aj",
+          "locator": "§4 Annotation Campaign, Phase 4 Production annotation, headcount and duration",
+          "quote": "The previously selected 80K pages were annotated with the defined 11 class labels by 32 annotators."
+        },
+        {
+          "key": "ak",
+          "locator": "§4 Annotation Campaign, Phase 4 Production annotation, duration (search: \"three months\")",
+          "quote": "This production phase took around three months to complete."
+        },
+        {
+          "key": "al",
+          "locator": "§4 Annotation Campaign, Phase 4, annotation practice, first measure (search: \"non-overlapping, vertically oriented\")",
+          "quote": "First, we only allow non-overlapping, vertically oriented, rectangular boxes."
+        },
+        {
+          "key": "am",
+          "locator": "§4 Annotation Campaign, Phase 4, annotation practice, second measure (search: \"not able to see each other's annotations\")",
+          "quote": "Second, annotator staff were not able to see each other's annotations. This was enforced by design to avoid any bias in the annotation, which could skew the numbers of the inter-annotator agreement."
+        },
+        {
+          "key": "an",
+          "locator": "§4 Annotation Campaign, Phase 4, annotation practice, fourth measure (search: \"flag pages as rejected\")",
+          "quote": "Fourth, we established a way to flag pages as rejected for cases where no valid annotation according to the label guidelines could be achieved."
+        },
+        {
+          "key": "ao",
+          "locator": "§4 Annotation Campaign, Phase 4, annotation throughput (search: \"20s to 60s\")",
+          "quote": "With all these measures in place, experienced annotation staff managed to annotate a single page in a typical timeframe of 20s to 60s, depending on its complexity."
+        },
+        {
+          "key": "ap",
+          "locator": "Caption of Table 1 (search: \"inter-annotator agreement is computed\")",
+          "quote": "The inter-annotator agreement is computed as the mAP@0.5-0.95 metric between pairwise annotations from the triple-annotated pages, from which we obtain accuracy ranges."
+        },
+        {
+          "key": "aq",
+          "locator": "§5 Baselines for Object Detection, running prose on the human-model gap (search: \"between 6 and 10% lower\")",
+          "quote": "As one can observe, the variation in mAP between the models is rather low, but overall between 6 and 10% lower than the mAP computed from the pairwise human annotations on triple-annotated pages."
+        },
+        {
+          "key": "ar",
+          "locator": "§6 Conclusion, closing sentence on the human-model gap (search: \"close that gap\")",
+          "quote": "To date, there is still a significant gap between human and ML accuracy on the layout interpretation task, and we hope that this work will inspire the research community to close that gap."
+        }
+      ],
+      "id": "S24"
+    },
+    {
+      "kind": "dataset",
+      "title": "DocLayNet dataset card (ds4sd/DocLayNet)",
+      "authors": [
+        "IBM Deep Search team"
+      ],
+      "published": "2022",
+      "url": "https://huggingface.co/datasets/ds4sd/DocLayNet",
+      "identifier": "huggingface:ds4sd/DocLayNet",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Dataset description, sentence on redundant annotation",
+          "quote": "A fraction of the pages in DocLayNet are double- or triple-annotated, allowing to estimate annotation uncertainty and an upper-bound of achievable prediction accuracy."
+        },
+        {
+          "key": "b",
+          "locator": "Data fields, permitted values of the doc_category field",
+          "quote": "financial_reports, scientific_articles, laws_and_regulations, government_tenders, manuals, patents"
+        }
+      ],
+      "id": "S25"
+    },
+    {
+      "kind": "paper",
+      "title": "Docling Technical Report",
+      "authors": [
+        "Christoph Auer",
+        "Maksym Lysak",
+        "Ahmed Nassar",
+        "Michele Dolfi",
+        "Nikolaos Livathinos",
+        "Panos Vagenas",
+        "Cesar Berrospi Ramis",
+        "Matteo Omenetti",
+        "Fabian Lindlbauer",
+        "Kasper Dinkla",
+        "Lokesh Mishra",
+        "Yusik Kim",
+        "Shubham Gupta",
+        "Rafael Teixeira de Lima",
+        "Valery Weber",
+        "Lucas Morin",
+        "Ingmar Meijer",
+        "Viktor Kuropiatnyk",
+        "Peter W. J. Staar"
+      ],
+      "published": "2024-08-19",
+      "url": "https://arxiv.org/html/2408.09869v5",
+      "identifier": "arXiv:2408.09869",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, sentence naming the two specialised models",
+          "quote": "It is powered by state-of-the-art specialized AI models for layout analysis (DocLayNet) and table structure recognition (TableFormer), and runs efficiently on commodity hardware in a small resource budget."
+        },
+        {
+          "key": "b",
+          "locator": "§1 Introduction, opening sentence on why PDF conversion is hard",
+          "quote": "Converting PDF documents back into a machine-processable format has been a major challenge for decades due to their huge variability in formats, weak standardization and printing-optimized characteristic, which discards most structural features and metadata."
+        },
+        {
+          "key": "c",
+          "locator": "Section describing the layout analysis model",
+          "quote": "Its architecture is derived from RT-DETR and re-trained on DocLayNet, our popular human-annotated dataset for document-layout analysis, among other proprietary datasets."
+        }
+      ],
+      "id": "S26"
+    },
+    {
+      "kind": "paper",
+      "title": "PubLayNet: largest dataset ever for document layout analysis",
+      "authors": [
+        "Xu Zhong",
+        "Jianbin Tang",
+        "Antonio Jimeno Yepes"
+      ],
+      "published": "2019-08-16",
+      "url": "https://arxiv.org/abs/1908.07836",
+      "identifier": "arXiv:1908.07836",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, opening sentence",
+          "quote": "Recognizing the layout of unstructured digital documents is an important step when parsing the documents into structured machine-readable format for downstream applications."
+        },
+        {
+          "key": "b",
+          "locator": "Abstract, sentence on how the dataset was built (search: \"automatically matching the XML representations\")",
+          "quote": "In this paper, we develop the PubLayNet dataset for document layout analysis by automatically matching the XML representations and the content of over 1 million PDF articles that are publicly available on PubMed Central."
+        },
+        {
+          "key": "c",
+          "locator": "Abstract, sentence on dataset size (search: \"360 thousand document images\")",
+          "quote": "The size of the dataset is comparable to established computer vision datasets, containing over 360 thousand document images, where typical document layout elements are annotated."
+        }
+      ],
+      "id": "S27"
+    },
+    {
+      "kind": "paper",
+      "title": "olmOCR: Unlocking Trillions of Tokens in PDFs with Vision Language Models",
+      "authors": [
+        "Jake Poznanski",
+        "Aman Rangapur",
+        "Jon Borchardt",
+        "Jason Dunkelberger",
+        "Regan Huff",
+        "Daniel Lin",
+        "Christopher Wilhelm",
+        "Kyle Lo",
+        "Luca Soldaini"
+      ],
+      "published": "2025-02-25",
+      "url": "https://arxiv.org/html/2502.18443v3",
+      "identifier": "arXiv:2502.18443",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, opening two sentences (v3; also read at https://arxiv.org/abs/2502.18443)",
+          "quote": "PDF documents have the potential to provide trillions of novel, high-quality tokens for training language models. However, these documents come in a diversity of types with differing formats and visual layouts that pose a challenge when attempting to extract and faithfully represent the underlying content for language model use."
+        },
+        {
+          "key": "b",
+          "locator": "Abstract, sentence contrasting traditional tools with VLMs and naming the GPT-4o cost (search: \"prohibitively costly\"). As rendered on the arXiv HTML page the figure carries a dollar sign; the arXiv abstract page renders the same sentence as \"over 6,240 USD\".",
+          "quote": "Traditional open source tools often produce lower quality extractions compared to vision language models (VLMs), but reliance on the best VLMs can be prohibitively costly (e.g., over $6,240 USD per million PDF pages for GPT-4o) or infeasible if the PDFs cannot be sent to proprietary APIs."
+        },
+        {
+          "key": "c",
+          "locator": "Abstract, sentence stating what olmOCR is (search: \"open-source toolkit\")",
+          "quote": "We present olmOCR, an open-source toolkit for processing PDFs into clean, linearized plain text in natural reading order while preserving structured content like sections, tables, lists, equations, and more."
+        },
+        {
+          "key": "d",
+          "locator": "Abstract, sentence on the model and its training mix (search: \"olmOCR-mix-0225\")",
+          "quote": "Our toolkit runs a fine-tuned 7B vision language model (VLM) trained on olmOCR-mix-0225, a sample of 260,000 pages from over 100,000 crawled PDFs with diverse properties, including graphics, handwritten text and poor quality scans."
+        },
+        {
+          "key": "e",
+          "locator": "Abstract, sentence on batch cost (search: \"million PDF pages for only\"). The arXiv abstract page renders the same sentence as \"only 176 USD\", without the dollar sign.",
+          "quote": "olmOCR is optimized for large-scale batch processing, able to scale flexibly to different hardware setups and can convert a million PDF pages for only $176 USD."
+        },
+        {
+          "key": "f",
+          "locator": "Abstract, sentence introducing olmOCR-Bench (search: \"1,400 PDFs\")",
+          "quote": "To aid comparison with existing systems, we also introduce olmOCR-Bench, a curated set of 1,400 PDFs capturing many content types that remain challenging even for the best tools and VLMs, including formulas, tables, tiny fonts, old scans, and more."
+        },
+        {
+          "key": "g",
+          "locator": "Abstract, headline comparison sentence (search: \"outperforms even top VLMs\")",
+          "quote": "We find olmOCR outperforms even top VLMs including GPT-4o, Gemini Flash 2 and Qwen-2.5-VL."
+        },
+        {
+          "key": "h",
+          "locator": "Abstract, closing sentence on what is released",
+          "quote": "We openly release all components of olmOCR: our fine-tuned VLM model, training code and data, an efficient inference pipeline that supports vLLM and SGLang backends, and benchmark olmOCR-Bench."
+        },
+        {
+          "key": "i",
+          "locator": "Methodology, the two sentences that define document-anchoring (search: \"extracts coordinates of salient elements\"). The typo \"is provide as input\" is in the source and is reproduced here unaltered.",
+          "quote": "document-anchoring extracts coordinates of salient elements in each page (e.g., text blocks and images) and injects them alongside raw text extracted from the PDF binary file. Crucially, the anchored text is provide as input to any VLM alongside a rasterized image of the page."
+        },
+        {
+          "key": "j",
+          "locator": "Methodology, sentence on how anchoring is implemented (search: \"pypdf\")",
+          "quote": "document-anchoring processes PDF document pages via the pypdf library to extract a representation of the page's structure from the underlying PDF."
+        },
+        {
+          "key": "k",
+          "locator": "Methodology, sentence on what image-only prompting did (search: \"completing unfinished sentences\")",
+          "quote": "Prompting with just the page image was prone to models completing unfinished sentences, or to invent larger texts when the image data was ambiguous."
+        },
+        {
+          "key": "l",
+          "locator": "§2.2 Generating Linearized Plain Text, sentence on the teacher model's failure modes (search: \"sufficiently high-fidelity\")",
+          "quote": "GPT-4o does not produce sufficiently high-fidelity plain text on its own; for high-density pages or complex layouts, we found it is prone to omitting content, rewriting or completing content in a manner unfaithful to the original, or captioning images when not instructed to do so."
+        },
+        {
+          "key": "m",
+          "locator": "Section describing how the training pages were sampled (search: \"240 million PDFs\")",
+          "quote": "We randomly sample PDFs from an internal dataset of 240 million PDFs crawled from public internet sites, as well as PDFs of public domain books sourced from the Internet Archive."
+        },
+        {
+          "key": "n",
+          "locator": "§4.3 Cost Evaluation, the efficiency claim and the multiple (search: \"32 times cheaper\")",
+          "quote": "Overall, we find olmOCR to be significantly more efficient than other pipelines. It is over 32 times cheaper than GPT-4o in batch mode."
+        },
+        {
+          "key": "o",
+          "locator": "Appendix B Cost Estimates, measured throughput on an L40S node (search: \"906 output tokens per second\")",
+          "quote": "On L40s, it processed 1,288 test pages in 17 minutes, 10 seconds. The effective throughput of the model was 906 output tokens per second."
+        },
+        {
+          "key": "p",
+          "locator": "Evaluation section, the head-to-head human preference result (search: \"ELO score over 1800\")",
+          "quote": "olmOCR achieves an ELO score over 1800, far exceeding all other PDF linearization tools."
+        },
+        {
+          "key": "q",
+          "locator": "§1 Introduction, sentence on what PDFs lack (search: \"ground truth reading order\")",
+          "quote": "PDFs lack basic structure necessary for coherent prose, such as ground truth reading order."
+        },
+        {
+          "key": "r",
+          "locator": "Related work / introduction, sentence on linearization difficulty (search: \"layout-rich documents\")",
+          "quote": "end-to-end-systems have also made strides to enable linearization of this content—prescribing a flattening of this content to adhere to logical reading order—which can be quite challenging for layout-rich documents."
+        }
+      ],
+      "id": "S28"
+    },
+    {
+      "kind": "paper",
+      "title": "olmOCR 2: Unit Test Rewards for Document OCR",
+      "authors": [
+        "Jake Poznanski",
+        "Luca Soldaini",
+        "Kyle Lo"
+      ],
+      "published": "2025-10-22",
+      "url": "https://arxiv.org/html/2510.19817v1",
+      "identifier": "arXiv:2510.19817",
+      "retrieved": "2026-08-13",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, opening two sentences (v1; also read at https://arxiv.org/abs/2510.19817)",
+          "quote": "We present olmOCR 2, the latest in our family of powerful OCR systems for converting digitized print documents, like PDFs, into clean, naturally ordered plain text. olmOCR 2 is powered by olmOCR-2-7B-1025, a specialized, 7B vision language model (VLM) trained using reinforcement learning with verifiable rewards (RLVR), where our rewards are a diverse set of binary unit tests."
+        },
+        {
+          "key": "b",
+          "locator": "Abstract, sentence on the synthetic document pipeline (search: \"To scale unit test creation\")",
+          "quote": "To scale unit test creation, we develop a pipeline for generating synthetic documents with diverse and challenging layouts, known ground-truth HTML source code, and extracted test cases."
+        },
+        {
+          "key": "c",
+          "locator": "Abstract, sentence stating the result and naming the benchmark as English-language (search: \"our English-language OCR benchmark\")",
+          "quote": "We show that RL training on these test cases results in state-of-the-art performance on olmOCR-Bench, our English-language OCR benchmark, with the largest improvements in math formula conversion, table parsing, and multi-column layouts compared to previous versions."
+        },
+        {
+          "key": "d",
+          "locator": "Abstract, closing sentence",
+          "quote": "We release our model, data and code under permissive open licenses."
+        },
+        {
+          "key": "e",
+          "locator": "§1 Introduction, the improvement figure. This is the closing clause of a longer sentence that begins \"Combined with other performance improvements...\"; quoted from \"olmOCR 2 achieves\" so the span stands alone.",
+          "quote": "olmOCR 2 achieves state-of-the-art performance on olmOCR-Bench, with a +14.2 point overall improvement over our initial release six months prior"
+        },
+        {
+          "key": "f",
+          "locator": "§3.2 Training, how the reward is computed (search: \"fraction from 0.0 to 1.0\")",
+          "quote": "Each test case is either a pass or fail, and the reward is the fraction from 0.0 to 1.0 of passing test cases."
+        },
+        {
+          "key": "g",
+          "locator": "§3.1 Data, how synthetic pages are produced (search: \"iteratively prompt a general VLM\")",
+          "quote": "We iteratively prompt a general VLM to first create, and then refine, the HTML code that best represents the rasterized image of a page."
+        },
+        {
+          "key": "h",
+          "locator": "§3.1 Data, implementation and cost of the synthetic data pipeline (search: \"$0.12 per document page\")",
+          "quote": "We use claude-sonnet-4-20250514 as the general VLM for the procedure described above. Overall, we found it sufficiently accurate and cost effective, costing approximately $0.12 per document page."
+        },
+        {
+          "key": "i",
+          "locator": "Discussion of why unit tests are used as the reward, on elements with no single correct output (search: \"Floating document elements\")",
+          "quote": "Floating document elements like tables or figures lack a definitive ground truth representation. Unit tests can allow for these different-yet-equivalently-correct representations of the same OCR'd content to yield similar scores, while edit distance often rewards/penalizes these cases differently."
+        },
+        {
+          "key": "j",
+          "locator": "Related work / discussion, on RLVR for OCR and where it helped most (search: \"Others have also demonstrated\")",
+          "quote": "Others have also demonstrated the power of RLVR for OCR-specialized VLMs; we find this training process is highly effective when combined with binary unit tests, with particular efficiency in improving the model's ability to extract equations, tables and multi-column layouts."
+        },
+        {
+          "key": "k",
+          "locator": "Conclusion, closing statement of future work",
+          "quote": "In the future, we hope to further develop the synthetic data pipeline to cover more complicated document types and unit tests."
+        }
+      ],
+      "id": "S29"
+    }
+  ]
+}

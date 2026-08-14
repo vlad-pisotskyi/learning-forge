@@ -49,6 +49,19 @@ const planVersion = z.literal(PLAN_VERSION);
 const isoDay = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "expected YYYY-MM-DD");
 const fileSlug = z.string().regex(/^[a-z][a-z0-9-]{1,60}$/, "expected kebab-case");
 
+/**
+ * A shard name may open with a digit, which a chapter or challenge slug may not.
+ *
+ * The research playbook asks for shard names whose alphabetical order matches their
+ * teaching order, because source ids are handed out in that order. A numeric prefix is
+ * how anyone actually does that, and `01-rag-formulation` is the name the first real run
+ * chose for all eight of its shards. The shared slug rule rejected every one of them: it
+ * was written for chapter and challenge slugs, which are `ch01` and `c01` and start with a
+ * letter by convention, and the tests used `a-anatomy` and `b-fastening`, so nothing ever
+ * put the two conventions in the same room.
+ */
+const shardSlug = z.string().regex(/^[a-z0-9][a-z0-9-]{1,60}$/, "expected kebab-case");
+
 /** A source as a research shard reports it, before ids are handed out. */
 export const sourceDraftSchema = sourcesFileSchema.shape.sources.element.omit({ id: true });
 
@@ -181,7 +194,7 @@ export const chapterCritiqueSchema = z
 export const researchShardSchema = z
   .object({
     planVersion,
-    shard: fileSlug,
+    shard: shardSlug,
     question: z.string().min(10),
     completedAt: isoDay,
     sources: z.array(sourceDraftSchema).min(1),
