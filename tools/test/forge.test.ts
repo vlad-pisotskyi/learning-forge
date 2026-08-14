@@ -120,6 +120,9 @@ function planFromFixture(): TopicPlan {
         afterChapter: challenge.afterChapter,
         exercises: challenge.exercises,
         estimatedHours: challenge.estimatedHours,
+        // Omitted when it matches the topic, so the fallback stays exercised by c01 and
+        // the override stays exercised by c02.
+        ...(challenge.language === manifest.language ? {} : { language: challenge.language }),
         interface: challenge.interface,
         eval: { runner: challenge.eval.runner, metrics: challenge.eval.metrics },
       };
@@ -786,7 +789,7 @@ describe("forge status", () => {
     const owed = (kind: string) => status.outstanding.find((o) => o.kind === kind)?.ids;
     expect(owed("chapters")).toEqual(["ch01", "ch02"]);
     expect(owed("quizzes")).toEqual(["ch01", "ch02"]);
-    expect(owed("challenges")).toEqual(["c01"]);
+    expect(owed("challenges")).toEqual(["c01", "c02"]);
     expect(status.excerpts.uncited).toEqual(["S01.a", "S01.b", "S02.a"]);
     expect(status.excerpts.unallocated).toEqual([]);
     expect(status.next).toMatch(/chapters stage/);
@@ -966,6 +969,119 @@ describe("forge eval on the vitest runner", () => {
     const value = (name: string) => result.metrics.find((m) => m.name === name);
     expect(value("false-positive-rate")?.value).toBeGreaterThan(0.1);
     expect(value("false-positive-rate")?.ok).toBe(false);
+    expect(result.passed).toBe(false);
+  });
+});
+
+describe("forge eval on the python runner", () => {
+  /**
+   * The reason this block exists. A runner that is only ever exercised by a manifest
+   * some test rewrote is a runner nobody has run, which is how the vitest path stayed
+   * broken while its tests passed. c02 is a real Python challenge in the fixture, on
+   * the runner its own manifest declares, graded end to end.
+   */
+  function stagePythonChallenge(root: string): { topicDir: string; challengeDir: string } {
+    const plan = planFromFixture();
+    initTopic(root, SLUG, clock);
+    approve(root, plan);
+    applyPlan(root, SLUG, clock);
+    const topicDir = paths.topicDir(root, SLUG);
+    cpSync(join(FIXTURE, "corpus"), join(topicDir, "corpus"), { recursive: true });
+    const rel = paths.challengeDir(at(plan.challenges, 1));
+    for (const sub of ["starter", ".hidden"]) {
+      cpSync(join(FIXTURE, rel, sub), join(topicDir, rel, sub), { recursive: true });
+    }
+    return { topicDir, challengeDir: join(topicDir, rel) };
+  }
+
+  function submit(challengeDir: string, body: string) {
+    cpSync(join(challengeDir, "starter"), join(challengeDir, "work"), { recursive: true });
+    writeFileSync(join(challengeDir, "work/checker.py"), body);
+  }
+
+  it("scaffolds the spec and the reference with Python extensions", () => {
+    const plan = planFromFixture();
+    const challenge = at(plan.challenges, 1);
+    expect(paths.evalSpec(challenge.id, challenge.eval.runner)).toBe(".hidden/eval/c02.eval.py");
+    expect(referenceEntrypoint(challenge.interface.entrypoint)).toBe(".hidden/solution/checker.py");
+  });
+
+  it("proves the reference solution passes its own held-out set", () => {
+    const root = makeRoot();
+    stagePythonChallenge(root);
+
+    const result = evalChallenge(root, SLUG, "c02", true);
+    expect(result.problems).toEqual([]);
+    expect(result.ran).toBe(true);
+    expect(result.metrics.map((m) => [m.name, m.value, m.ok])).toEqual([
+      ["classification-accuracy", 1, true],
+      ["in-window-miss-rate", 0, true],
+    ]);
+    expect(result.passed, result.output).toBe(true);
+  });
+
+  it("reaches the corpus from the staged work tree", () => {
+    // The reference resolves corpus/fasteners.json by walking up from its own file, so
+    // this asserts the staging layout mirrors a real topic rather than merely running.
+    const root = makeRoot();
+    stagePythonChallenge(root);
+    const result = evalChallenge(root, SLUG, "c02", true);
+    expect(existsSync(join(result.staged, "work/checker.py"))).toBe(true);
+    expect(result.output).not.toContain("FileNotFoundError");
+  });
+
+  it("never stages the reference solution beside the code being scored", () => {
+    const root = makeRoot();
+    const { challengeDir } = stagePythonChallenge(root);
+    submit(challengeDir, "def classify(reading):\n    return 'unrated'\n");
+
+    const result = evalChallenge(root, SLUG, "c02");
+    expect(existsSync(join(result.staged, ".hidden/eval"))).toBe(true);
+    expect(existsSync(join(result.staged, ".hidden/solution"))).toBe(false);
+  });
+
+  it("fails a classifier that answers in-window every time, on accuracy not on misses", () => {
+    // The pair of metrics is two-sided on purpose. This submission is perfect on one of
+    // them, which is exactly why one metric would have passed it.
+    const root = makeRoot();
+    const { challengeDir } = stagePythonChallenge(root);
+    submit(challengeDir, "def classify(reading):\n    return 'in-window'\n");
+
+    const result = evalChallenge(root, SLUG, "c02");
+    expect(result.ran).toBe(true);
+    const value = (name: string) => result.metrics.find((m) => m.name === name);
+    expect(value("in-window-miss-rate")?.value).toBe(0);
+    expect(value("in-window-miss-rate")?.ok).toBe(true);
+    expect(value("classification-accuracy")?.ok).toBe(false);
+    expect(result.passed).toBe(false);
+  });
+
+  it("fails a classifier that treats the window bounds as exclusive", () => {
+    // The one rule the challenge is built around. Six of the sixteen held-out readings
+    // sit on a bound, so getting this wrong costs both metrics.
+    const root = makeRoot();
+    const { challengeDir } = stagePythonChallenge(root);
+    submit(
+      challengeDir,
+      "import json\n" +
+        "from pathlib import Path\n" +
+        "CORPUS = Path(__file__).resolve().parents[3] / 'corpus' / 'fasteners.json'\n" +
+        "WINDOWS = {e['id']: e['window'] for e in json.loads(CORPUS.read_text())['fasteners']}\n" +
+        "def classify(reading):\n" +
+        "    window = WINDOWS.get(reading['fastener'])\n" +
+        "    if window is None:\n" +
+        "        return 'unrated'\n" +
+        "    if reading['newtonMetres'] <= window['min']:\n" +
+        "        return 'under'\n" +
+        "    if reading['newtonMetres'] >= window['max']:\n" +
+        "        return 'over'\n" +
+        "    return 'in-window'\n",
+    );
+
+    const result = evalChallenge(root, SLUG, "c02");
+    const value = (name: string) => result.metrics.find((m) => m.name === name);
+    expect(value("in-window-miss-rate")?.value).toBeGreaterThan(0.1);
+    expect(value("in-window-miss-rate")?.ok).toBe(false);
     expect(result.passed).toBe(false);
   });
 });

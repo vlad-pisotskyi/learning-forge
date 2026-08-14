@@ -116,7 +116,7 @@ Nothing outside a `.hidden/` directory may reveal hidden material. `brief.md`,
 | `summary` | 1 to 2 sentences, 20 to 400 characters. |
 | `generatedAt` | `YYYY-MM-DD`, not in the future. |
 | `generator` | Which skill produced this, and at what version. |
-| `language` | Primary language for challenges. `typescript` for now. |
+| `language` | The default language for challenges. A challenge may override it. |
 | `status` | `draft` → `validated` → `verified`. See section 9. |
 | `chapters` | Ordered list of chapter ids. This is the canonical order. |
 | `challenges` | Ordered list of challenge ids. |
@@ -216,6 +216,46 @@ The reason is required and the auditor reads it.
 
 Contested material is stated as contested: "X and Y disagree on Z. X argues A
 {{S04.a}}; Y argues B {{S11.c}}." That is a fact about the field, not a hedge.
+
+Unmeasured practice is the third case, and it is the one the escape exists for.
+Some subjects are full of numbers everybody uses and nobody has measured. A chapter
+teaching retrieval has to say something about chunk size and about how many passages
+to retrieve, and there is no primary source that settles either. Writing "chunking at
+512 tokens works well" asserts a finding nobody published, and the auditor rules it
+unsupported. Writing "chunk size may affect quality" is a hedge and the validator
+rejects it. Both outcomes are wrong, because the honest statement is neither.
+
+The sanctioned form states the practice, cites who recommends it, and says plainly
+that it was never measured:
+
+```markdown
+<!-- allow-hedge: unmeasured practice, the cited recommendation carries no measurement -->
+Retrieval pipelines are commonly built with passages of roughly 500 tokens, which is
+what the reference implementations ship with {{S12.a}}. That recommendation is published
+without a measurement behind it {{S12.a}}. The one study that compared semantic chunking
+against fixed-size chunking found the extra cost was not repaid by consistent gains
+{{S12.d}}.
+```
+
+Three things make that legal rather than a loophole. The recommendation is cited, so
+the claim being made is "these people recommend this", which is checkable. The absence
+of evidence is stated outright instead of being smuggled in as a qualifier. And the
+reason on the escape names the gap, so the auditor knows what it is ruling on.
+
+Note what the example does not say. It does not say that nobody has measured chunk
+size. That is a claim about the entire literature, no excerpt can carry it, and the
+auditor rules it unsupported, so a sentence written to be honest fails the chapter. Say
+what the cited source does and does not contain, which is a claim about a document
+somebody can open. The scope of an absence claim is the source, never the field.
+
+The escape suppresses the hedge scan for its paragraph and nothing else. Every other
+rule still applies, citation density included. A paragraph that uses it to avoid
+sourcing a claim is the defect this section exists to prevent, and the auditor rules on
+it like any other.
+
+Reach for this only when the research genuinely came back empty. A writer who cannot
+find a source is not the same as a field that does not have one, and the difference is
+a research question, not a drafting decision.
 
 **Structure.** At least 400 words. At least two `##` headings. At least one
 citation marker per 150 words of prose, which is a floor on sourcing density rather
@@ -441,12 +481,12 @@ challenges/c02-bm25-from-scratch/
 | `id` | `^c\d{2}$`, matches the directory prefix and `topic.json.challenges`. |
 | `afterChapter` | The chapter the learner must finish first. Must exist. |
 | `exercises` | Non-empty concept ids. **Every one must be taught by a chapter at or before `afterChapter`.** |
-| `language` | Matches `topic.json.language` unless deliberately different. |
+| `language` | This challenge's language. Defaults to `topic.json.language`. |
 | `estimatedHours` | Number, 0.5 to 40. |
 | `brief`, `rubric` | Paths relative to the challenge directory. Must exist and be non-empty. |
 | `interface.entrypoint` | Path under `work/` that the eval set imports. |
 | `interface.exports` | Non-empty. Name, signature, and one-line description for each. |
-| `eval.runner` | `vitest` or `node`. |
+| `eval.runner` | `vitest`, `node`, or `python`. |
 | `eval.spec` | Path under `.hidden/`. Must exist. |
 | `eval.metrics` | Non-empty. Each has a name, a numeric threshold, and `gte` or `lte`. |
 | `reference` | Path under `.hidden/`. Must exist and contain at least one file. |
@@ -461,6 +501,19 @@ teach; that one is the critique agent's call.
 imports the learner's entrypoint, so the signatures have to be pinned somewhere the
 learner can read. Pinning them here means the eval set can be strict about the API
 without the learner having to guess it.
+
+A topic may mix languages. `topic.json.language` is the default its chapters are
+written against, and a challenge that sets its own `language` overrides it, because a
+subject taught in one language sometimes has to be practised in another: document
+layout extraction and retrieval evaluation live in Python whatever the surrounding
+material is written in. The validator does not compare the two fields. It compares the
+challenge's language against its own runner, and only for Python, which is the one
+pairing it can rule on: `vitest` and `node` both run TypeScript and JavaScript, so a
+disagreement there is not knowable from the runner alone.
+
+The evaluation set's filename follows the runner: `<id>.eval.ts` for `vitest` and
+`node`, `<id>.eval.py` for `python`. The reference solution mirrors the entrypoint, so
+it inherits the entrypoint's extension without a separate rule.
 
 ### `brief.md`
 
@@ -498,15 +551,29 @@ metric <name> <value>
 The name matches a `eval.metrics[].name` exactly and the value is a number, with an
 optional minus sign and an optional decimal part. One line per declared metric. This
 is the whole interface between an evaluation set and whatever is scoring it, which is
-what lets `eval.runner` be either `vitest` or `node` without the scorer caring.
+what lets `eval.runner` be `vitest`, `node`, or `python` without the scorer caring.
+
+The three runners differ only in what gets spawned. `vitest` runs the spec under a
+generated config that pins the include pattern and the root; `node` and `python` spawn
+the spec directly and read its stdout. A language reaches this contract by being able
+to print a line, which is why adding one is a loosening rather than a new subsystem.
+
+`python` spawns `python3` and needs nothing installed beyond it. Deliberately not
+pytest: the metric protocol is stdout, so a test framework's assertions and reporting
+sit outside the only channel the scorer reads, and requiring one would mean a fresh
+clone of this repo could not run its own fixture.
 
 Thresholds are not the evaluation set's business. It prints the numbers and the runner
 compares them to `challenge.json`, so the bar exists in exactly one place. An
 evaluation set that asserts its own thresholds has put the bar in two places, and they
 will disagree.
 
-The validator checks that the spec imports the entrypoint and that it names each
-declared metric somewhere in its source. It deliberately does not look for the literal
+The validator checks that the spec reaches the learner's code and that it names each
+declared metric somewhere in its source. Reaching the code is read as `work` appearing
+as a path segment, not as an import statement, because languages disagree about what an
+import looks like: a TypeScript spec writes `from "../work/src/index.ts"` and a Python
+one puts `"work"` on `sys.path` and imports a module by name. Both name the directory,
+and that is the most any language-agnostic reading can ask for. It deliberately does not look for the literal
 `metric <name>` text, because an evaluation set that prints its lines through a helper
 taking the name as an argument is correct and would fail that reading. Whether the
 lines are printed at all is settled by running the thing, which is what the dry run

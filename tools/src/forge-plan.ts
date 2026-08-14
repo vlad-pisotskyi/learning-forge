@@ -219,6 +219,14 @@ export const challengePlanSchema = z
     afterChapter: z.string().regex(CHAPTER_ID),
     exercises: z.array(z.string().regex(CONCEPT_ID)).min(1),
     estimatedHours: z.number().min(0.5).max(40),
+    /**
+     * Omitted means the topic's language. Present means this challenge is deliberately
+     * in another one, which is a decision and not something derivable: a topic taught in
+     * TypeScript still has to run a document-layout challenge in Python, because that is
+     * where the ecosystem is. Optional rather than required so every existing plan stays
+     * valid.
+     */
+    language: z.string().min(1).optional(),
     interface: challengeManifestSchema.shape.interface,
     eval: challengeManifestSchema.shape.eval.omit({ spec: true }),
   })
@@ -245,6 +253,7 @@ export type SourceDraft = z.infer<typeof sourceDraftSchema>;
 export type ChapterPlan = z.infer<typeof chapterPlanSchema>;
 export type ChallengePlan = z.infer<typeof challengePlanSchema>;
 export type TopicPlan = z.infer<typeof topicPlanSchema>;
+export type ChallengeRunner = z.infer<typeof challengeManifestSchema>["eval"]["runner"];
 
 /* ------------------------------------------------------- path conventions */
 
@@ -269,7 +278,14 @@ export const paths = {
   chapterFile: (chapter: ChapterPlan) => `chapters/${chapter.id}-${chapter.slug}.md`,
   quizFile: (chapterId: string) => `quizzes/${chapterId}.quiz.json`,
   challengeDir: (challenge: ChallengePlan) => `challenges/${challenge.id}-${challenge.slug}`,
-  evalSpec: (challengeId: string) => `.hidden/eval/${challengeId}.eval.ts`,
+  /**
+   * `.eval.ts` for the JavaScript runners, `.eval.py` for `python`. The runner decides
+   * the extension because the runner is what spawns the file: a spec named `.ts` handed
+   * to `python3` is a syntax error rather than a failing evaluation. Defaulting to the
+   * TypeScript spelling keeps every existing call site and every existing topic correct.
+   */
+  evalSpec: (challengeId: string, runner: ChallengeRunner = "node") =>
+    `.hidden/eval/${challengeId}.eval.${runner === "python" ? "py" : "ts"}`,
   reference: () => ".hidden/solution",
   /**
    * Where the verification agents leave their rulings. One file per chapter per agent, so
@@ -366,12 +382,12 @@ export function challengeManifestFromPlan(plan: TopicPlan, challenge: ChallengeP
     title: challenge.title,
     afterChapter: challenge.afterChapter,
     exercises: challenge.exercises,
-    language: plan.language,
+    language: challenge.language ?? plan.language,
     estimatedHours: challenge.estimatedHours,
     brief: "brief.md",
     rubric: "rubric.md",
     interface: challenge.interface,
-    eval: { ...challenge.eval, spec: paths.evalSpec(challenge.id) },
+    eval: { ...challenge.eval, spec: paths.evalSpec(challenge.id, challenge.eval.runner) },
     reference: paths.reference(),
   };
 }

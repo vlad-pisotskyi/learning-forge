@@ -173,6 +173,19 @@ function walk(dir: string): string[] {
  */
 const CORPUS_REF = /(?<![\w-])corpus(?:\/[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*)+/g;
 
+/**
+ * `work` named as a path segment: followed by a separator, or closing the quoted string
+ * that holds it.
+ *
+ * Languages disagree about what an import looks like, so this asks the weaker question
+ * every language can answer, which is whether the evaluation set names the directory the
+ * learner's code lives in. A TypeScript spec writes `from "../work/src/index.ts"`; a
+ * Python one puts `"work"` on `sys.path` and then imports a module by name, never writing
+ * a slash at all. Matching the literal `work/` passed the first and failed the second,
+ * which is a rule that was true for the one language in front of its author.
+ */
+const WORK_REF = /(?<![\w-])work(?=[/\\"'\]])/;
+
 /* ---------------------------------------------------------------- the checks */
 
 type Chapter = {
@@ -536,8 +549,24 @@ export function validateTopic(topicDir: string, strictFlag: boolean): Report {
     if (!manifest.challenges.includes(challenge.id)) {
       report.error(manifestPath, "challenge is not listed in topic.json.challenges");
     }
-    if (challenge.language !== manifest.language) {
-      report.warn(manifestPath, `language "${challenge.language}" differs from the topic's "${manifest.language}"`);
+    // Not compared against the topic's language. A topic's language is the default its
+    // chapters are written against, not a constraint on every challenge, and warning on a
+    // difference made a mixed-language topic impossible to promote: `promote` runs
+    // `--strict`, so the warning was a hard block on a TypeScript topic shipping the one
+    // Python challenge its subject actually requires.
+    //
+    // What is worth asking is whether the manifest agrees with itself. Only the Python
+    // pairing is checked, because it is the only one this repo can rule on: `vitest` and
+    // `node` both run TypeScript and JavaScript, so a mismatch there is not knowable from
+    // the runner alone, and guessing would reintroduce the false alarm at a different
+    // field.
+    const pythonRunner = challenge.eval.runner === "python";
+    const pythonLanguage = challenge.language.toLowerCase() === "python";
+    if (pythonRunner !== pythonLanguage) {
+      report.warn(
+        manifestPath,
+        `language "${challenge.language}" and runner "${challenge.eval.runner}" disagree; one of the two fields is wrong`,
+      );
     }
 
     const afterOrder = orderOf.get(challenge.afterChapter);
@@ -600,10 +629,10 @@ export function validateTopic(topicDir: string, strictFlag: boolean): Report {
       const spec = readFileSync(specPath, "utf8");
       if (isStub(spec)) {
         report.error(specPath, "the evaluation set is still a stub");
-      } else if (!spec.includes("work/")) {
+      } else if (!WORK_REF.test(spec)) {
         report.error(
           specPath,
-          `does not import ${challenge.interface.entrypoint}, so it is not scoring the submission`,
+          `never names work/, so it cannot be reaching ${challenge.interface.entrypoint} to score the submission`,
         );
       }
       // Whether the metric is actually printed is settled by running the thing:

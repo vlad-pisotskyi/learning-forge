@@ -1,0 +1,40 @@
+{
+  "contractVersion": 3,
+  "id": "c02",
+  "title": "Rate torque readings against their windows",
+  "afterChapter": "ch02",
+  "exercises": [
+    "torque-spec"
+  ],
+  "language": "python",
+  "estimatedHours": 1,
+  "brief": "brief.md",
+  "rubric": "rubric.md",
+  "interface": {
+    "entrypoint": "work/checker.py",
+    "exports": [
+      {
+        "name": "classify",
+        "signature": "(reading: dict) -> str",
+        "description": "Return one of in-window, under, over, or unrated for a single torque reading."
+      }
+    ]
+  },
+  "eval": {
+    "runner": "python",
+    "spec": ".hidden/eval/c02.eval.py",
+    "metrics": [
+      {
+        "name": "classification-accuracy",
+        "threshold": 0.9,
+        "direction": "gte"
+      },
+      {
+        "name": "in-window-miss-rate",
+        "threshold": 0.1,
+        "direction": "lte"
+      }
+    ]
+  },
+  "reference": ".hidden/solution"
+}

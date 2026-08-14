@@ -351,7 +351,7 @@ describe("hidden material", () => {
         `  expect(true).toBe(true);\n` +
         `});\n`,
     );
-    expect(matching(errorsOf(dir), "is not scoring the submission").length).toBe(1);
+    expect(matching(errorsOf(dir), "never names work/").length).toBe(1);
   });
 
   it("rejects an evaluation set that is still a stub", () => {
@@ -519,6 +519,12 @@ describe("corpus", () => {
     );
     patch(join(challenge, "rubric.md"), "`corpus/fasteners.json`", "the ratings it is handed");
     patch(join(challenge, ".hidden/eval/c01.eval.ts"), "`corpus/builds.json`", "the published build records");
+    // c02 loads the same fastener ratings, so the topic only stops naming a corpus once
+    // both challenges do.
+    const python = join(dir, "challenges/c02-rate-torque-readings");
+    for (const rel of ["brief.md", "rubric.md", "starter/checker.py", ".hidden/eval/c02.eval.py"]) {
+      patch(join(python, rel), "corpus/fasteners.json", "the ratings it is handed");
+    }
     rmSync(join(dir, "corpus"), { recursive: true, force: true });
     expect(matching(errorsOf(dir), "corpus")).toEqual([]);
   });

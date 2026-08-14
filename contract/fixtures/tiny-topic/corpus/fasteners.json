@@ -1,6 +1,8 @@
 {
   "fasteners": [
     { "id": "flange-bolt-m6", "rated": 9, "window": { "min": 7, "max": 11 } },
-    { "id": "shroud-clip", "rated": null, "window": null }
+    { "id": "shroud-clip", "rated": null, "window": null },
+    { "id": "cap-screw-m4", "rated": 4, "window": { "min": 3, "max": 5 } },
+    { "id": "panel-rivet", "rated": null, "window": null }
   ]
 }

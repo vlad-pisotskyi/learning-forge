@@ -358,12 +358,30 @@ Not written yet. The challenge author replaces this with weighted criteria
 summing to 100 for: ${title}.
 `;
 
-const evalStub = (id: string) => `// ${STUB_MARKER} eval ${id}
+// A stub is spawned by whichever runner the challenge declares, so it has to be written
+// in that language. A Python file carrying `throw new Error(...)` fails as a syntax error
+// before anything reaches the "not written yet" message it exists to deliver.
+const isPythonFile = (path: string) => path.endsWith(".py");
+
+const evalStub = (id: string, python: boolean) =>
+  python
+    ? `# ${STUB_MARKER} eval ${id}
+# The held-out evaluation set goes here. Only the Judge runs this file.
+raise SystemExit("${id}: evaluation set not written yet")
+`
+    : `// ${STUB_MARKER} eval ${id}
 // The held-out evaluation set goes here. Only the Judge runs this file.
 throw new Error("${id}: evaluation set not written yet");
 `;
 
-const solutionStub = (id: string) => `// ${STUB_MARKER} solution ${id}
+const solutionStub = (id: string, python: boolean) =>
+  python
+    ? `# ${STUB_MARKER} solution ${id}
+# The reference implementation goes here. It exists so the challenge is proven
+# solvable within the interface the manifest pins.
+raise SystemExit("${id}: reference solution not written yet")
+`
+    : `// ${STUB_MARKER} solution ${id}
 // The reference implementation goes here. It exists so the challenge is proven
 // solvable within the interface the manifest pins.
 throw new Error("${id}: reference solution not written yet");
@@ -486,16 +504,22 @@ export function applyPlan(root: string, slug: string, clock: Clock = systemClock
     );
     stubUnlessAuthored(join(dir, "brief.md"), briefStub(challenge.title), `${rel}/brief.md`, written);
     stubUnlessAuthored(join(dir, "rubric.md"), rubricStub(challenge.title), `${rel}/rubric.md`, written);
+    const specRel = paths.evalSpec(challenge.id, challenge.eval.runner);
     stubUnlessAuthored(
-      join(dir, paths.evalSpec(challenge.id)),
-      evalStub(challenge.id),
-      `${rel}/${paths.evalSpec(challenge.id)}`,
+      join(dir, specRel),
+      evalStub(challenge.id, isPythonFile(specRel)),
+      `${rel}/${specRel}`,
       written,
     );
     // The reference lives at the entrypoint's path under .hidden/solution/, so a
     // dry run can stage it as work/ and the eval set's imports resolve unchanged.
     const referenceRel = referenceEntrypoint(challenge.interface.entrypoint);
-    stubUnlessAuthored(join(dir, referenceRel), solutionStub(challenge.id), `${rel}/${referenceRel}`, written);
+    stubUnlessAuthored(
+      join(dir, referenceRel),
+      solutionStub(challenge.id, isPythonFile(referenceRel)),
+      `${rel}/${referenceRel}`,
+      written,
+    );
   }
 
   /* --- the three roles, stamped from templates --- */
@@ -620,7 +644,7 @@ export function statusOf(root: string, slug: string): Status {
     [
       join(dir, "brief.md"),
       join(dir, "rubric.md"),
-      join(dir, paths.evalSpec(challenge.id)),
+      join(dir, paths.evalSpec(challenge.id, challenge.eval.runner)),
       join(dir, referenceEntrypoint(challenge.interface.entrypoint)),
     ].some((path) => !existsSync(path) || isStub(readFileSync(path, "utf8"))) ||
     !hasFiles(join(dir, "starter")),
@@ -1040,6 +1064,14 @@ export function evalChallenge(
       cwd: stageRoot,
       ...RUN_LIMITS,
     });
+  } else if (challenge.eval.runner === "python") {
+    // `python3` and nothing else. The metric protocol is a line on stdout, so a test
+    // framework's assertions and reporting sit outside the only channel the scorer reads,
+    // and requiring one would mean a fresh clone of this repo could not run its own
+    // fixture. Same cwd as the node branch, so a spec that puts `work` on sys.path
+    // resolves it the way a TypeScript spec resolves its relative import.
+    command = `python3 ${spec}`;
+    run = spawnSync("python3", [spec], { cwd: staged, ...RUN_LIMITS });
   } else {
     command = `node ${spec}`;
     run = spawnSync("node", [spec], { cwd: staged, ...RUN_LIMITS });

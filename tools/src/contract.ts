@@ -246,7 +246,7 @@ export const challengeManifestSchema = z
       .strict(),
     eval: z
       .object({
-        runner: z.enum(["vitest", "node"]),
+        runner: z.enum(["vitest", "node", "python"]),
         spec: z.string().startsWith(".hidden/"),
         metrics: z
           .array(
