@@ -14,8 +14,8 @@ the Teacher, Helper, and Judge templates the generator stamps into every topic, 
 hook that enforces the hidden-material boundary rather than asking agents to respect
 it, and the two verification agents that rule on whether a chapter's claims are
 carried by its sources and whether it teaches. The first end-to-end generation run is
-under way. [HANDOFF.md](HANDOFF.md) is the original plan of record and lists every
-phase.
+under way. [docs/plans/HANDOFF.md](docs/plans/HANDOFF.md) is the original plan of record
+and lists every phase.
 
 ```
 npm install
@@ -26,7 +26,14 @@ npm run forge -- status --all                               # where each topic s
 
 Requires Node 22 or newer, which runs the TypeScript in `tools/` without a build step.
 
-Start with [CLAUDE.md](CLAUDE.md) for what the repo is and how the roles differ, then
-[contract/TOPIC-CONTRACT.md](contract/TOPIC-CONTRACT.md) for what a generated topic
-has to look like. The setup and licensing sections arrive with Phase 11, alongside the
-attribution a Wikipedia subset requires.
+Start with [docs/](docs/), the internal documentation, which is written for people rather
+than for agents. [reference/GLOSSARY.md](docs/reference/GLOSSARY.md) defines every term this
+repo uses, [reference/HOW-IT-WORKS.md](docs/reference/HOW-IT-WORKS.md) walks the pipeline
+from a subject name to a verified topic, and
+[reference/CONCEPTS.md](docs/reference/CONCEPTS.md) covers why the design looks the way it
+does, mostly by naming the failure that forced each part of it.
+
+After that, [CLAUDE.md](CLAUDE.md) for how agents are expected to behave here, and
+[contract/TOPIC-CONTRACT.md](contract/TOPIC-CONTRACT.md) for what a generated topic has to
+look like. The setup and licensing sections arrive with Phase 11, alongside the attribution
+a Wikipedia subset requires.

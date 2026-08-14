@@ -34,10 +34,27 @@ contract/     the topic contract: spec + fixtures. Read this before generating.
 tools/        the validator and other Forge scripts (TypeScript, Node 22+)
 topics/<slug>/  one generated topic instance
 .claude/rules/  path-scoped rules; they load only when a matching file is touched
+docs/<category>/  internal docs, written for people. Categorised; see docs/README.md
 ```
 
 Full directory shape, file-by-file, is in `contract/TOPIC-CONTRACT.md`. Do not
 reconstruct it from memory or from what happens to exist on disk.
+
+## Documents
+
+`docs/` is categorised and never a flat pile. Read `docs/README.md` before adding a file,
+put it in an existing category, and if none fits, add one and register it in that index. A
+directory not listed there should not exist.
+
+The category decides how a file is treated, and the two that exist fail in opposite
+directions. `docs/reference/` describes what exists now, so drift is a defect: adding,
+renaming, or removing a term or a technique means updating `docs/reference/GLOSSARY.md` and
+its siblings in the same commit as the code. `docs/plans/` records what was intended at a
+point in time and is frozen, so a plan that no longer matches the code is the record working
+correctly and must not be edited to agree with it.
+
+Nothing imports these, so they cost nothing at startup and can go stale in silence. That is
+why the obligation is written here rather than assumed.
 
 ## Hard content rules
 

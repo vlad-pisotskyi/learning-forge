@@ -2,7 +2,7 @@
 
 > Kept as written, as the plan of record. It describes the repo before any code
 > existed, so its status line is historical: Phases 0 through 3 are now built. See
-> [README.md](README.md) for where things actually stand.
+> [README.md](../../README.md) for where things actually stand.
 
 **For:** a fresh Claude Code session (Sonnet is fine for most phases; see the model notes per phase).
 **From:** an Opus planning session that ran the requirements interview and one successful research pass before hitting a session limit.
