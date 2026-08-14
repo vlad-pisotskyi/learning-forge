@@ -286,6 +286,42 @@ describe("forge sources", () => {
     expect(at(written.sources, 2).excerpts).toHaveLength(1);
   });
 
+  it("folds the arXiv mirrors of one paper into one source", () => {
+    // The first real research run produced this: two shards, two papers, four entries,
+    // because the abstract page and the ar5iv full-text render are different hosts.
+    const root = makeRoot();
+    initTopic(root, SLUG, clock);
+    writeFileSync(
+      join(paths.researchDir(root, SLUG), "a-rag.json"),
+      JSON.stringify(
+        shard("a-rag", [
+          draft("https://arxiv.org/abs/2005.11401", ["Parametric and non-parametric memory are combined."]),
+          draft("https://arxiv.org/abs/1234.56789", ["A different paper entirely, and it stays its own source."]),
+        ]),
+      ),
+    );
+    writeFileSync(
+      join(paths.researchDir(root, SLUG), "b-rag.json"),
+      JSON.stringify(
+        shard("b-rag", [
+          draft("https://ar5iv.labs.arxiv.org/html/2005.11401v2", ["RAG-Sequence conditions on one retrieved passage."]),
+          draft("https://arxiv.org/pdf/2005.11401", ["RAG-Token may draw each token from a different passage."]),
+        ]),
+      ),
+    );
+
+    const result = mergeSources(root, SLUG, clock);
+    expect(result.problems).toEqual([]);
+    expect(result.sources).toBe(2);
+    expect(result.folded).toBe(2);
+
+    const written = sourcesFileSchema.parse(
+      JSON.parse(readFileSync(join(paths.topicDir(root, SLUG), "sources.json"), "utf8")),
+    );
+    expect(at(written.sources, 0).excerpts).toHaveLength(3);
+    expect(at(written.sources, 1).excerpts).toHaveLength(1);
+  });
+
   it("takes the more precise date, the later retrieval, and the honest primary flag", () => {
     const root = makeRoot();
     initTopic(root, SLUG, clock);

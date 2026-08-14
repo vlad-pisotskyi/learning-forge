@@ -206,6 +206,21 @@ export type MergeResult = {
  * collapse. Folding two genuinely different sources into one is a worse failure than
  * leaving a duplicate on the page where a reader can see it.
  */
+/**
+ * arXiv is reached through several hosts that all name a paper by one identifier: the
+ * abstract page at `arxiv.org/abs/<id>`, its `/pdf/` sibling, and the full-text renders
+ * at `ar5iv.org` and `ar5iv.labs.arxiv.org`. Shards researching the same paper land on
+ * different ones as a matter of course, and the first real research run produced two
+ * entries per paper for exactly this reason, across two shards and two papers.
+ *
+ * The version suffix is dropped deliberately. `2005.11401v2` and `2005.11401` are not the
+ * same file, but a chapter citing an arXiv id is citing the paper, and keeping them apart
+ * would leave standing the duplicate this exists to remove.
+ */
+const ARXIV_HOST =
+  /^(?:arxiv\.org|ar5iv\.org|ar5iv\.labs\.arxiv\.org|export\.arxiv\.org|browse\.arxiv\.org)$/;
+const ARXIV_PATH = /^\/(?:abs|pdf|html|format)\/(.+?)(?:v\d+)?$/;
+
 export function sourceKey(url: string): string {
   let parsed: URL;
   try {
@@ -215,6 +230,10 @@ export function sourceKey(url: string): string {
   }
   const host = parsed.host.toLowerCase().replace(/^www\./, "");
   const path = parsed.pathname.replace(/\/+$/, "").replace(/\.(?:txt|html?)$/i, "");
+  if (ARXIV_HOST.test(host)) {
+    const onArxiv = ARXIV_PATH.exec(path);
+    if (onArxiv) return `arxiv:${onArxiv[1]!.toLowerCase()}`;
+  }
   return `${host}${path}${parsed.search}`;
 }
 

@@ -75,6 +75,13 @@ shards reaching one RFC through `/rfc/rfc3629` and `/rfc/rfc3629.txt`, or one li
 standard through two anchors, found one source. Before this the merge compared URL
 strings, and a real run produced four entries for two documents.
 
+arXiv is the one host family with a rule of its own, because it is reached through
+several hosts that name a paper by the same identifier: the abstract page, the `/pdf/`
+sibling, and the full-text renders at `ar5iv.org` and `ar5iv.labs.arxiv.org`. Those all
+key to `arxiv:<id>`, version suffix dropped. This is not a guess about what shards do.
+The first research run on the retrieval topic produced two entries per paper across two
+shards, on two papers, before a single chapter existed.
+
 Keep it narrow. Folding two genuinely different sources into one is a worse failure
 than leaving a duplicate visible on the page, so only spellings that name the same
 document by construction collapse. `reconcile` then settles the disagreements

@@ -42,6 +42,12 @@ map stage works without it.
 Do not read the shard files into this context. The merge step reads them, and the
 map stage reads the merged result.
 
+One instruction worth putting in every shard prompt: when a paper is on arXiv, pin the
+abstract page. The merge folds the abstract page, the PDF, and the ar5iv full-text
+renders onto one identifier, so reaching a different mirror is not a defect. The
+abstract page is still the one that carries the arXiv id the validator wants and the one
+a reader can navigate from.
+
 ## 3. Merge
 
 ```
@@ -51,9 +57,10 @@ npm run forge -- sources <slug>
 This folds every shard into `sources.json`, hands out source ids in shard order, and
 folds duplicate excerpts from different shards into one entry. It also folds URL
 spellings that name the same document: the host without `www.`, the path without a
-trailing slash or a `.txt`/`.html` extension, the fragment dropped. Two shards reaching
-one RFC through `/rfc/rfc3629` and `/rfc/rfc3629.txt` found one source, not two, and the
-merge says so. A merge that finds a problem writes nothing and names the shard
+trailing slash or a `.txt`/`.html` extension, the fragment dropped, and every arXiv
+mirror of a paper onto its identifier. Two shards reaching one RFC through
+`/rfc/rfc3629` and `/rfc/rfc3629.txt`, or one paper through `arxiv.org/abs/` and
+`ar5iv.labs.arxiv.org/html/`, found one source, not two, and the merge says so. A merge that finds a problem writes nothing and names the shard
 responsible, so `sources.json` either does not exist or is trustworthy.
 
 Read the summary it prints, not the file. It reports the source count, the excerpt
