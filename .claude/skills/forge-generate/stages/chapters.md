@@ -66,8 +66,8 @@ A chapter that meets the floor by attaching markers to sentences they do not sup
 passes the validator and fails the audit.
 
 **A number everybody uses and nobody measured.** Some subjects are full of these, and
-they cannot be written as findings or as hedges. The contract's hedging section gives
-the sanctioned form: state the practice, cite who recommends it, and say that the cited
+they cannot be written as findings or as hedges. Section 4 of the contract, under "Body
+rules", gives the sanctioned form: state the practice, cite who recommends it, and say that the cited
 recommendation carries no measurement. Keep the absence claim scoped to the source. A
 sentence saying nobody has ever measured it is a claim about the whole literature, and
 the auditor rules it unsupported.

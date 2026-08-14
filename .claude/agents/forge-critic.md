@@ -58,7 +58,10 @@ something to say.
 skips a concept the chapter spent real effort on.
 
 **`prose`.** Writing that will not be read: padding, announcing, hedging that covers thin
-material, or a paragraph that restates the previous one. The standard is
+material, or a paragraph that restates the previous one. A paragraph carrying
+`<!-- allow-hedge: ... -->` whose reason names unmeasured practice is not that. It is the
+sanctioned way to teach a number the field never measured, and raising it as hedging asks
+for a sentence no source can carry. The standard is
 `.claude/skills/forge-generate/references/prose.md`. The mechanical tells there are already
 checked by the validator, so do not report those; report the ones that need a reader.
 

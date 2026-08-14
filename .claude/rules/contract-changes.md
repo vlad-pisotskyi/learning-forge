@@ -27,10 +27,16 @@ passes is a checker whose state nobody knows.
 
 ## Versioning
 
-`contractVersion` appears in every generated file. Adding an optional field is
-compatible and does not bump it. Adding a required field, removing a field, tightening
-a rule, or changing a filename convention bumps it, and the validator then refuses
-older topics until they are migrated.
+`contractVersion` appears in every generated file. Adding a required field, removing a
+field, tightening a rule, or changing a filename convention bumps it, and the validator
+then refuses older topics until they are migrated.
+
+Loosening does not bump. Adding an optional field, adding a member to an enum, relaxing
+a check so that material it used to reject now passes, and extending a filename
+convention to a case it did not cover are all compatible, because no topic that was
+valid before becomes invalid. The `python` runner was all four at once and stayed at
+version 3. The test is not how large the change is, it is whether anything already on
+disk stops validating.
 
 Bumping means every existing topic under `topics/` needs a migration pass. Before
 bumping, check whether the rule can be expressed as a warning instead. Warnings are

@@ -83,6 +83,12 @@ no-hedging rule invites, and turning a source's "often" into a chapter's "always
 produces a false claim from a style rule. State the narrower fact, or say the question is
 open and cite both sides.
 
+Do not assert a number the field never measured. Where a practice is a widely followed
+default with no study behind it, the contract's `allow-hedge` escape covers it: state the
+practice, cite who recommends it, and say the cited recommendation carries no
+measurement. Scope that to the source, because a claim about the whole literature cannot
+be cited.
+
 ## Before finishing
 
 Read it back and ask two questions. Would a person write this sentence? Does every claim

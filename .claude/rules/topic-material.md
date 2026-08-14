@@ -59,6 +59,13 @@ question is open and cite both sides.
 Contested material is stated as contested and cited on both sides. That is a fact
 about the field, not a hedge.
 
+A third case exists for practice nobody has measured, which some subjects are full of.
+A paragraph may carry `<!-- allow-hedge: reason -->` to state the practice, cite who
+recommends it, and say that the cited recommendation carries no measurement. Section 4
+of `contract/TOPIC-CONTRACT.md`, under "Body rules", has the form and the one trap in
+it, which is that an absence claim has to be scoped to the source rather than to the
+field.
+
 Floors, per chapter: 400 words, two `##` headings, one citation marker per 150 words.
 The density floor is there because a long chapter with two markers is unsourced
 material with a citation stapled on.

@@ -46,6 +46,12 @@ signatures, so they are a public contract and the brief will state them. Pin the
 metrics and thresholds too, because the learner is told the bar they are being held
 to.
 
+Pin the runner as well, and set the challenge's own `language` when it differs from the
+topic's. Both are decisions only this stage makes. `vitest` and `node` run TypeScript and
+JavaScript; `python` spawns `python3` and needs nothing installed. A topic taught in one
+language can practise in another, and a subject whose tooling lives in Python should say
+so here rather than have a challenge author discover it.
+
 ## 4. Write the map and check it
 
 Write `.forge-cache/<slug>/map.json` against the shape in `tools/src/forge-plan.ts`

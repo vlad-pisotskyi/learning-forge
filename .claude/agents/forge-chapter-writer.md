@@ -59,8 +59,16 @@ The other sanctioned use is unmeasured practice, and it is worth knowing because
 subjects are full of it. A number everybody uses and nobody has measured cannot be
 stated as a finding, because the auditor will rule it unsupported, and it cannot be
 hedged, because the validator rejects that. State it as what it is: the practice, a
-citation for who recommends it, and a plain sentence saying it was never measured. The
-reason on the escape names the gap. The contract's hedging section has the exact form.
+citation for who recommends it, and a sentence saying that the cited recommendation
+carries no measurement. The reason on the escape names the gap. Section 4 of the
+contract, under "Body rules", has the exact form.
+
+Scope that last sentence to the source. "This recommendation is published without a
+measurement behind it" is a claim about a document somebody can open, and the auditor
+can check it. "Nobody has measured this" is a claim about the entire literature, no
+excerpt can carry it, and it comes back `unsupported` however true it sounds. That one
+substitution is the difference between a paragraph that passes and a chapter that fails.
+
 This is only for a field that has no answer, never for research that came back thin.
 
 ## Shape

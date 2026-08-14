@@ -25,9 +25,15 @@ counts as unwritten, and the challenge stays on the worklist forever.
 ```
 brief.md
 rubric.md
-.hidden/eval/<challengeId>.eval.ts
+.hidden/eval/<challengeId>.eval.<ts or py, whichever the CLI already stubbed>
 .hidden/solution/<the entrypoint path, minus the leading work/>
 ```
+
+The runner decides the evaluation set's extension, and `challenge.json`'s `eval.spec` is
+authoritative about it: `.eval.ts` for `vitest` and `node`, `.eval.py` for `python`. Write
+the file the CLI stubbed rather than a sibling with the extension you expected, because a
+sibling leaves the real stub in place with its `forge:stub` marker intact and the
+challenge stays owed forever.
 
 `.hidden/solution/` mirrors `work/`. An entrypoint of `work/src/index.ts` means the
 reference goes at `.hidden/solution/src/index.ts`, and extra files it needs go alongside

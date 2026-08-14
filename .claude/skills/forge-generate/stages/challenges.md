@@ -39,9 +39,14 @@ outstanding forever.
 ```
 brief.md
 rubric.md
-.hidden/eval/<challengeId>.eval.ts
+.hidden/eval/<challengeId>.eval.<ts or py, whichever the CLI already stubbed>
 .hidden/solution/<entrypoint minus the leading work/>
 ```
+
+The evaluation set's extension follows the runner, `.eval.ts` for `vitest` and `node` and
+`.eval.py` for `python`, and `challenge.json`'s `eval.spec` is authoritative. An author
+who writes a sibling with the other extension leaves the stub in place and the challenge
+stays on the worklist.
 
 The last one is a fixed mapping: `.hidden/solution/` mirrors `work/`, so an entrypoint
 of `work/src/index.ts` puts the reference at `.hidden/solution/src/index.ts`. That is
