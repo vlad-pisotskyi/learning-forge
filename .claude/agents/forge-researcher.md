@@ -33,14 +33,28 @@ the quote supports the claim. So:
 ## Primary sources
 
 Prefer the original: the paper that introduced a method, the specification, the
-official documentation. Mark anything secondary `primary: false` honestly, but know
-what that costs. Every non-primary source is a validator warning, and warnings become
-errors under `--strict`, which is how a topic is promoted. So a secondary source keeps
-the whole topic at `draft` until it is replaced by the primary it describes. Use one
-only when there is genuinely no primary to point at, and say so in `openQuestions`.
+official documentation. Mark anything secondary `primary: false` honestly. One such
+entry costs nothing, because the validator asks the question of the topic rather than
+of each source and warns only when more than half of them are secondary. A subject
+whose defaults come from practitioners has to cite the practitioners to teach
+honestly, and the flag exists to be set.
+
+What you are responsible for is the proportion, not the single entry. Reach for a
+secondary source when there is genuinely no primary to point at, and say so in
+`openQuestions`.
 
 Include the identifier when there is one: a DOI, an arXiv id, an RFC number. Names
-collide and identifiers do not, and a paper with no identifier is also a warning.
+collide and identifiers do not, and a `paper` or a `book` carrying no identifier is a
+warning.
+
+Pick the `kind` that is true rather than the one that sounds strongest. Measured work
+published outside a venue is `report`: a company technical report, a lab write-up, an
+evaluation posted to a project site. It has no DOI and no arXiv id, and the identifier
+warning is scoped to `paper` and `book` for exactly that reason, so `report` costs
+nothing. Filing such a source as `paper` buys a warning that can never be cleared,
+because the identifier it is being asked for does not exist. Filing it as `docs` to
+dodge that is the other misuse: documentation says how to use a thing, and a report
+says what somebody found.
 
 Do not coordinate URL spelling with the other shards. The merge folds spellings that
 name the same document, meaning the host without `www.`, the path without a trailing

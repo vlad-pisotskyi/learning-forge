@@ -100,12 +100,13 @@ Fix these by re-running the shard that produced the source, not by editing
 ## 5. Report and stop
 
 Report the shard count, the source count, the excerpt count, how many sources are
-primary, and any shard left unresolved. Flag the non-primary sources explicitly, and
-any paper with no DOI or arXiv identifier: each of those is a validator warning, and
-`promote` runs the validator under `--strict`, so the topic cannot reach `validated`
-while one remains. Better to replace a secondary source with the primary it describes
-now than after twelve chapters cite it. Then stop. The map stage is a separate
-invocation.
+primary, and any shard left unresolved. Two things need flagging by name. Any `paper` or
+`book` with no DOI or arXiv identifier is a validator warning, and `promote` runs
+`--strict`, so the topic cannot reach `validated` while one remains. And count the
+secondary sources against the total: the warning fires when more than half of them are
+secondary, so one `primary: false` entry is fine and a majority is not. Better to replace a
+secondary source with the primary it describes now than after twelve chapters cite it.
+Then stop. The map stage is a separate invocation.
 
 ## What counts as done
 

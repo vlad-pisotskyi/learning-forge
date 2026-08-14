@@ -91,10 +91,13 @@ verification agents and is not this skill's to hand out.
 A `validated` topic is still not audited: the faithfulness auditor and the critique
 agent have not run. Say that when reporting a finished run.
 
-`--strict` promotes warnings to errors, and `promote` always runs strict. Two
-warnings bite here in particular: a source with `primary: false`, and a paper with no
-DOI or arXiv identifier. Either one keeps a topic at `draft`, so a secondary source
-has to be replaced with the primary it describes before a topic can be promoted.
+`--strict` promotes warnings to errors, and `promote` always runs strict. Two warnings
+bite here in particular. A `paper` or a `book` carrying no DOI or arXiv identifier is one;
+record the identifier, or when the work genuinely has none, file it as the kind it actually
+is. The other is asked of the topic rather than of each source: when more than half the
+sources are secondary, the validator warns once and names them, so a topic built mostly on
+secondary material cannot be promoted until it has done its reading. A single
+`primary: false` entry is not a finding.
 
 ## Where the work is kept
 
