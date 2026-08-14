@@ -389,18 +389,32 @@ One file, `sources.json`, for the whole topic.
 | Field | Rule |
 |---|---|
 | `id` | `^S\d{2,3}$`, unique. |
-| `kind` | `paper`, `docs`, `spec`, `book`, `dataset`, `code`, or `standard`. |
+| `kind` | `paper`, `report`, `docs`, `spec`, `book`, `dataset`, `code`, or `standard`. |
 | `title` | 4 to 300 characters. |
 | `authors` | Non-empty for `paper` and `book`; optional otherwise. |
 | `published` | `YYYY`, `YYYY-MM`, or `YYYY-MM-DD`. Record the precision the source states and no more. |
 | `url` | Absolute `http`/`https`. |
-| `identifier` | Optional DOI, arXiv id, RFC number, ISBN. Recommended for papers. |
+| `identifier` | Optional DOI, arXiv id, RFC number, ISBN. Warned for `paper` and `book`, which are the kinds that have one. |
 | `retrieved` | `YYYY-MM-DD`, not in the future. |
 | `primary` | Whether this is a primary source. |
 | `excerpts` | Non-empty. |
 | `excerpts[].key` | `^[a-z]{1,3}$`, unique within the source. |
 | `excerpts[].quote` | 20 to 1500 characters, verbatim. |
 | `excerpts[].locator` | Where in the source: section, page, heading, or line range. |
+
+`report` is for work that measures something and publishes it outside a venue: a
+company technical report, a lab write-up, an evaluation posted to a project site. It
+is not `paper`, because there is no venue, no peer review, and no DOI or arXiv id to
+record. It is not `docs`, because documentation tells you how to use a thing and a
+report tells you what somebody found. The distinction is load bearing in exactly one
+place: the validator warns when a `paper` or a `book` carries no identifier, since
+one exists and was not recorded, and it does not warn for a `report`, because none
+exists to find. Marking a self-published report as `paper` to look more authoritative
+is the misuse to watch for, and marking one as `docs` to dodge the identifier warning
+is the other.
+
+A subject whose defaults come from practitioners will have several of these, and
+that is not a weakness in the topic. It is what the subject looks like.
 
 `primary: false` on one source is not a finding at all. A blog post explaining a
 paper is sometimes the clearest thing to point a learner at, and a subject whose

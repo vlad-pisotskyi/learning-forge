@@ -191,7 +191,14 @@ export const sourcesFileSchema = z
         z
           .object({
             id: z.string().regex(SOURCE_ID),
-            kind: z.enum(["paper", "docs", "spec", "book", "dataset", "code", "standard"]),
+            /**
+             * `report` is measured work published outside a venue: a company technical
+             * report, a lab write-up. It is separate from `paper` because the identifier
+             * warning below is scoped to the kinds that have an identifier to record, and
+             * separate from `docs` because a report says what somebody found rather than
+             * how to use something.
+             */
+            kind: z.enum(["paper", "report", "docs", "spec", "book", "dataset", "code", "standard"]),
             title: z.string().min(4).max(300),
             authors: z.array(z.string().min(2)).optional(),
             published: z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/),

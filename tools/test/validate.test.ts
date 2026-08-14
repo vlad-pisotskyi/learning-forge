@@ -134,6 +134,31 @@ describe("primary sources", () => {
   });
 });
 
+describe("source identifiers", () => {
+  it("warns when a paper carries no DOI or arXiv id", () => {
+    const dir = copyFixture();
+    editJson(join(dir, "sources.json"), (data) => {
+      data.sources[0].kind = "paper";
+      data.sources[0].authors = ["A Name"];
+      delete data.sources[0].identifier;
+    });
+    expect(matching(validateTopic(dir, false).warnings.map((w) => w.message), "no DOI/arXiv").length).toBe(1);
+  });
+
+  it("says nothing about a report with no identifier, because there is none to record", () => {
+    // A company technical report has no DOI and no arXiv id. Warning about it made the
+    // honest kind the expensive one: `promote` runs `--strict`, so a topic citing measured
+    // practitioner work could not reach `validated` without misfiling it as `docs`.
+    const dir = copyFixture();
+    editJson(join(dir, "sources.json"), (data) => {
+      data.sources[0].kind = "report";
+      delete data.sources[0].identifier;
+    });
+    expect(matching(validateTopic(dir, false).warnings.map((w) => w.message), "no DOI/arXiv")).toEqual([]);
+    expect(validateTopic(dir, true).findings).toEqual([]);
+  });
+});
+
 describe("no hedging", () => {
   it("rejects a hedge in prose", () => {
     const dir = copyFixture();

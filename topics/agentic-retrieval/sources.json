@@ -103,44 +103,14 @@
           "key": "p",
           "locator": "Table 1 caption",
           "quote": "Open-Domain QA Test Scores. For TQA, left column uses the standard test set for Open-Domain QA, right column uses the TQA-Wiki test set."
+        },
+        {
+          "key": "q",
+          "locator": "Abstract, fourth sentence",
+          "quote": "Additionally, providing provenance for their decisions and updating their world knowledge remain open research problems."
         }
       ],
       "id": "S01"
-    },
-    {
-      "kind": "paper",
-      "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (NeurIPS 2020 version of record)",
-      "authors": [
-        "Patrick Lewis",
-        "Ethan Perez",
-        "Aleksandra Piktus",
-        "Fabio Petroni",
-        "Vladimir Karpukhin",
-        "Naman Goyal",
-        "Heinrich Kuttler",
-        "Mike Lewis",
-        "Wen-tau Yih",
-        "Tim Rocktaschel",
-        "Sebastian Riedel",
-        "Douwe Kiela"
-      ],
-      "published": "2020-12",
-      "url": "https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html",
-      "retrieved": "2026-08-13",
-      "primary": true,
-      "excerpts": [
-        {
-          "key": "a",
-          "locator": "Abstract, sentences 3 to 5",
-          "quote": "Additionally, providing provenance for their decisions and updating their world knowledge remain open research problems. Pre-trained models with a differentiable access mechanism to explicit non-parametric memory can overcome this issue, but have so far been only investigated for extractive downstream tasks. We explore a general-purpose fine-tuning recipe for retrieval-augmented generation (RAG) -- models which combine pre-trained parametric and non-parametric memory for language generation."
-        },
-        {
-          "key": "b",
-          "locator": "Abstract, sentence 7",
-          "quote": "We compare two RAG formulations, one which conditions on the same retrieved passages across the whole generated sequence, the other can use different passages per token."
-        }
-      ],
-      "id": "S02"
     },
     {
       "kind": "paper",
@@ -197,7 +167,7 @@
           "quote": "Results can be improved further in some cases by combining DPR with BM25 in both single- and multi-dataset settings."
         }
       ],
-      "id": "S03"
+      "id": "S02"
     },
     {
       "kind": "paper",
@@ -281,7 +251,7 @@
           "quote": "Recall at kk is calculated as the fraction of the relevant documents that are successfully retrieved within the top kk extracted documents."
         }
       ],
-      "id": "S04"
+      "id": "S03"
     },
     {
       "kind": "code",
@@ -317,7 +287,7 @@
           "quote": "    if (strcmp(tm->name, \"ndcg\") == 0) {\n        /* Compare sum to ideal NDCG */\n        if (ideal_dcg > 0.0) {\n            eval->values[tm->eval_index].value = results_dcg / ideal_dcg;\n        }\n    } else if (strcmp(tm->name, \"dcg\") == 0) {\n        eval->values[tm->eval_index].value = results_dcg;\n    } else if (strcmp(tm->name, \"ideal_dcg\") == 0) {\n        eval->values[tm->eval_index].value = ideal_dcg;"
         }
       ],
-      "id": "S05"
+      "id": "S04"
     },
     {
       "kind": "code",
@@ -343,7 +313,7 @@
           "quote": "static long long_cutoff_array[] = { 5, 10, 15, 20, 30, 100, 200, 500, 1000 };"
         }
       ],
-      "id": "S06"
+      "id": "S05"
     },
     {
       "kind": "code",
@@ -369,7 +339,7 @@
           "quote": "    for (i = 0; i < res_rels.num_ret; i++) {\n        if (res_rels.results_rel_list[i] >= epi->relevance_level)\n            break;\n    }\n    if (i < res_rels.num_ret)\n        eval->values[tm->eval_index].value = (double) 1.0 / (double) (i + 1);"
         }
       ],
-      "id": "S07"
+      "id": "S06"
     },
     {
       "kind": "book",
@@ -406,7 +376,7 @@
           "quote": "These notions can be made clear by examining the following contingency table:"
         }
       ],
-      "id": "S08"
+      "id": "S07"
     },
     {
       "kind": "paper",
@@ -463,7 +433,7 @@
           "quote": "Sentence-level Chunking Our study focuses on sentence-level chunking, where documents are split into individual sentences, and each sentence is treated as a segment for grouping."
         }
       ],
-      "id": "S09"
+      "id": "S08"
     },
     {
       "kind": "paper",
@@ -589,7 +559,7 @@
           "quote": "These results, coupled with the observation that models are often better at retrieving and using information at the start or end of the input contexts, suggest that effective reranking of retrieved documents (pushing relevant information closer to the start of the input context) or ranked list truncation (retrieving fewer documents when appropriate; Arampatzis et al. 2009) may be promising directions for improving how language-model-based readers use retrieved context."
         }
       ],
-      "id": "S10"
+      "id": "S09"
     },
     {
       "kind": "paper",
@@ -631,10 +601,10 @@
           "quote": "Comparison of different chunk sizes."
         }
       ],
-      "id": "S11"
+      "id": "S10"
     },
     {
-      "kind": "paper",
+      "kind": "report",
       "title": "Evaluating Chunking Strategies for Retrieval",
       "authors": [
         "Brandon Smith",
@@ -681,7 +651,7 @@
           "quote": "We found that it was necessary to alter some defaults to achieve fair results. By default, the `RecursiveCharacterTextSplitter` uses the following separators: `[\"\\n\\n\", \"\\n\", \" \", \"\"]`. We found this would commonly result in very short chunks, which performed poorly in comparison to `TokenTextSplitter` which produces chunks of a fixed length by default."
         }
       ],
-      "id": "S12"
+      "id": "S11"
     },
     {
       "kind": "paper",
@@ -718,7 +688,7 @@
           "quote": "optimal trade-off and accuracy are attained when a minimal set of documents is initially retrieved and then supplemented with irrelevant documents until the context limit is reached"
         }
       ],
-      "id": "S13"
+      "id": "S12"
     },
     {
       "kind": "docs",
@@ -762,7 +732,7 @@
           "quote": "Although you could use the standard recommendation of 2,000 characters with a 500 character overlap, in this case it makes sense to go lower given the token counts of the sample document. In fact, setting an overlap value that's too large can result in no overlap appearing at all."
         }
       ],
-      "id": "S14"
+      "id": "S13"
     },
     {
       "kind": "docs",
@@ -796,7 +766,7 @@
           "quote": "retrieved_docs = vector_store.similarity_search(query, k=4)"
         }
       ],
-      "id": "S15"
+      "id": "S14"
     },
     {
       "kind": "docs",
@@ -826,7 +796,7 @@
           "quote": "there's no one-size-fits-all solution to chunking"
         }
       ],
-      "id": "S16"
+      "id": "S15"
     },
     {
       "kind": "paper",
@@ -863,7 +833,7 @@
           "quote": "Two popular used LLMs are selected for evaluation based on whether they can handle extremely long-context: (1) GPT-4-Turbo-128K, the gpt-4-1106-preview model with a 128K context window size from OpenAI. (2) Kimi-Chat, the Moonshot-v1-128K model with a 128K context window size from Moonshot AI."
         }
       ],
-      "id": "S17"
+      "id": "S16"
     },
     {
       "kind": "paper",
@@ -900,7 +870,7 @@
           "quote": "We evaluate five recent capable LLMs: GPT4, GPT3.5, Gemini-Pro, Mistral 70B and Mixtral 8x7B."
         }
       ],
-      "id": "S18"
+      "id": "S17"
     },
     {
       "kind": "paper",
@@ -945,7 +915,7 @@
           "quote": "We conduct experiments on two multi-document question answering tasks (more details in Appendix A), NaturalQuestion and SynthWiki, with two models supporting different context window length: Vicuna-7b-v1.5-16k (Vicuna) and tulu-2-7b (Tulu) with 16k and 8k context window respectively."
         }
       ],
-      "id": "S19"
+      "id": "S18"
     },
     {
       "kind": "paper",
@@ -977,7 +947,7 @@
           "quote": "Accuracy consistently drops most when relevant information appears in the middle of the context, yet this is not reflected in a corresponding increase in output entropy, suggesting the model remains confident even when it fails to use mid-context cues."
         }
       ],
-      "id": "S20"
+      "id": "S19"
     },
     {
       "kind": "paper",
@@ -1005,7 +975,7 @@
           "quote": "At finite depth, causal masking and residual connections induce broad, often U-shaped, influence profiles. At infinite depth, our framework resolves a discrepancy between prior attention-only collapse theory and practical Transformer behavior: residual connections fundamentally change cumulative attention dynamics. Empirically, the predicted profiles closely match measured input-token influence in pretrained language models."
         }
       ],
-      "id": "S21"
+      "id": "S20"
     },
     {
       "kind": "paper",
@@ -1084,7 +1054,7 @@
           "quote": "As shown in Tables 2 (bottom), our Self-Rag also outperforms existing RAG in many tasks, obtaining the best performance among non-proprietary LM-based models on all tasks. While our method outperforms other baselines, on PopQA or Bio, powerful instruction-tuned LMs with retrieval (e.g., LLama2-chat, Alpaca) show large gains from their non-retrieval baselines."
         }
       ],
-      "id": "S22"
+      "id": "S21"
     },
     {
       "kind": "paper",
@@ -1150,7 +1120,7 @@
           "quote": "On Webshop, one-shot Act prompting already performs on par with IL and IL+RL methods. With additional sparse reasoning, ReAct achieves significantly better performance, with an absolute 10% improvement over the previous best success rate."
         }
       ],
-      "id": "S23"
+      "id": "S22"
     },
     {
       "kind": "paper",
@@ -1389,7 +1359,7 @@
           "quote": "To date, there is still a significant gap between human and ML accuracy on the layout interpretation task, and we hope that this work will inspire the research community to close that gap."
         }
       ],
-      "id": "S24"
+      "id": "S23"
     },
     {
       "kind": "dataset",
@@ -1414,7 +1384,7 @@
           "quote": "financial_reports, scientific_articles, laws_and_regulations, government_tenders, manuals, patents"
         }
       ],
-      "id": "S25"
+      "id": "S24"
     },
     {
       "kind": "paper",
@@ -1462,7 +1432,7 @@
           "quote": "Its architecture is derived from RT-DETR and re-trained on DocLayNet, our popular human-annotated dataset for document-layout analysis, among other proprietary datasets."
         }
       ],
-      "id": "S26"
+      "id": "S25"
     },
     {
       "kind": "paper",
@@ -1494,7 +1464,7 @@
           "quote": "The size of the dataset is comparable to established computer vision datasets, containing over 360 thousand document images, where typical document layout elements are annotated."
         }
       ],
-      "id": "S27"
+      "id": "S26"
     },
     {
       "kind": "paper",
@@ -1607,7 +1577,7 @@
           "quote": "end-to-end-systems have also made strides to enable linearization of this content—prescribing a flattening of this content to adhere to logical reading order—which can be quite challenging for layout-rich documents."
         }
       ],
-      "id": "S28"
+      "id": "S27"
     },
     {
       "kind": "paper",
@@ -1679,7 +1649,7 @@
           "quote": "In the future, we hope to further develop the synthetic data pipeline to cover more complicated document types and unit tests."
         }
       ],
-      "id": "S29"
+      "id": "S28"
     }
   ]
 }
