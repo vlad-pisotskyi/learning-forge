@@ -1,0 +1,157 @@
+{
+  "note": "Three sample scenarios in the format the fake retrieve and generate read. They are for development. The held-out set is a different set of scenarios in the same shape.",
+  "scenarios": [
+    {
+      "id": "s01",
+      "note": "Two hops. The second query cannot be written until the first passage is in hand.",
+      "query": "Which team maintains the store that Orion writes its telemetry to?",
+      "max_steps": 6,
+      "expected_answer": "Ridgeline",
+      "generate_rules": [
+        {
+          "have": [
+            "p01",
+            "p02"
+          ],
+          "done": true,
+          "text": "Ridgeline"
+        },
+        {
+          "have": [
+            "p01"
+          ],
+          "done": false,
+          "text": "Orion writes to Kestrel, so the question is who maintains Kestrel.",
+          "follow_up": "who maintains the Kestrel store",
+          "retrieve_scores": {
+            "yes": 9.0,
+            "no": 1.0
+          }
+        },
+        {
+          "have": [],
+          "done": false,
+          "text": "I do not know where Orion writes telemetry.",
+          "follow_up": "where does Orion write its telemetry",
+          "retrieve_scores": {
+            "yes": 8.0,
+            "no": 2.0
+          }
+        }
+      ],
+      "retrieve_rules": [
+        {
+          "query": "where does Orion write its telemetry",
+          "query_embedding": "q1",
+          "candidates": [
+            {
+              "id": "p01",
+              "score": 0.963624
+            },
+            {
+              "id": "p04",
+              "score": 0.919866
+            },
+            {
+              "id": "p11",
+              "score": 0.923077
+            },
+            {
+              "id": "p03",
+              "score": 0.0
+            }
+          ]
+        },
+        {
+          "query": "who maintains the Kestrel store",
+          "query_embedding": "q2",
+          "candidates": [
+            {
+              "id": "p02",
+              "score": 0.980581
+            },
+            {
+              "id": "p09",
+              "score": 0.588348
+            },
+            {
+              "id": "p03",
+              "score": 0.692308
+            },
+            {
+              "id": "p07",
+              "score": 0.307692
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s02",
+      "note": "The generator answers from its own weights at step 0, so nothing is retrieved.",
+      "query": "Does the Ridgeline team exist?",
+      "max_steps": 6,
+      "expected_answer": "Yes",
+      "generate_rules": [
+        {
+          "have": [],
+          "done": true,
+          "text": "Yes"
+        }
+      ],
+      "retrieve_rules": []
+    },
+    {
+      "id": "s03",
+      "note": "A follow-up the generator is not confident about. Below the bar, the loop lets it answer itself.",
+      "query": "How often does the on-call rota rotate?",
+      "max_steps": 6,
+      "expected_answer": "Weekly",
+      "generate_rules": [
+        {
+          "have": [
+            "p03"
+          ],
+          "done": true,
+          "text": "I lost the thread."
+        },
+        {
+          "step": 1,
+          "have": [],
+          "done": true,
+          "text": "Weekly"
+        },
+        {
+          "have": [],
+          "done": false,
+          "text": "I think the rota is weekly, but let me consider looking it up.",
+          "follow_up": "what does the on-call rota cover",
+          "retrieve_scores": {
+            "yes": 3.0,
+            "no": 7.0
+          }
+        }
+      ],
+      "retrieve_rules": [
+        {
+          "query": "what does the on-call rota cover",
+          "query_embedding": "q3",
+          "candidates": [
+            {
+              "id": "p03",
+              "score": 0.964764
+            },
+            {
+              "id": "p14",
+              "score": 0.789352
+            },
+            {
+              "id": "p10",
+              "score": 0.223607
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

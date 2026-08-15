@@ -1,0 +1,270 @@
+{
+  "note": "A synthetic corpus for c03. The services, teams and facts are invented, so every answer this corpus supports is derivable from the passage text and nothing else. Embeddings are hand-built over the six axes named below, and each candidate score is the cosine similarity between the passage embedding and the query embedding, rounded to six decimal places. Recomputing one of them is a way to check your own cosine implementation.",
+  "dimensions": [
+    "telemetry",
+    "storage",
+    "teams",
+    "billing",
+    "scheduling",
+    "security"
+  ],
+  "tokenCount": "tokens is the whitespace word count of text, standing in for a tokeniser.",
+  "passages": [
+    {
+      "id": "p01",
+      "text": "Orion streams its telemetry into the Kestrel store every thirty seconds.",
+      "embedding": [
+        3.0,
+        2.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "tokens": 11
+    },
+    {
+      "id": "p02",
+      "text": "The Kestrel store is maintained by the Ridgeline team.",
+      "embedding": [
+        0.0,
+        3.0,
+        3.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "tokens": 9
+    },
+    {
+      "id": "p03",
+      "text": "Ridgeline publishes an on-call rota covering every service it owns.",
+      "embedding": [
+        0.0,
+        0.0,
+        3.0,
+        0.0,
+        2.0,
+        0.0
+      ],
+      "tokens": 10
+    },
+    {
+      "id": "p04",
+      "text": "Telemetry from Orion is sampled down before anything is written.",
+      "embedding": [
+        3.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "tokens": 10
+    },
+    {
+      "id": "p05",
+      "text": "Billing rolls Kestrel storage costs up at the close of each month.",
+      "embedding": [
+        0.0,
+        2.0,
+        0.0,
+        3.0,
+        0.0,
+        0.0
+      ],
+      "tokens": 12
+    },
+    {
+      "id": "p06",
+      "text": "The scheduler retries a failed Orion export after four minutes.",
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        3.0,
+        0.0
+      ],
+      "tokens": 10
+    },
+    {
+      "id": "p07",
+      "text": "Access to the Kestrel store is granted through the security desk.",
+      "embedding": [
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        3.0
+      ],
+      "tokens": 11
+    },
+    {
+      "id": "p08",
+      "text": "A copy of Orion telemetry lands in the cold archive once a day.",
+      "embedding": [
+        3.0,
+        2.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "tokens": 13
+    },
+    {
+      "id": "p09",
+      "text": "The Ridgeline team also runs the billing exporter.",
+      "embedding": [
+        0.0,
+        0.0,
+        3.0,
+        3.0,
+        0.0,
+        0.0
+      ],
+      "tokens": 8
+    },
+    {
+      "id": "p10",
+      "text": "Security reviews every new scheduling rule before it ships.",
+      "embedding": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        3.0,
+        3.0
+      ],
+      "tokens": 9
+    },
+    {
+      "id": "p11",
+      "text": "Kestrel keeps two weeks of raw telemetry and then compacts it.",
+      "embedding": [
+        2.0,
+        3.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "tokens": 11
+    },
+    {
+      "id": "p12",
+      "text": "Orion has no owner listed in the service catalogue.",
+      "embedding": [
+        1.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "tokens": 9
+    },
+    {
+      "id": "p13",
+      "text": "Billing queries run against a nightly snapshot, not live storage.",
+      "embedding": [
+        0.0,
+        2.0,
+        0.0,
+        3.0,
+        1.0,
+        0.0
+      ],
+      "tokens": 10
+    },
+    {
+      "id": "p14",
+      "text": "The on-call rota rotates weekly and the scheduler enforces it.",
+      "embedding": [
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        3.0,
+        0.0
+      ],
+      "tokens": 10
+    }
+  ],
+  "queries": [
+    {
+      "id": "q1",
+      "text": "where does Orion write its telemetry",
+      "embedding": [
+        3.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "who maintains the Kestrel store",
+      "embedding": [
+        0.0,
+        2.0,
+        3.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "q3",
+      "text": "what does the on-call rota cover",
+      "embedding": [
+        0.0,
+        0.0,
+        3.0,
+        0.0,
+        1.0,
+        0.0
+      ]
+    },
+    {
+      "id": "q4",
+      "text": "how are storage costs billed",
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        3.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "q5",
+      "text": "who can read the Kestrel store",
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        3.0
+      ]
+    },
+    {
+      "id": "q6",
+      "text": "when does the scheduler retry an export",
+      "embedding": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        3.0,
+        1.0
+      ]
+    }
+  ]
+}

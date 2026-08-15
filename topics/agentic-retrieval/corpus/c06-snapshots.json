@@ -1,0 +1,45 @@
+{
+  "before": {
+    "handbook-intro": {
+      "text": "Vega handles authentication for every internal service.",
+      "pages": 2
+    },
+    "handbook-quota": {
+      "text": "Quota resets every Monday at 09:00 local time.",
+      "pages": 1
+    },
+    "handbook-oncall": {
+      "text": "The on-duty engineer is paged after two consecutive failures.",
+      "pages": 1
+    },
+    "handbook-retention": {
+      "text": "Audit records are retained for ninety days.",
+      "pages": 3
+    }
+  },
+  "after": {
+    "handbook-intro": {
+      "text": "Vega handles authentication and authorization for every internal service.",
+      "pages": 2
+    },
+    "handbook-quota": {
+      "text": "Quota resets every Monday at 09:00 local time.",
+      "pages": 1
+    },
+    "handbook-retention": {
+      "text": "Audit records are retained for ninety days.",
+      "pages": 3
+    },
+    "handbook-backup": {
+      "text": "Nightly backups are copied to cold storage.",
+      "pages": 1
+    }
+  },
+  "questions": [
+    {"id": "q-auth", "doc_id": "handbook-intro", "checks": ["authentication"]},
+    {"id": "q-authz", "doc_id": "handbook-intro", "checks": ["authorization"]},
+    {"id": "q-oncall", "doc_id": "handbook-oncall", "checks": ["paged after two"]},
+    {"id": "q-backup", "doc_id": "handbook-backup", "checks": ["cold storage"]},
+    {"id": "q-retention", "doc_id": "handbook-retention", "checks": ["ninety days"]}
+  ]
+}

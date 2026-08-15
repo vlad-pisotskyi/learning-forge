@@ -1,0 +1,222 @@
+{
+  "id": "c02-heldout",
+  "note": "Token offsets, not character offsets. A span is a half-open range over re.findall(r'\\S+', text). Every relevant span was produced from whole sentences of the document and checked against them.",
+  "documents": [
+    {
+      "id": "ferry",
+      "title": "Kelder Sound ferry operations notice",
+      "tokens": 628,
+      "text": "The Kelder Sound ferry runs between Ardmore Quay and the village of Trellick, a crossing of four and a half nautical miles that takes twenty five minutes in ordinary conditions.\nTwo vessels are in service, the Aline Roskil and the smaller Portmarry, and only one of them is crewed outside the summer timetable.\nThe Aline Roskil carries one hundred and ninety passengers and twelve cars, while the Portmarry carries sixty passengers and no vehicles at all.\nVehicle loading closes fifteen minutes before departure, and foot passengers are admitted until five minutes before the ramp is raised.\n\nTickets are sold at the quay office and on board, but the on board price carries a surcharge of two pounds on every fare.\nConcessionary travel is honoured on all sailings except the first departure of the day, which is held for commercial traffic and for holders of a resident permit.\nA resident permit is issued to anyone on the Trellick electoral roll and is renewed each April at the harbour office.\n\nThe winter timetable runs from the first of November to the last day of March, with four return sailings on weekdays and two on Sundays.\nThe summer timetable adds a late crossing at twenty one hundred on Fridays and Saturdays, and that sailing takes no vehicles.\n\nSailings are cancelled when the swell at the Trellick approach passes two point five metres or when the wind in the sound reaches force seven.\nThe master alone decides a cancellation, and the decision goes to the harbour board display and to the service telephone line before the scheduled departure time.\nPassengers holding a ticket for a cancelled sailing are carried on the next available crossing at no extra charge, and a refund is paid at the quay office on request within fourteen days.\n\nBicycles travel free of charge on both vessels but are limited to eight on the Portmarry because of the deck space taken by the life raft cradle.\nDogs travel free and stay on the open deck, except assistance dogs, which are admitted to the passenger cabin.\nPrams are carried at no charge and are stowed against the forward bulkhead so that the walkway stays clear.\n\nThe Aline Roskil was refitted in 2019 and her main engines were replaced at that time with a pair of eight cylinder units rated at four hundred and ten kilowatts each.\nThe Portmarry is the older vessel, built in 1987 at a yard on the Clyde, and she is slipped every second winter for hull survey.\nCrew training is run from the quay office and every deckhand finishes the sea survival course before a first watch is stood.\n\nThe muster station for passengers is the forward saloon on the Aline Roskil and the open deck aft of the wheelhouse on the Portmarry.\nLife jackets for children are stowed in the yellow locker at the head of the boarding ramp on both vessels.\nA drill is held on the first Monday of each quarter and passengers on that sailing are asked to take part.\n\nThe service carries freight on the second morning sailing only, and any load above one tonne must be booked with the harbour office by noon on the preceding day.\nLivestock is carried by prior arrangement and only on the Aline Roskil, and the operator charges by the head rather than by the vehicle.\nLost property is held at the quay office for twenty eight days and is then passed to the parish hall for disposal.\n\nComplaints are made in writing to the harbour board, which meets on the second Tuesday of each month and publishes its minutes on the notice board at Ardmore Quay.\nThe board reviews the fare table each January and any change takes effect on the first of April."
+    }
+  ],
+  "queries": [
+    {
+      "id": "f1",
+      "document": "ferry",
+      "text": "How long does the crossing take?",
+      "terms": [
+        "between",
+        "conditions",
+        "ferry",
+        "half"
+      ],
+      "relevant": [
+        [
+          0,
+          30
+        ]
+      ]
+    },
+    {
+      "id": "f2",
+      "document": "ferry",
+      "text": "How many cars does the Aline Roskil carry?",
+      "terms": [
+        "cars",
+        "ninety",
+        "sixty",
+        "twelve"
+      ],
+      "relevant": [
+        [
+          53,
+          76
+        ]
+      ]
+    },
+    {
+      "id": "f3",
+      "document": "ferry",
+      "text": "When does vehicle loading close?",
+      "terms": [
+        "closes",
+        "fifteen",
+        "foot",
+        "loading"
+      ],
+      "relevant": [
+        [
+          76,
+          96
+        ]
+      ]
+    },
+    {
+      "id": "f4",
+      "document": "ferry",
+      "text": "Who can use the first departure of the day?",
+      "terms": [
+        "commercial",
+        "concessionary",
+        "holders",
+        "honoured"
+      ],
+      "relevant": [
+        [
+          120,
+          168
+        ]
+      ]
+    },
+    {
+      "id": "f5",
+      "document": "ferry",
+      "text": "When are sailings cancelled, and who decides?",
+      "terms": [
+        "approach",
+        "force",
+        "metres",
+        "passes"
+      ],
+      "relevant": [
+        [
+          214,
+          265
+        ]
+      ]
+    },
+    {
+      "id": "f6",
+      "document": "ferry",
+      "text": "What happens to my ticket if the sailing is cancelled?",
+      "terms": [
+        "available",
+        "extra",
+        "fourteen",
+        "holding"
+      ],
+      "relevant": [
+        [
+          265,
+          298
+        ]
+      ]
+    },
+    {
+      "id": "f7",
+      "document": "ferry",
+      "text": "How many bicycles fit on the Portmarry?",
+      "terms": [
+        "bicycles",
+        "cradle",
+        "limited",
+        "raft"
+      ],
+      "relevant": [
+        [
+          298,
+          325
+        ]
+      ]
+    },
+    {
+      "id": "f8",
+      "document": "ferry",
+      "text": "Where is the muster station, and where are life jackets for children?",
+      "terms": [
+        "muster",
+        "saloon",
+        "station",
+        "wheelhouse"
+      ],
+      "relevant": [
+        [
+          441,
+          485
+        ]
+      ]
+    },
+    {
+      "id": "f9",
+      "document": "ferry",
+      "text": "How do I book freight?",
+      "terms": [
+        "booked",
+        "freight",
+        "load",
+        "morning"
+      ],
+      "relevant": [
+        [
+          506,
+          535
+        ]
+      ]
+    },
+    {
+      "id": "f10",
+      "document": "ferry",
+      "text": "How do I complain, and when does the fare table change?",
+      "terms": [
+        "complaints",
+        "meets",
+        "month",
+        "notice"
+      ],
+      "relevant": [
+        [
+          581,
+          628
+        ]
+      ]
+    },
+    {
+      "id": "f11",
+      "document": "ferry",
+      "text": "Which sailings take no vehicles?",
+      "terms": [
+        "cars",
+        "fridays",
+        "ninety",
+        "late"
+      ],
+      "relevant": [
+        [
+          53,
+          76
+        ],
+        [
+          193,
+          214
+        ]
+      ]
+    },
+    {
+      "id": "f12",
+      "document": "ferry",
+      "text": "What was replaced on the Aline Roskil in 2019?",
+      "terms": [
+        "2019",
+        "cylinder",
+        "engines",
+        "kilowatts"
+      ],
+      "relevant": [
+        [
+          363,
+          394
+        ]
+      ]
+    }
+  ]
+}

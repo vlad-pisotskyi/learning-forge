@@ -1,0 +1,446 @@
+{
+ "collection": "freight handbook",
+ "judgements": {
+  "built": "plan first, text second. Every document is generated from a record saying which service it is about, which aspect of that service it covers, and which planted value it states. The judgements are read off those records, so no document was judged by looking at it afterwards.",
+  "grades": {
+   "3": "states the answer to the question: the handbook page for that service and aspect, and the field note that repeats the same value under the service code.",
+   "2": "the same service, on one of the two aspects the handbook cross-references from the one asked about. Useful to the reader, does not contain the answer.",
+   "1": "names the service and the aspect in passing without stating the value, which is what the runbooks do.",
+   "0": "everything else, including the service index and the change logs. Both carry service names and aspect wording and neither states a value."
+  },
+  "unlisted": "a document id absent from a relevance map is graded 0.",
+  "services": 36,
+  "aspects": 8
+ },
+ "queries": [
+  {
+   "id": "dev-00",
+   "query": "how often is the ledger reconciler restarted",
+   "subject": "ledger reconciler",
+   "aspect": "restart-cadence",
+   "relevance": {
+    "hb-00-0": 3,
+    "hb-00-5": 2,
+    "hb-00-6": 2,
+    "rb-00": 1,
+    "rb-48": 1
+   }
+  },
+  {
+   "id": "dev-01",
+   "query": "how many times does the ledger dispatcher retry a failed call",
+   "subject": "ledger dispatcher",
+   "aspect": "retry-policy",
+   "relevance": {
+    "fn-01-1": 3,
+    "hb-01-1": 3,
+    "hb-01-2": 2,
+    "hb-01-6": 2
+   }
+  },
+  {
+   "id": "dev-02",
+   "query": "at what backlog does the ledger archiver page the on-call engineer",
+   "subject": "ledger archiver",
+   "aspect": "alert-threshold",
+   "relevance": {
+    "hb-02-2": 3,
+    "hb-02-6": 2,
+    "hb-02-7": 2
+   }
+  },
+  {
+   "id": "dev-03",
+   "query": "how many partitions does the parcel indexer write to",
+   "subject": "parcel indexer",
+   "aspect": "storage-layout",
+   "relevance": {
+    "hb-03-3": 3,
+    "hb-03-4": 2,
+    "hb-03-7": 2,
+    "rb-27": 1,
+    "rb-59": 1
+   }
+  },
+  {
+   "id": "dev-04",
+   "query": "which group can change the configuration of the parcel validator",
+   "subject": "parcel validator",
+   "aspect": "access-control",
+   "relevance": {
+    "hb-04-3": 2,
+    "hb-04-4": 3,
+    "hb-04-5": 2
+   }
+  },
+  {
+   "id": "dev-05",
+   "query": "how many stages does a release of the parcel planner pass through",
+   "subject": "parcel planner",
+   "aspect": "deployment-steps",
+   "relevance": {
+    "hb-05-0": 2,
+    "hb-05-4": 2,
+    "hb-05-5": 3,
+    "rb-29": 1
+   }
+  },
+  {
+   "id": "dev-06",
+   "query": "what failure does the tariff dispatcher hit most often",
+   "subject": "tariff dispatcher",
+   "aspect": "failure-modes",
+   "relevance": {
+    "hb-06-1": 2,
+    "hb-06-2": 2,
+    "hb-06-6": 3
+   }
+  },
+  {
+   "id": "dev-07",
+   "query": "how many requests a second does the tariff archiver sustain",
+   "subject": "tariff archiver",
+   "aspect": "capacity-limit",
+   "relevance": {
+    "hb-07-2": 2,
+    "hb-07-3": 2,
+    "hb-07-7": 3,
+    "rb-31": 1
+   }
+  },
+  {
+   "id": "dev-08",
+   "query": "how often is the tariff reconciler restarted",
+   "subject": "tariff reconciler",
+   "aspect": "restart-cadence",
+   "relevance": {
+    "fn-08-0": 3,
+    "hb-08-0": 3,
+    "hb-08-5": 2,
+    "hb-08-6": 2
+   }
+  },
+  {
+   "id": "dev-09",
+   "query": "how many times does the harbour validator retry a failed call",
+   "subject": "harbour validator",
+   "aspect": "retry-policy",
+   "relevance": {
+    "hb-09-1": 3,
+    "hb-09-2": 2,
+    "hb-09-6": 2
+   }
+  },
+  {
+   "id": "dev-10",
+   "query": "at what backlog does the harbour planner page the on-call engineer",
+   "subject": "harbour planner",
+   "aspect": "alert-threshold",
+   "relevance": {
+    "hb-10-2": 3,
+    "hb-10-6": 2,
+    "hb-10-7": 2
+   }
+  },
+  {
+   "id": "dev-11",
+   "query": "how many partitions does the harbour indexer write to",
+   "subject": "harbour indexer",
+   "aspect": "storage-layout",
+   "relevance": {
+    "fn-11-3": 3,
+    "hb-11-3": 3,
+    "hb-11-4": 2,
+    "hb-11-7": 2
+   }
+  },
+  {
+   "id": "dev-12",
+   "query": "which group can change the configuration of the transit archiver",
+   "subject": "transit archiver",
+   "aspect": "access-control",
+   "relevance": {
+    "hb-12-3": 2,
+    "hb-12-4": 3,
+    "hb-12-5": 2
+   }
+  },
+  {
+   "id": "dev-13",
+   "query": "how many stages does a release of the transit reconciler pass through",
+   "subject": "transit reconciler",
+   "aspect": "deployment-steps",
+   "relevance": {
+    "hb-13-0": 2,
+    "hb-13-4": 2,
+    "hb-13-5": 3,
+    "rb-69": 1
+   }
+  },
+  {
+   "id": "dev-14",
+   "query": "what failure does the transit dispatcher hit most often",
+   "subject": "transit dispatcher",
+   "aspect": "failure-modes",
+   "relevance": {
+    "hb-14-1": 2,
+    "hb-14-2": 2,
+    "hb-14-6": 3
+   }
+  },
+  {
+   "id": "dev-15",
+   "query": "how many requests a second does the invoice planner sustain",
+   "subject": "invoice planner",
+   "aspect": "capacity-limit",
+   "relevance": {
+    "hb-15-2": 2,
+    "hb-15-3": 2,
+    "hb-15-7": 3,
+    "rb-07": 1
+   }
+  },
+  {
+   "id": "dev-16",
+   "query": "how often is the invoice indexer restarted",
+   "subject": "invoice indexer",
+   "aspect": "restart-cadence",
+   "relevance": {
+    "fn-16-0": 3,
+    "hb-16-0": 3,
+    "hb-16-5": 2,
+    "hb-16-6": 2
+   }
+  },
+  {
+   "id": "dev-17",
+   "query": "how many times does the invoice validator retry a failed call",
+   "subject": "invoice validator",
+   "aspect": "retry-policy",
+   "relevance": {
+    "fn-17-1": 3,
+    "hb-17-1": 3,
+    "hb-17-2": 2,
+    "hb-17-6": 2,
+    "rb-33": 1
+   }
+  },
+  {
+   "id": "dev-18",
+   "query": "at what backlog does the manifest reconciler page the on-call engineer",
+   "subject": "manifest reconciler",
+   "aspect": "alert-threshold",
+   "relevance": {
+    "fn-18-2": 3,
+    "hb-18-2": 3,
+    "hb-18-6": 2,
+    "hb-18-7": 2,
+    "rb-02": 1
+   }
+  },
+  {
+   "id": "dev-19",
+   "query": "how many partitions does the manifest dispatcher write to",
+   "subject": "manifest dispatcher",
+   "aspect": "storage-layout",
+   "relevance": {
+    "hb-19-3": 3,
+    "hb-19-4": 2,
+    "hb-19-7": 2
+   }
+  },
+  {
+   "id": "dev-20",
+   "query": "which group can change the configuration of the manifest archiver",
+   "subject": "manifest archiver",
+   "aspect": "access-control",
+   "relevance": {
+    "hb-20-3": 2,
+    "hb-20-4": 3,
+    "hb-20-5": 2
+   }
+  },
+  {
+   "id": "dev-21",
+   "query": "how many stages does a release of the warehouse indexer pass through",
+   "subject": "warehouse indexer",
+   "aspect": "deployment-steps",
+   "relevance": {
+    "hb-21-0": 2,
+    "hb-21-4": 2,
+    "hb-21-5": 3
+   }
+  },
+  {
+   "id": "dev-22",
+   "query": "what failure does the warehouse validator hit most often",
+   "subject": "warehouse validator",
+   "aspect": "failure-modes",
+   "relevance": {
+    "hb-22-1": 2,
+    "hb-22-2": 2,
+    "hb-22-6": 3,
+    "rb-46": 1
+   }
+  },
+  {
+   "id": "dev-23",
+   "query": "how many requests a second does the warehouse planner sustain",
+   "subject": "warehouse planner",
+   "aspect": "capacity-limit",
+   "relevance": {
+    "fn-23-7": 3,
+    "hb-23-2": 2,
+    "hb-23-3": 2,
+    "hb-23-7": 3,
+    "rb-55": 1,
+    "rb-71": 1
+   }
+  },
+  {
+   "id": "dev-24",
+   "query": "how often is the courier dispatcher restarted",
+   "subject": "courier dispatcher",
+   "aspect": "restart-cadence",
+   "relevance": {
+    "fn-24-0": 3,
+    "hb-24-0": 3,
+    "hb-24-5": 2,
+    "hb-24-6": 2
+   }
+  },
+  {
+   "id": "dev-25",
+   "query": "how many times does the courier archiver retry a failed call",
+   "subject": "courier archiver",
+   "aspect": "retry-policy",
+   "relevance": {
+    "fn-25-1": 3,
+    "hb-25-1": 3,
+    "hb-25-2": 2,
+    "hb-25-6": 2
+   }
+  },
+  {
+   "id": "dev-26",
+   "query": "at what backlog does the courier reconciler page the on-call engineer",
+   "subject": "courier reconciler",
+   "aspect": "alert-threshold",
+   "relevance": {
+    "hb-26-2": 3,
+    "hb-26-6": 2,
+    "hb-26-7": 2
+   }
+  },
+  {
+   "id": "dev-27",
+   "query": "how many partitions does the customs validator write to",
+   "subject": "customs validator",
+   "aspect": "storage-layout",
+   "relevance": {
+    "hb-27-3": 3,
+    "hb-27-4": 2,
+    "hb-27-7": 2
+   }
+  },
+  {
+   "id": "dev-28",
+   "query": "which group can change the configuration of the customs planner",
+   "subject": "customs planner",
+   "aspect": "access-control",
+   "relevance": {
+    "hb-28-3": 2,
+    "hb-28-4": 3,
+    "hb-28-5": 2,
+    "rb-04": 1
+   }
+  },
+  {
+   "id": "dev-29",
+   "query": "how many stages does a release of the customs indexer pass through",
+   "subject": "customs indexer",
+   "aspect": "deployment-steps",
+   "relevance": {
+    "fn-29-5": 3,
+    "hb-29-0": 2,
+    "hb-29-4": 2,
+    "hb-29-5": 3,
+    "rb-53": 1
+   }
+  },
+  {
+   "id": "dev-30",
+   "query": "what failure does the pallet archiver hit most often",
+   "subject": "pallet archiver",
+   "aspect": "failure-modes",
+   "relevance": {
+    "hb-30-1": 2,
+    "hb-30-2": 2,
+    "hb-30-6": 3
+   }
+  },
+  {
+   "id": "dev-31",
+   "query": "how many requests a second does the pallet reconciler sustain",
+   "subject": "pallet reconciler",
+   "aspect": "capacity-limit",
+   "relevance": {
+    "fn-31-7": 3,
+    "hb-31-2": 2,
+    "hb-31-3": 2,
+    "hb-31-7": 3,
+    "rb-31": 1
+   }
+  },
+  {
+   "id": "dev-32",
+   "query": "how often is the pallet dispatcher restarted",
+   "subject": "pallet dispatcher",
+   "aspect": "restart-cadence",
+   "relevance": {
+    "hb-32-0": 3,
+    "hb-32-5": 2,
+    "hb-32-6": 2
+   }
+  },
+  {
+   "id": "dev-33",
+   "query": "how many times does the freight planner retry a failed call",
+   "subject": "freight planner",
+   "aspect": "retry-policy",
+   "relevance": {
+    "fn-33-1": 3,
+    "hb-33-1": 3,
+    "hb-33-2": 2,
+    "hb-33-6": 2
+   }
+  },
+  {
+   "id": "dev-34",
+   "query": "at what backlog does the freight indexer page the on-call engineer",
+   "subject": "freight indexer",
+   "aspect": "alert-threshold",
+   "relevance": {
+    "hb-34-2": 3,
+    "hb-34-6": 2,
+    "hb-34-7": 2,
+    "rb-42": 1,
+    "rb-66": 1
+   }
+  },
+  {
+   "id": "dev-35",
+   "query": "how many partitions does the freight validator write to",
+   "subject": "freight validator",
+   "aspect": "storage-layout",
+   "relevance": {
+    "fn-35-3": 3,
+    "hb-35-3": 3,
+    "hb-35-4": 2,
+    "hb-35-7": 2,
+    "rb-11": 1,
+    "rb-59": 1
+   }
+  }
+ ]
+}

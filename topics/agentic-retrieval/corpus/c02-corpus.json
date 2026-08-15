@@ -1,0 +1,317 @@
+{
+  "id": "c02-corpus",
+  "note": "Token offsets, not character offsets. A span is a half-open range over re.findall(r'\\S+', text). Every relevant span was produced from whole sentences of the document and checked against them.",
+  "documents": [
+    {
+      "id": "handbook",
+      "title": "Northgate Observatory operations handbook",
+      "tokens": 521,
+      "text": "The Northgate Observatory sits on the ridge above Carrow Beck and has been run by the county astronomical society since the site was handed over in 1974.\nThe main instrument is a forty inch reflecting telescope housed under a rotating steel dome that was rebuilt in 2011 after storm damage tore off two shutter panels.\nThe dome turns on eighteen bogie wheels and its drive motor takes power from the same three phase supply that feeds the workshop and the coating bay.\nRotation is controlled from the console on the observing floor, and the manual crank stored beside the north pier is the only way to move the dome once the drive is isolated.\n\nThe primary mirror is washed with deionised water every eighteen months and recoated with aluminium roughly once a decade.\nWashing is done in place using the wash ring, and the mirror is never lifted out of its cell for a routine clean.\nRecoating needs the mirror to travel to a coating plant, which puts the telescope out of service for between six and nine weeks.\nThe society budgets for one recoat every ten years and holds the money in a separate capital fund that members vote on at the spring meeting.\n\nVisitors are admitted on the first and third Saturday of each month between nineteen hundred and twenty two hundred, and no booking is taken for parties smaller than six.\nAnyone under sixteen must arrive with an adult, and the society asks that torches be covered with red film before anyone steps into the dome.\nThe site has no mains lighting along the approach path, so the gate steward hands a red lamp to each party at the entrance and takes it back at the end of the evening.\n\nWeather closure is decided by the duty observer, who reads the roof anemometer and closes the shutter whenever the sustained wind passes thirty five miles per hour.\nThe shutter is also closed when the humidity sensor on the south wall reads above ninety per cent for more than ten minutes, because condensation on the corrector plate takes several hours to clear.\nA closure lasting the whole session is written up as a lost night and counts against the annual availability figure the society reports to its landlord.\n\nThe society keeps a logbook on the observing floor, and every session is recorded with the observer name, the start and end times, and the instrument configuration used.\nPhotographic data is written to the local server in the workshop and mirrored to the county archive once a week on Sunday night.\nThe archive keeps three generations of every mirror image and discards nothing that carries a calibration frame.\n\nMembership of the society costs twenty eight pounds a year, and members who finish the observing induction are issued a key to the outer gate.\nThe induction covers the dome drive, the shutter interlock, the emergency stop on the east wall, and the procedure for logging a fault.\nA fault that stops the shutter closing is treated as urgent and goes to the site warden by telephone rather than through the fault book."
+    },
+    {
+      "id": "log",
+      "title": "Northgate Observatory maintenance log 2024",
+      "tokens": 280,
+      "text": "2024-01-12 dome drive belt replaced by Hollis. Spare belt stock now two.\n2024-01-19 shutter interlock tested against the emergency stop. Pass.\n2024-02-02 anemometer cable chafed at the roof penetration. Repaired with heat shrink by Okonkwo.\n2024-02-16 mirror wash carried out. Wash ring nozzle four blocked and cleared.\n2024-03-01 north pier crank handle found seized. Freed and greased.\n2024-03-15 humidity sensor reading drifted eleven per cent high. Sensor swapped for the workshop spare.\n2024-04-05 outer gate lock rekeyed after a member key went missing. Twenty nine keys reissued.\n2024-04-19 county archive mirror failed on Sunday night. Cause was a full disc on the workshop server.\n2024-05-03 workshop server disc replaced with a four terabyte unit. Archive mirror ran clean the same night.\n2024-05-17 bogie wheel six showed a flat. Wheel replaced, dome rotation checked over four full turns.\n2024-06-07 red film ordered for eighteen visitor torches. Delivery expected before the July open evening.\n2024-06-21 logbook volume nine filled. Volume ten opened and the old one filed at the parish office.\n2024-07-05 corrector plate dewed over during the open evening. Session abandoned at twenty one forty.\n2024-07-19 dew heater tape fitted around the corrector cell. Draws thirty watts from the console supply.\n2024-08-02 shutter motor overload tripped twice. Overload relay adjusted from six amps to eight amps.\n2024-08-16 emergency stop on the east wall tested. Pass.\n2024-09-06 coating plant quoted eleven thousand pounds for the next recoat. Quote valid for six months.\n2024-09-20 approach path gravel washed out over twelve metres. Refilled by the landlord.\n2024-10-04 anemometer calibrated against the county weather station. Reading two miles per hour low.\n2024-10-18 induction run for four new members. All four issued outer gate keys."
+    }
+  ],
+  "queries": [
+    {
+      "id": "h1",
+      "document": "handbook",
+      "text": "How often is the primary mirror washed, and is it taken out of its cell?",
+      "terms": [
+        "aluminium",
+        "decade",
+        "deionised",
+        "months"
+      ],
+      "relevant": [
+        [
+          114,
+          156
+        ]
+      ]
+    },
+    {
+      "id": "h2",
+      "document": "handbook",
+      "text": "What happens to a night lost to weather?",
+      "terms": [
+        "annual",
+        "availability",
+        "counts",
+        "figure"
+      ],
+      "relevant": [
+        [
+          354,
+          380
+        ]
+      ]
+    },
+    {
+      "id": "h3",
+      "document": "handbook",
+      "text": "When are visitors admitted?",
+      "terms": [
+        "admitted",
+        "booking",
+        "hundred",
+        "month"
+      ],
+      "relevant": [
+        [
+          205,
+          234
+        ]
+      ]
+    },
+    {
+      "id": "h4",
+      "document": "handbook",
+      "text": "How long is the telescope out of service for a recoat, and how is a recoat paid for?",
+      "terms": [
+        "needs",
+        "nine",
+        "plant",
+        "puts"
+      ],
+      "relevant": [
+        [
+          156,
+          205
+        ]
+      ]
+    },
+    {
+      "id": "h5",
+      "document": "handbook",
+      "text": "How do you turn the dome when the drive is isolated?",
+      "terms": [
+        "beside",
+        "console",
+        "controlled",
+        "crank"
+      ],
+      "relevant": [
+        [
+          82,
+          114
+        ]
+      ]
+    },
+    {
+      "id": "h6",
+      "document": "handbook",
+      "text": "Where does photographic data go, and what does the archive keep?",
+      "terms": [
+        "data",
+        "local",
+        "mirrored",
+        "photographic"
+      ],
+      "relevant": [
+        [
+          408,
+          448
+        ]
+      ]
+    },
+    {
+      "id": "h7",
+      "document": "handbook",
+      "text": "What does membership cost and what does the induction cover?",
+      "terms": [
+        "covers",
+        "east",
+        "emergency",
+        "interlock"
+      ],
+      "relevant": [
+        [
+          448,
+          496
+        ]
+      ]
+    },
+    {
+      "id": "h8",
+      "document": "handbook",
+      "text": "What are the two conditions for closing the shutter?",
+      "terms": [
+        "cent",
+        "clear",
+        "closed",
+        "condensation"
+      ],
+      "relevant": [
+        [
+          293,
+          354
+        ]
+      ]
+    },
+    {
+      "id": "h9",
+      "document": "handbook",
+      "text": "Who decides a weather closure, and where is a session written down?",
+      "terms": [
+        "anemometer",
+        "configuration",
+        "closes",
+        "logbook"
+      ],
+      "relevant": [
+        [
+          293,
+          320
+        ],
+        [
+          380,
+          408
+        ]
+      ]
+    },
+    {
+      "id": "l1",
+      "document": "log",
+      "text": "Who replaced the dome drive belt?",
+      "terms": [
+        "2024-01-12",
+        "belt",
+        "drive",
+        "hollis"
+      ],
+      "relevant": [
+        [
+          0,
+          12
+        ]
+      ]
+    },
+    {
+      "id": "l2",
+      "document": "log",
+      "text": "Why did the archive mirror fail, and what fixed it?",
+      "terms": [
+        "2024-04-19",
+        "cause",
+        "failed",
+        "sunday"
+      ],
+      "relevant": [
+        [
+          87,
+          121
+        ]
+      ]
+    },
+    {
+      "id": "l3",
+      "document": "log",
+      "text": "What was done about the seized crank handle?",
+      "terms": [
+        "2024-03-01",
+        "crank",
+        "found",
+        "freed"
+      ],
+      "relevant": [
+        [
+          47,
+          57
+        ]
+      ]
+    },
+    {
+      "id": "l4",
+      "document": "log",
+      "text": "What did the coating plant quote for the recoat?",
+      "terms": [
+        "2024-09-06",
+        "coating",
+        "months",
+        "plant"
+      ],
+      "relevant": [
+        [
+          224,
+          240
+        ]
+      ]
+    },
+    {
+      "id": "l5",
+      "document": "log",
+      "text": "How was the shutter motor overload fixed?",
+      "terms": [
+        "2024-08-02",
+        "adjusted",
+        "amps",
+        "eight"
+      ],
+      "relevant": [
+        [
+          200,
+          215
+        ]
+      ]
+    },
+    {
+      "id": "l6",
+      "document": "log",
+      "text": "What happened to bogie wheel six?",
+      "terms": [
+        "2024-05-17",
+        "bogie",
+        "checked",
+        "flat"
+      ],
+      "relevant": [
+        [
+          121,
+          137
+        ]
+      ]
+    },
+    {
+      "id": "l7",
+      "document": "log",
+      "text": "Why was the dew heater tape fitted?",
+      "terms": [
+        "2024-07-19",
+        "cell",
+        "console",
+        "draws"
+      ],
+      "relevant": [
+        [
+          169,
+          200
+        ]
+      ]
+    },
+    {
+      "id": "l8",
+      "document": "log",
+      "text": "How far out is the anemometer calibration, and what was repaired on its cable?",
+      "terms": [
+        "2024-02-02",
+        "2024-10-04",
+        "cable",
+        "calibrated"
+      ],
+      "relevant": [
+        [
+          21,
+          35
+        ],
+        [
+          253,
+          267
+        ]
+      ]
+    }
+  ]
+}
