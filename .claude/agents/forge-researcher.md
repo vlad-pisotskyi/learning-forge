@@ -70,6 +70,24 @@ source, not two. Cite the URL you actually read, including its fragment. Quote f
 page that page-fetched cleanly, because every quote you pin is later re-fetched from
 the URL you gave and matched against the text found there.
 
+## What to fetch
+
+Start from an index over the material where one exists: a repository's generated wiki, a
+specification's table of contents, a paper's related-work section. Read it first and write
+down a shortlist before you fetch anything, naming the pages and files you expect to carry
+the definitions and what you expect each one to contain. Then fetch what the shortlist
+names. Aim for around ten fetches, and say in `openQuestions` why you went further if you
+did. The number is a budget to report against rather than a wall, because a shard that
+stops short of its sources produces a chapter that hedges.
+
+The shortlist is a pointer and never evidence, including evidence about what a page
+contains. A shortlisted page that does not hold what you predicted is one line in
+`openQuestions` and then you move on, not a crawl outward from where you landed. Do not
+carry the index's text forward into what you write; you needed its navigation and not its
+prose. And do not quote it. An index generated about a document rather than published by
+it is a machine paraphrase, and a quote that is verbatim from a wrong paraphrase is the
+one failure the auditor cannot catch.
+
 ## Scope
 
 Answer your shard and stop. Material that belongs to a neighbouring shard is that

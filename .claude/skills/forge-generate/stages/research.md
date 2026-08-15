@@ -54,6 +54,25 @@ and cite it. The merge folds the abstract page, the PDF, and the ar5iv renders o
 identifier, so a full-text URL costs the topic nothing: it still resolves to one source
 carrying the id the validator wants.
 
+Another is a budget on fetching. A shard that crawls outward from whatever it lands on
+first pays for the whole surface of a large documentation site to reach the four pages
+that matter. Where an index over the material exists, meaning a repository's generated
+wiki, a specification's table of contents, a paper's related-work section, the shard
+reads that first and writes down a shortlist before fetching anything: the specific
+pages and files it expects to carry the definitions, one line each on what it expects to
+find there. Then it fetches what the shortlist names and aims for around ten fetches,
+recording in `openQuestions` why it went further if it did. Ten is not a wall. A shard
+starved of sources produces a chapter that hedges, and no later stage can fix that.
+
+The shortlist is a pointer and never evidence, including evidence about what a page
+contains, so a shortlisted page that does not hold what was predicted is a miss to record
+and move past rather than a claim to write down. Its text does not travel either: an
+index page is long, and carrying it forward alongside everything the shard then fetches
+spends more than the crawl it replaced. An index generated about a document rather than
+published by it cannot be quoted at all, because the claim would then rest on a machine
+paraphrase, and a quote that is verbatim from a wrong paraphrase is the one failure the
+auditor cannot catch.
+
 ## 3. Merge
 
 ```
