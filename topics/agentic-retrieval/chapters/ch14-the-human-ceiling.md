@@ -7,6 +7,20 @@ teaches: [inter-annotator-agreement, human-ceiling, redundant-annotation, ground
 quiz: quizzes/ch14.quiz.json
 estimatedMinutes: 30
 status: draft
+audit:
+  faithfulness:
+    verdict: fail
+    at: 2026-08-15
+    claims: 34
+    supported: 30
+    unsupported: 0
+    overstated: 0
+    contradicted: 0
+    unreachable: 4
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 1 advisory
 ---
 
 ## Labelling the same page twice on purpose

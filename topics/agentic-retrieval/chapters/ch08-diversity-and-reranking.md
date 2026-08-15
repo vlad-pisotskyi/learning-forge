@@ -7,6 +7,20 @@ teaches: [reranking, marginal-relevance, diversity-relevance-tradeoff, lambda-pa
 quiz: quizzes/ch08.quiz.json
 estimatedMinutes: 35
 status: draft
+audit:
+  faithfulness:
+    verdict: fail
+    at: 2026-08-15
+    claims: 58
+    supported: 51
+    unsupported: 0
+    overstated: 3
+    contradicted: 0
+    unreachable: 4
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 4 advisory
 ---
 
 Chapter seven closed on a direction its authors named without measuring: reorder the retrieved list, or truncate it, before the model reads it. Reordering is the cheaper half, because the documents are already in hand and nothing has to be fetched again.

@@ -7,13 +7,27 @@ teaches: [position-effect, u-shaped-attention-bias, multi-document-qa-probe, key
 quiz: quizzes/ch06.quiz.json
 estimatedMinutes: 30
 status: draft
+audit:
+  faithfulness:
+    verdict: fail
+    at: 2026-08-15
+    claims: 31
+    supported: 30
+    unsupported: 1
+    overstated: 0
+    contradicted: 0
+    unreachable: 0
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 2 advisory
 ---
 
 The previous chapter ended on an assertion offered without a measurement: that models have trouble finding information inside very long inputs. The measurement exists. Accuracy is often highest when the relevant information sits at the beginning or the end of the input context, and it degrades significantly when the model has to use information sitting in the middle of a long context, including in models sold explicitly as long-context models. {{S09.e}} The same work also produced evaluation protocols for testing long-context models, and that half is the part you can reuse on a system nobody has published a paper about. {{S09.a}}
 
 ## The experiment: hold the documents, move the answer
 
-The task is multi-document question answering. The model receives a question and a set of documents, exactly one of which contains the answer, and the manipulation is a single variable: the order of the documents is adjusted so that the position of the answer-bearing document changes. {{S09.f}} Nothing else about the prompt is allowed to move with it. The same distractors are present in both runs, the question is identical, and the total amount of text is unchanged, because input context length is controlled by a separate knob, the number of documents in the context. {{S09.g}} Position and length are two variables, and the design keeps them apart.
+The task is multi-document question answering. The model receives a question and a set of documents, exactly one of which contains the answer, and the manipulation is a single variable: the order of the documents is adjusted so that the position of the answer-bearing document changes. {{S09.f}} Input context length is controlled by a separate knob, the number of documents in the context. {{S09.g}} Position and length are two variables, and the design keeps them apart.
 
 That discipline is what makes the result mean anything. If two runs differ in the index of one document and in nothing else, then a difference in accuracy between them has one candidate cause. Swap in different distractors as well, or lengthen the context at the same time, and the number you get back is a number about three things at once.
 
@@ -55,4 +69,4 @@ The curve is not a constant of nature, and the same paper that found it also fou
 
 The direction of the bias is model-specific too. Position bias is primarily model-driven, with language-specific nuances, and Qwen2.5-7B-Instruct, DeepSeek 7B Chat, and Mistral 7B consistently favour late positions, which runs against the common assumption of a universal early-token preference. {{S19.a}} So the rule of thumb "put the important passage first" is a hypothesis about your model, not a law, and section one gives you the design that settles it in an afternoon.
 
-One more measurement is the one you will meet in production. Accuracy drops most when the relevant information appears in the middle of the context, and that drop is not accompanied by a corresponding rise in output entropy; the authors read this as the model remaining confident even when it fails to use mid-context cues. {{S19.b}} The failure does not announce itself. The answer comes back in the same tone as a correct one, which means a position problem in your pipeline will not show up as refusals or as visible uncertainty. It shows up as wrong answers, delivered well, until somebody measures the curve.
+One more measurement is the one you will meet in production. Accuracy drops most when the relevant information appears in the middle of the context, and that drop is not accompanied by a corresponding rise in output entropy; the authors read this as the model remaining confident even when it fails to use mid-context cues. {{S19.b}} The failure does not announce itself. Output entropy stays flat right where accuracy is falling, {{S19.b}} so a position problem in your pipeline will not show up as visible uncertainty. It shows up as wrong answers, delivered well, until somebody measures the curve.

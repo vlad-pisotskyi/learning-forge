@@ -7,6 +7,20 @@ teaches: [reflection-tokens, adaptive-retrieval, retrieval-threshold, reasoning-
 quiz: quizzes/ch09.quiz.json
 estimatedMinutes: 30
 status: draft
+audit:
+  faithfulness:
+    verdict: fail
+    at: 2026-08-15
+    claims: 32
+    supported: 27
+    unsupported: 0
+    overstated: 3
+    contradicted: 0
+    unreachable: 2
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 4 advisory
 ---
 
 ## Retrieving a fixed number of passages every time, and what it costs

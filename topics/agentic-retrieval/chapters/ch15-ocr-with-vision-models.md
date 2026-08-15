@@ -7,6 +7,20 @@ teaches: [reading-order, linearization, vlm-ocr, document-anchoring, unit-test-r
 quiz: quizzes/ch15.quiz.json
 estimatedMinutes: 35
 status: draft
+audit:
+  faithfulness:
+    verdict: fail
+    at: 2026-08-15
+    claims: 42
+    supported: 40
+    unsupported: 0
+    overstated: 2
+    contradicted: 0
+    unreachable: 0
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 3 advisory
 ---
 
 ## The order a page should be read in, which the file does not record

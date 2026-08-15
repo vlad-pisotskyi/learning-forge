@@ -7,6 +7,20 @@ teaches: [document-conversion, document-layout-analysis, layout-label-set, layou
 quiz: quizzes/ch13.quiz.json
 estimatedMinutes: 30
 status: draft
+audit:
+  faithfulness:
+    verdict: fail
+    at: 2026-08-15
+    claims: 33
+    supported: 32
+    unsupported: 0
+    overstated: 0
+    contradicted: 0
+    unreachable: 1
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 2 advisory
 ---
 
 ## A format built for printing, read back for machines

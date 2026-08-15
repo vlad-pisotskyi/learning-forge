@@ -7,6 +7,20 @@ teaches: [checkpoint, thread-identity, super-step, replay-and-resume, node-idemp
 quiz: quizzes/ch12.quiz.json
 estimatedMinutes: 35
 status: draft
+audit:
+  faithfulness:
+    verdict: fail
+    at: 2026-08-15
+    claims: 37
+    supported: 36
+    unsupported: 0
+    overstated: 1
+    contradicted: 0
+    unreachable: 0
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 3 advisory
 ---
 
 ## The key that decides which state a run joins

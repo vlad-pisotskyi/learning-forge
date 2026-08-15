@@ -7,6 +7,20 @@ teaches: [graph-state, state-reducer, node-and-edge, conditional-edge, builder-v
 quiz: quizzes/ch11.quiz.json
 estimatedMinutes: 30
 status: draft
+audit:
+  faithfulness:
+    verdict: fail
+    at: 2026-08-15
+    claims: 33
+    supported: 29
+    unsupported: 2
+    overstated: 1
+    contradicted: 0
+    unreachable: 1
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 2 advisory
 ---
 
 Everything below is pinned to one release and one day: the package version is 1.2.11, and the documentation pages quoted here were read on 2026-08-14. The documentation site is not version pinned, so opening the same URL later returns whatever is current, not what is quoted. That is a problem this chapter has and the other chapters in this topic do not, and the last section turns it into a habit.

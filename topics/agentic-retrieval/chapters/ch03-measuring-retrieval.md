@@ -7,18 +7,35 @@ teaches: [test-collection, precision-and-recall, recall-at-k, ndcg, reciprocal-r
 quiz: quizzes/ch03.quiz.json
 estimatedMinutes: 30
 status: draft
+audit:
+  faithfulness:
+    verdict: fail
+    at: 2026-08-15
+    claims: 46
+    supported: 44
+    unsupported: 0
+    overstated: 2
+    contradicted: 0
+    unreachable: 0
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 4 advisory
 ---
 
 ## What you need before you can score anything
 
-The previous chapter compared systems using numbers it never defined: nDCG@10 and
-top-20 accuracy. Before either one can be defined, three other things have to be
-pinned down, because a retrieval score is a property of a system and a collection
-together rather than of the system alone. Measuring ad hoc retrieval effectiveness
-in the standard way starts by assembling a test collection, which has three parts.
-{{S38.a}} Those parts are the documents being searched, the information needs being
-served, and a record of which documents are relevant to which need. {{S38.a}}
-{{S38.b}} {{S38.c}}
+The previous chapter compared systems using numbers it never defined: top-20 passage
+retrieval accuracy and BEIR's zero-shot scores. Before either one can be defined,
+three other things have to be pinned down. This chapter's premise is that a retrieval
+score is a property of a system and a collection together, not of the system alone,
+and the sections that follow build the case: the same system scored against a
+different collection, or against a different record of what counts as relevant, comes
+out with a different number without anything about the system changing. Measuring ad
+hoc retrieval effectiveness in the standard way starts by assembling a test
+collection. {{S38.a}} A test collection, in the sense this book uses throughout, is
+documents being searched, information needs being served, and a record of which
+documents are relevant to which need.
 
 The middle part is where engineers new to this go wrong, because a need is not a
 query. Relevance is assessed relative to an information need, not relative to a
@@ -42,6 +59,14 @@ relevant. {{S07.c}} Recall is the fraction of relevant documents that are retrie
 and relevant, and differ only in what they divide by: precision divides by what the
 system returned, recall divides by what existed. The standard presentation is a
 contingency table of retrieved against relevant. {{S07.d}}
+
+|               | relevant | nonrelevant |
+| ------------- | -------- | ----------- |
+| retrieved     | hits     | false positives |
+| not retrieved | misses   | true negatives |
+
+Precision reads the top row: hits over the whole row. Recall reads the left column:
+hits over the whole column.
 
 ```ts
 const hits = retrieved.filter((d) => relevant.has(d)).length;
@@ -78,9 +103,8 @@ parameter string. {{S05.b}} {{S05.a}}
 static long long_cutoff_array[] = { 5, 10, 15, 20, 30, 100, 200, 500, 1000 };
 ```
 
-Recall at 5 and recall at 1000 answer different questions about one ranking, which
-is why the tool offers the whole spread rather than one number. {{S05.b}} Which of
-them to report is a decision about the application and not a property of the ranker.
+Which cutoff to report is a decision about the application, not a property of the
+ranker.
 BEIR's argument for its own metric opens on exactly that point: retrieval tasks are
 precision focused or recall focused depending on the nature and requirements of the
 real world application. {{S03.i}}
@@ -104,8 +128,7 @@ The accumulation is one loop over the retrieved list. {{S04.b}}
 
 Read three things out of it. The index `i` is zero based while the document at that
 index sits at rank `i + 1`, so the discount divides by `log2(i + 2)`, and the source
-carries a comment saying so because that is the step people get wrong when they
-reimplement the measure. {{S04.b}} The document at rank 1 divides by `log2(2)`, which
+carries a comment marking exactly that. {{S04.b}} The document at rank 1 divides by `log2(2)`, which
 is 1, so the top position takes no discount and every position after it is worth
 strictly less than the one before. And the loop halts as soon as the ideal ranking
 has no gain left to place. {{S04.b}}
@@ -129,16 +152,18 @@ The measure itself is then a division. {{S04.d}}
         }
 ```
 
-A ranking that puts the highest gains first makes the two sums equal and the score
-1.0, so the normalised number has a fixed ceiling no matter how many relevant
-documents a particular need has. The same file also reports the raw DCG and the ideal
-DCG under their own measure names, so the unnormalised sums are available when the
-ratio is not what is wanted. {{S04.d}}
+Work the ratio through by hand from the code above. {{S04.d}} When a ranking puts the
+highest gains first, `results_dcg` accumulates the same gains in the same order as
+`ideal_dcg`, so the two sums come out equal and the division returns 1.0: the
+normalised number has a fixed ceiling no matter how many relevant documents a
+particular need has. The same file also reports the raw DCG and the ideal DCG under
+their own measure names, so the unnormalised sums are available when the ratio is not
+what is wanted. {{S04.d}}
 
 ## Reciprocal rank, and the task it suits
 
 Reciprocal rank is one divided by the position of the first relevant retrieved
-document. {{S06.a}} In trec_eval it is four lines. {{S06.b}}
+document. {{S06.a}} In trec_eval it is the six lines below. {{S06.b}}
 
 ```c
     for (i = 0; i < res_rels.num_ret; i++) {
@@ -163,15 +188,18 @@ everything written about a subject does not.
 
 ## Binary judgements against graded ones
 
-A binary judgement records relevant or not relevant. A graded judgement records how
-relevant, on a scale. A majority of BEIR's datasets carry binary judgements and a few
-carry fine-grained ones. {{S03.l}}
+BEIR's own datasets illustrate the two kinds directly: a majority carry binary
+judgements, relevant or not relevant, and a few carry fine-grained, graded judgements
+instead. {{S03.l}}
 
 Which measures are usable follows from that split. nDCG reads a grade directly,
 because gain defaults to the relevance level. {{S04.a}} Reciprocal rank does not: the
 comparison in its loop is a threshold test against a configured relevance level, so a
-five point scale is flattened to relevant or not the moment the measure runs.
-{{S06.b}} BEIR raises the same objection against MRR and MAP, calling them binary
+graded scale is flattened to relevant or not the moment the measure runs. {{S06.b}}
+BEIR raises the same objection against MRR and MAP. MRR is mean reciprocal rank, the
+aggregate of the exact reciprocal rank measure walked through above, and MAP is mean
+average precision, another rank-aware measure built on binary judgements; BEIR's own
+text spells the first acronym out as Mean Reciprocal Rate. BEIR calls both binary
 rank-aware metrics that fail to evaluate tasks with graded relevance judgements.
 {{S03.i}}
 

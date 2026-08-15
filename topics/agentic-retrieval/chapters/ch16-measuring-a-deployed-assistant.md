@@ -7,6 +7,20 @@ teaches: [llm-as-judge, judge-bias, judge-validation, reference-free-evaluation,
 quiz: quizzes/ch16.quiz.json
 estimatedMinutes: 40
 status: draft
+audit:
+  faithfulness:
+    verdict: fail
+    at: 2026-08-15
+    claims: 45
+    supported: 43
+    unsupported: 1
+    overstated: 0
+    contradicted: 0
+    unreachable: 1
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 3 advisory
 ---
 
 ## Two modes: a fixed set replayed, and traffic as it arrives

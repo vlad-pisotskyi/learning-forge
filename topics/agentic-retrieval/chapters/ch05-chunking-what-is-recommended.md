@@ -6,7 +6,21 @@ requires: [ch04]
 teaches: [measured-versus-advocated, default-parameter, internal-inconsistency, corpus-dependence]
 quiz: quizzes/ch05.quiz.json
 estimatedMinutes: 20
-status: draft
+status: verified
+audit:
+  faithfulness:
+    verdict: pass
+    at: 2026-08-15
+    claims: 21
+    supported: 21
+    unsupported: 0
+    overstated: 0
+    contradicted: 0
+    unreachable: 0
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 1 advisory
 ---
 
 ## Three widely followed recommendations, and where they came from
@@ -16,7 +30,7 @@ Microsoft's chunking guidance for Azure AI Search opens with a number. Start at 
 <!-- allow-hedge: unmeasured practice, the cited recommendation carries no measurement -->
 That is the figure most people mean when they say "512 with overlap", and the page states it without reporting an experiment behind it. {{S13.a}}
 
-The LangChain RAG tutorial reaches for a different pair. It splits with `RecursiveCharacterTextSplitter`, which cuts on common separators such as newlines and keeps recursing until each piece is small enough {{S14.c}}, and it configures that splitter with a chunk size of 1000 and an overlap of 200. {{S14.b}} Those are characters, not tokens, so the chunk is roughly half Azure's and the overlap is 20 percent of it.
+The LangChain RAG tutorial reaches for a different pair. It splits with `RecursiveCharacterTextSplitter`, which cuts on common separators such as newlines and keeps recursing until each piece is small enough {{S14.c}}, and it configures that splitter with a chunk size of 1000 and an overlap of 200. {{S14.b}} The class name says character, not token {{S14.c}}, so the chunk is roughly half Azure's and the overlap is 20 percent of it.
 
 <!-- allow-hedge: unmeasured practice, the cited recommendation carries no measurement -->
 The tutorial supplies no justification for either number anywhere in its text. {{S14.b}}
@@ -52,7 +66,10 @@ Copying a default is a legitimate way to get a first pipeline running, and the s
 
 ## Why the honest answer depends on your corpus
 
-The advocates say this themselves, and that is worth more than the chapter asserting it. Pinecone closes by stating there is no one-size-fits-all solution to chunking. {{S15.c}} Microsoft names content type and use case as what the optimal overlap depends on, putting highly structured data toward less overlap and conversational or narrative text toward more {{S13.b}}, and states outright that the right choice of parameters depends on how the chunks are used. {{S13.e}}
+The advocates say this themselves, and that is worth more than the chapter asserting it. Pinecone closes by stating there is no one-size-fits-all solution to chunking. {{S15.c}}
+
+<!-- allow-hedge: unmeasured practice, the cited recommendation carries no measurement -->
+Microsoft hedges its own overlap advice rather than stating it flat: the optimal overlap might vary by content type and use case, with highly structured data possibly needing less overlap and conversational or narrative text possibly benefiting from more. {{S13.b}} It states outright that the right choice of parameters depends on how the chunks are used. {{S13.e}}
 
 The sharpest version is the page departing from its own recommendation. In its LangChain example, Microsoft goes below the standard 2,000 characters with 500 overlap because the sample document's token counts make a smaller setting sensible, and it gives a mechanical consequence for ignoring that: an overlap set too large can end up producing no overlap at all. {{S13.f}} The parameters did not change their meaning. The document did, and the same settings behaved differently on it.
 

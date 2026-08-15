@@ -7,6 +7,20 @@ teaches: [single-time-retrieval, fixed-schedule-interleaving, model-decided-inte
 quiz: quizzes/ch10.quiz.json
 estimatedMinutes: 35
 status: draft
+audit:
+  faithfulness:
+    verdict: fail
+    at: 2026-08-15
+    claims: 44
+    supported: 41
+    unsupported: 0
+    overstated: 1
+    contradicted: 1
+    unreachable: 1
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 4 advisory
 ---
 
 ## One retrieval from the question, and the questions it cannot serve

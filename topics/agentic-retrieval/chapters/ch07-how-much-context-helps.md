@@ -6,7 +6,21 @@ requires: [ch03, ch06]
 teaches: [reader-saturation, top-k-selection, distractor-cost, input-length-degradation, contested-evidence]
 quiz: quizzes/ch07.quiz.json
 estimatedMinutes: 25
-status: draft
+status: verified
+audit:
+  faithfulness:
+    verdict: pass
+    at: 2026-08-15
+    claims: 17
+    supported: 17
+    unsupported: 0
+    overstated: 0
+    contradicted: 0
+    unreachable: 0
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 1 advisory
 ---
 
 Chapter 6 held the set of documents fixed and moved the answer around inside it. This chapter asks the other half of the question: how many passages go in beside the answer, and what each additional one costs. Numbers exist for this. They were measured on particular models with particular query sets, they do not all point the same way, and learning to carry that disagreement without flattening it is as much the subject of this chapter as the numbers themselves.

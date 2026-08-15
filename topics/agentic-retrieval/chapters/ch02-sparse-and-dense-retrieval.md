@@ -7,6 +7,20 @@ teaches: [sparse-retrieval, dense-retrieval, in-batch-negatives, in-domain-versu
 quiz: quizzes/ch02.quiz.json
 estimatedMinutes: 30
 status: draft
+audit:
+  faithfulness:
+    verdict: fail
+    at: 2026-08-15
+    claims: 35
+    supported: 32
+    unsupported: 1
+    overstated: 0
+    contradicted: 0
+    unreachable: 2
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 2 advisory
 ---
 
 ## Ranking by the words that match
@@ -15,7 +29,8 @@ The retriever in the previous chapter was a black box that returned passages. Op
 and the oldest working answer inside is to score a passage by the words it shares with
 the query. BM25 is that idea in its standard form: a bag-of-words scoring function
 computed as token matching between two high-dimensional sparse vectors whose components
-carry TF-IDF weights. {{S03.d}}
+carry TF-IDF weights, each one scoring a token by its frequency in the passage weighed
+against its rarity across the whole corpus. {{S03.d}}
 
 Sparse is literal. The space has one dimension per token in the vocabulary, and any one
 passage uses a small fraction of them, so nearly every component of its vector is zero.
@@ -26,7 +41,9 @@ different words for the same thing contribute nothing to each other on those wor
 
 This is the method new retrieval work had to beat. For open-domain question answering,
 sparse vector space models such as TF-IDF and BM25 were the de facto way to select
-candidate passages. {{S02.a}}
+candidate passages. {{S02.a}} The two names overlap on purpose: TF-IDF is the per-token
+weighting scheme already described, the one behind BM25's own vectors, and also, used on
+its own, a ranking method that scores a passage directly by those weights.
 
 ## Ranking by the vectors that match
 
@@ -36,15 +53,12 @@ alone, with the embeddings learned from a small number of questions and passages
 dual-encoder framework. {{S02.a}}
 
 Two encoders, and they run independently: queries and documents are each mapped into the
-vector space without seeing the other side. {{S03.c}} Because a passage embedding then
-depends on nothing but the passage, the entire corpus can be encoded before any query
-exists, and the work left at query time is to embed the query and rank passages by
-closeness in that same space. {{S03.c}}
+vector space without seeing the other side. {{S03.c}}
 
 The contrast with the previous section sits in the two adjectives. A sparse vector's
 components are vocabulary tokens carrying TF-IDF weights, and a query and a passage meet
-only where they use the same token. {{S03.d}} A dense vector's components are learned
-from question-passage pairs, and the two sides meet as whole vectors. {{S02.a}}
+only where they use the same token. {{S03.d}} A dense vector's components are learned from
+question-passage pairs rather than assigned by a fixed rule. {{S02.a}}
 
 ## How a dense retriever is trained, and on how little
 
@@ -54,12 +68,14 @@ ones, and where those come from is a design decision with a name.
 
 The DPR model used in the paper's main experiments was trained in the in-batch negative
 setting, with a batch size of 128 and one additional BM25 negative passage per question.
-{{S02.d}} The setting is named for where the negatives come from. A batch already holds
-128 question-passage pairs, and for any one question in it, the passages belonging to the
-other questions are used as that question's negatives, so the negatives require no
-retrieval of their own. The extra negative per question is the exception, and it comes
-from BM25 {{S02.d}}, which puts the lexical method inside the dense retriever's training
-loop rather than only opposite it at evaluation.
+{{S02.d}} The setting is named for where the negatives come from: in-batch negatives are a
+standard training technique in which every other example already sitting in the same
+training batch stands in as a negative for the current one, so no separate retrieval step
+has to go find one. Applied here, a batch already holds 128 question-passage pairs, and
+for any one question in it, the passages that belong to the other 127 questions serve as
+its negatives. The extra negative per question is the exception, and it comes from BM25
+{{S02.d}}, which puts the lexical method inside the dense retriever's training loop rather
+than only opposite it at evaluation.
 
 The amount of supervision this needs is smaller than the setup suggests. In the paper's
 ablation on training set size, a dense retriever trained on only 1,000 examples already

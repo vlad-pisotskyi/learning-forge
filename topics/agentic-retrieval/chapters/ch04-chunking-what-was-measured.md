@@ -6,37 +6,51 @@ requires: [ch01, ch03]
 teaches: [fixed-size-chunking, semantic-chunking, chunk-overlap, token-level-evaluation]
 quiz: quizzes/ch04.quiz.json
 estimatedMinutes: 30
-status: draft
+status: verified
+audit:
+  faithfulness:
+    verdict: pass
+    at: 2026-08-15
+    claims: 30
+    supported: 30
+    unsupported: 0
+    overstated: 0
+    contradicted: 0
+    unreachable: 0
+  critique:
+    verdict: pass
+    at: 2026-08-15
+    notes: 0 blocking, 2 advisory
 ---
 
 ## The baseline everything else is measured against
 
 A fixed-size chunker splits a document sequentially into fixed-size chunks, using a
-predefined or user-specified number of sentences per chunk. {{S08.b}} There is no
-model to run and no boundary to detect. That is exactly why it is the control
-condition: anything more expensive has to earn the difference against it, and whether
-the more expensive options do was open enough to be worth a study. {{S08.a}}
+predefined or user-specified number of sentences per chunk. {{S08.b}} That is exactly
+why it is the control condition: anything more expensive has to earn the difference
+against it, and whether the more expensive options do was open enough to be worth a
+study. {{S08.a}}
 
 The single parameter still moves results. Larger chunks provide more context and cost
 more processing time, while smaller chunks improve retrieval recall and cost less.
 {{S10.a}} Wang and colleagues ran a comparison across chunk sizes {{S10.f}} and scored
 it on faithfulness, which measures whether the generated response is hallucinated or
 matches the retrieved text, together with relevancy. {{S10.b}} The corpus was the first
-sixty pages of one financial filing, with roughly a hundred and seventy queries
+sixty pages of one document, with roughly a hundred and seventy queries
 generated from that corpus by an LLM. {{S10.c}} Generation ran on zephyr-7b-alpha and
 the scoring was done by gpt-3.5-turbo. {{S10.d}}
 
 Hold that setup in mind before reading any number off that experiment. A chunk size
-that wins on sixty pages of a filing, against queries written by a model and graded by
-a model, is a fact about that arrangement. {{S10.c}} {{S10.d}}
+that wins on sixty pages of one document, against queries written by a model and
+graded by a model, is a fact about that arrangement. {{S10.c}} {{S10.d}}
 
 ## Splitting on meaning instead of on length
 
 Semantic chunking divides documents into semantically coherent segments, on the
 expectation that retrieval improves when a chunk holds one topic rather than one
-length. {{S08.a}} The boundary comes from the content: one of the chunkers in the study
-is breakpoint-based, placing a split where the text turns rather than where a counter
-runs out. {{S08.e}} That detection carries an additional computational cost. {{S08.f}}
+length. {{S08.a}} The boundary comes from the content rather than a fixed count. {{S08.a}} One of the
+chunkers in the study is named for exactly that: the Breakpoint-based Semantic Chunker.
+{{S08.e}} That detection carries an additional computational cost. {{S08.f}}
 
 The argument for paying it is that a length cutoff fails at both ends. Chroma's report
 speculates that recall reaches a maximum before relevant information becomes diluted
@@ -67,10 +81,11 @@ and reliable choice for practical RAG applications. {{S08.g}}
 
 ## Overlap, and the redundancy it buys with
 
-Overlap repeats text across a boundary so that a passage cut in half by the split still
-appears intact in one of the two chunks. The bill arrives as duplicated tokens. Reducing
-overlap improves IoU scores, because that metric penalises redundant information.
-{{S11.b}}
+Overlap repeats text across a boundary, one way to keep a passage cut in half by the
+split from disappearing between two chunks. The bill arrives as duplicated tokens. IoU,
+intersection over union, scores how much a retrieved set overlaps with itself rather
+than adding new material, and reducing overlap improves that score because the metric
+penalises redundant information. {{S11.b}}
 
 Overlap also has to be pinned down before a size experiment means anything: the chunk
 size sweep above held overlap constant at 20 tokens, so what varied was size alone.
@@ -87,9 +102,8 @@ The reason is arithmetic. Recall at k, from the previous chapter, counts chunks,
 chunk is not a fixed quantity of text: ten retrieved chunks at 800 tokens {{S11.f}} is
 four times the material of ten retrieved chunks at 200 tokens {{S11.d}}. Compare those
 two runs on chunk-level recall and the larger setting looks better partly because it
-dragged in more text. Score which tokens of the annotated relevant passage came back,
-and which irrelevant tokens came back with them, and the two runs land on one scale.
-{{S11.a}} {{S11.b}}
+dragged in more text. Evaluating at the token level instead of the chunk level is how
+the two runs land on one scale. {{S11.a}}
 
 Two configurations came out of that sweep well. The heuristic
 `RecursiveCharacterTextSplitter` at chunk size 200 with no overlap performs well.
