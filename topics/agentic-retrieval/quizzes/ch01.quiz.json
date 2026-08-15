@@ -1,0 +1,51 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch01",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "parametric-memory",
+      "kind": "application",
+      "prompt": "A model answers a factual question with no documents in its context and gets it wrong. Where did the wrong fact come from, and what does the RAG paper say about a practitioner's ability to inspect or revise it?"
+    },
+    {
+      "id": "q2",
+      "concept": "non-parametric-memory",
+      "kind": "recall",
+      "prompt": "In the original RAG model, what concretely is the non-parametric memory, and what does the retriever return when handed an input sequence?"
+    },
+    {
+      "id": "q3",
+      "concept": "rag-sequence",
+      "kind": "discrimination",
+      "prompt": "RAG-Sequence and RAG-Token both retrieve K documents and marginalise over them. At what point does each one commit to a document, and what task makes the two formulations equivalent?"
+    },
+    {
+      "id": "q4",
+      "concept": "rag-token",
+      "kind": "application",
+      "prompt": "You need an answer whose date comes from one retrieved passage and whose name comes from another. Which of the two RAG formulations can produce it, and what in its definition allows that?"
+    },
+    {
+      "id": "q5",
+      "concept": "retriever-generator-split",
+      "kind": "application",
+      "prompt": "The training data is input and target pairs with no label saying which passage was the right one to retrieve. How are the retriever and generator trained, and where does the retriever's probability over a passage enter the objective?"
+    },
+    {
+      "id": "q6",
+      "concept": "retriever-generator-split",
+      "kind": "discrimination",
+      "prompt": "On Natural Questions, when the correct answer appeared in none of the retrieved documents, RAG scored 11.8% and an extractive model scores 0%. What architectural difference makes the extractive score structurally zero there?"
+    },
+    {
+      "id": "q7",
+      "concept": "provenance-and-updating",
+      "kind": "application",
+      "prompt": "The RAG abstract names two problems that remain open for models holding world knowledge in their parameters. What are they, and why does a closed-book answer make each one harder than a retrieval-conditioned answer does?"
+    }
+  ],
+  "passing": {
+    "atLeast": 5
+  }
+}

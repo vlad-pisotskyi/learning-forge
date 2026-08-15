@@ -1,0 +1,51 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch13",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "document-conversion",
+      "kind": "application",
+      "prompt": "Your extractor pulls every character out of a two-column PDF correctly, yet a figure caption lands in the middle of a body paragraph. What property of the PDF format explains why the file does not carry the information that would have prevented this, and how do the DocLayNet authors state the structural problem that conversion has to solve?"
+    },
+    {
+      "id": "q2",
+      "concept": "document-layout-analysis",
+      "kind": "recall",
+      "prompt": "What does layout analysis produce for a single page in DocLayNet's formulation, and how does that output settle which segments of text belong to the same unit?"
+    },
+    {
+      "id": "q3",
+      "concept": "layout-label-set",
+      "kind": "discrimination",
+      "prompt": "DocBank defines thirteen labels and DocLayNet eleven. Why does the larger count not make DocBank's vocabulary a richer version of DocLayNet's, and on what grounds did DocLayNet leave out labels such as Author and Affiliation?"
+    },
+    {
+      "id": "q4",
+      "concept": "layout-domain-shift",
+      "kind": "application",
+      "prompt": "You run a layout model trained on PubLayNet over a pile of product manuals and marketing material, and the boxes come back much worse than they did on journal articles. What about how PubLayNet was built explains that, and how do the DocLayNet authors describe the effect?"
+    },
+    {
+      "id": "q5",
+      "concept": "layout-domain-shift",
+      "kind": "discrimination",
+      "prompt": "DocLayNet splits train, test, and validation only on full-document boundaries rather than on individual pages. What would a page-level split let a model do, and what do the authors say happens to the reported accuracy?"
+    },
+    {
+      "id": "q6",
+      "concept": "layout-domain-shift",
+      "kind": "application",
+      "prompt": "DocLayNet's pages were not drawn uniformly from its documents. What were two of the deliberate sampling decisions, what was used to implement the bias toward pages with figures or tables, and what does that mean for anyone reading a per-class frequency off the dataset?"
+    },
+    {
+      "id": "q7",
+      "concept": "pipeline-composition",
+      "kind": "application",
+      "prompt": "Docling is assembled from specialised models rather than trained as one end-to-end network. Which two specialised tasks does the technical report name, where did the layout model's architecture and training data come from, and what does the report claim about the hardware it runs on?"
+    }
+  ],
+  "passing": {
+    "atLeast": 5
+  }
+}

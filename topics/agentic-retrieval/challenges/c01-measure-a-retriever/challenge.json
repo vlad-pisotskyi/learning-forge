@@ -1,0 +1,71 @@
+{
+  "contractVersion": 3,
+  "id": "c01",
+  "title": "Measure a retriever over a markdown corpus",
+  "afterChapter": "ch03",
+  "exercises": [
+    "sparse-retrieval",
+    "precision-and-recall",
+    "recall-at-k",
+    "ndcg",
+    "reciprocal-rank",
+    "evaluation-cutoff",
+    "graded-versus-binary-relevance"
+  ],
+  "language": "python",
+  "estimatedHours": 5,
+  "brief": "brief.md",
+  "rubric": "rubric.md",
+  "interface": {
+    "entrypoint": "work/retrieval.py",
+    "exports": [
+      {
+        "name": "build_index",
+        "signature": "build_index(documents: list[dict]) -> dict",
+        "description": "Build a searchable index over a list of documents, each carrying an id and text."
+      },
+      {
+        "name": "search",
+        "signature": "search(index: dict, query: str, k: int) -> list[str]",
+        "description": "Return the ids of the k highest scoring documents for a query, best first."
+      },
+      {
+        "name": "recall_at_k",
+        "signature": "recall_at_k(ranked_ids: list[str], relevant_ids: set[str], k: int) -> float",
+        "description": "Fraction of the relevant documents that appear in the first k results."
+      },
+      {
+        "name": "ndcg_at_k",
+        "signature": "ndcg_at_k(ranked_ids: list[str], relevance: dict[str, int], k: int) -> float",
+        "description": "Discounted cumulative gain over the first k results, normalised against the ideal ordering."
+      },
+      {
+        "name": "reciprocal_rank",
+        "signature": "reciprocal_rank(ranked_ids: list[str], relevant_ids: set[str]) -> float",
+        "description": "One divided by the rank of the first relevant result, or zero when none is relevant."
+      }
+    ]
+  },
+  "eval": {
+    "runner": "python",
+    "metrics": [
+      {
+        "name": "metric_cases_passed",
+        "threshold": 1,
+        "direction": "gte"
+      },
+      {
+        "name": "ndcg_at_10",
+        "threshold": 0.4,
+        "direction": "gte"
+      },
+      {
+        "name": "recall_at_50",
+        "threshold": 0.75,
+        "direction": "gte"
+      }
+    ],
+    "spec": ".hidden/eval/c01.eval.py"
+  },
+  "reference": ".hidden/solution"
+}

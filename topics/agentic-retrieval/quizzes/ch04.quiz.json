@@ -1,0 +1,39 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch04",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "fixed-size-chunking",
+      "kind": "recall",
+      "prompt": "How does a fixed-size chunker decide where one chunk ends and the next begins, and why does that make it the control condition other strategies get compared against?"
+    },
+    {
+      "id": "q2",
+      "concept": "semantic-chunking",
+      "kind": "application",
+      "prompt": "In the semantic chunking study, the breakpoint-based chunker's advantage shrank as document length grew across the stitched datasets. What mechanism do the authors offer for that?"
+    },
+    {
+      "id": "q3",
+      "concept": "chunk-overlap",
+      "kind": "application",
+      "prompt": "A colleague wants 800-token chunks with 400 tokens of overlap. What does overlap buy, what does it cost on a metric that penalises redundancy, and what did Chroma measure for that exact setting?"
+    },
+    {
+      "id": "q4",
+      "concept": "token-level-evaluation",
+      "kind": "application",
+      "prompt": "You compare a 200-token chunker against an 800-token chunker using recall at 10 chunks. What is wrong with that comparison, and what does scoring at the token level change about it?"
+    },
+    {
+      "id": "q5",
+      "concept": "semantic-chunking",
+      "kind": "discrimination",
+      "prompt": "One study found no clear advantage for semantic chunking; another put a clustering semantic chunker at the second highest recall it recorded. What differences between the two setups let both results stand?"
+    }
+  ],
+  "passing": {
+    "atLeast": 3
+  }
+}

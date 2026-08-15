@@ -1,0 +1,66 @@
+{
+  "contractVersion": 3,
+  "id": "c02",
+  "title": "Chunk a corpus and defend the choice",
+  "afterChapter": "ch05",
+  "exercises": [
+    "fixed-size-chunking",
+    "chunk-overlap",
+    "semantic-chunking",
+    "token-level-evaluation",
+    "measured-versus-advocated",
+    "corpus-dependence",
+    "default-parameter"
+  ],
+  "language": "python",
+  "estimatedHours": 4,
+  "brief": "brief.md",
+  "rubric": "rubric.md",
+  "interface": {
+    "entrypoint": "work/chunking.py",
+    "exports": [
+      {
+        "name": "chunk_fixed",
+        "signature": "chunk_fixed(text: str, size: int, overlap: int) -> list[tuple[int, int]]",
+        "description": "Split text into fixed-length chunks with the given overlap, returned as start and end offsets."
+      },
+      {
+        "name": "token_recall",
+        "signature": "token_recall(retrieved: list[tuple[int, int]], relevant: list[tuple[int, int]]) -> float",
+        "description": "Fraction of the relevant token positions covered by the retrieved spans."
+      },
+      {
+        "name": "token_iou",
+        "signature": "token_iou(retrieved: list[tuple[int, int]], relevant: list[tuple[int, int]]) -> float",
+        "description": "Intersection over union of retrieved and relevant token positions, which penalises retrieving more than was needed."
+      },
+      {
+        "name": "sweep",
+        "signature": "sweep(text: str, sizes: list[int], overlaps: list[int], queries: list[dict]) -> list[dict]",
+        "description": "Score every size and overlap combination over the query set and return one record per combination."
+      }
+    ]
+  },
+  "eval": {
+    "runner": "python",
+    "metrics": [
+      {
+        "name": "span_cases_passed",
+        "threshold": 1,
+        "direction": "gte"
+      },
+      {
+        "name": "token_recall",
+        "threshold": 0.8,
+        "direction": "gte"
+      },
+      {
+        "name": "token_iou",
+        "threshold": 0.15,
+        "direction": "gte"
+      }
+    ],
+    "spec": ".hidden/eval/c02.eval.py"
+  },
+  "reference": ".hidden/solution"
+}

@@ -1,0 +1,57 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch14",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "redundant-annotation",
+      "kind": "application",
+      "prompt": "You are assembling a judgement set for your own retrieval system and the budget stretches to exactly one judgement per item. What can you never compute under that plan, and what did DocLayNet get in return for paying to have thousands of its pages labelled a second and a third time?"
+    },
+    {
+      "id": "q2",
+      "concept": "inter-annotator-agreement",
+      "kind": "application",
+      "prompt": "Take one page that three different people annotated. Mechanically, what do you do with those three sets of boxes to turn them into an agreement figure, and why does a triple-annotated page yield a range instead of a single number?"
+    },
+    {
+      "id": "q3",
+      "concept": "human-ceiling",
+      "kind": "discrimination",
+      "prompt": "Your annotators' agreement is reported as the percentage of items where two labellers chose identical labels, while your models are scored with mAP at 0.5 to 0.95. Both numbers are legitimate. What can you not do with them, and how does DocLayNet's section 5 use its agreement figure in a way that requires the two to share a unit?"
+    },
+    {
+      "id": "q4",
+      "concept": "human-ceiling",
+      "kind": "discrimination",
+      "prompt": "The DocLayNet abstract says the baseline models fall approximately 10% behind the inter-annotator agreement, and section 5 says they are between 6 and 10% lower. Which figure goes into your own write-up, on what grounds, and what do you do with the disagreement itself?"
+    },
+    {
+      "id": "q5",
+      "concept": "ground-truth-ambiguity",
+      "kind": "application",
+      "prompt": "On a page with subfigures, one of your annotators draws a single figure box and another draws one box per subfigure. Neither broke the guideline. If your evaluation admits exactly one correct answer per item, what is the resulting penalty a property of, and where does that cost become visible once you measure agreement?"
+    },
+    {
+      "id": "q6",
+      "concept": "annotation-guideline",
+      "kind": "discrimination",
+      "prompt": "DocLayNet's authors say perfect consistency across 40 annotators is not achievable, yet report a large improvement in consistency once their guideline existed. What separates a rule like \"for every caption there must be exactly one corresponding picture or table\" from an instruction to label carefully, and what does the guideline's length tell you about the work involved?"
+    },
+    {
+      "id": "q7",
+      "concept": "annotator-qualification",
+      "kind": "application",
+      "prompt": "You add a screening exam to your own annotation campaign and every candidate passes first time. Why is that outcome uninformative about your cohort, and how was DocLayNet's exam constructed and how many of its allocated annotators did it remove?"
+    },
+    {
+      "id": "q8",
+      "concept": "annotation-independence",
+      "kind": "discrimination",
+      "prompt": "Your annotation tool shows the second labeller what the first one produced, and the agreement figure comes out high. What is that number now measuring, in which direction does it move the ceiling and what does that do to how your models look against it, and how did DocLayNet's campaign rule the problem out?"
+    }
+  ],
+  "passing": {
+    "atLeast": 6
+  }
+}

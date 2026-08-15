@@ -1,0 +1,73 @@
+{
+  "contractVersion": 3,
+  "id": "c04",
+  "title": "Build a graph that can be resumed",
+  "afterChapter": "ch12",
+  "exercises": [
+    "graph-state",
+    "state-reducer",
+    "node-and-edge",
+    "conditional-edge",
+    "checkpoint",
+    "thread-identity",
+    "super-step",
+    "replay-and-resume",
+    "node-idempotency"
+  ],
+  "language": "python",
+  "estimatedHours": 6,
+  "brief": "brief.md",
+  "rubric": "rubric.md",
+  "interface": {
+    "entrypoint": "work/graph.py",
+    "exports": [
+      {
+        "name": "build_graph",
+        "signature": "build_graph(nodes: dict, edges: list[tuple[str, str]], routes: dict, reducers: dict) -> dict",
+        "description": "Assemble a runnable graph from named node functions, unconditional edges, routing functions keyed by source node, and a reducer per state key."
+      },
+      {
+        "name": "merge_messages",
+        "signature": "merge_messages(left: list[dict], right: list[dict]) -> list[dict]",
+        "description": "Reducer that replaces an existing message when the update carries the same id and appends it otherwise."
+      },
+      {
+        "name": "run",
+        "signature": "run(graph: dict, state: dict, store: dict, thread_id: str) -> dict",
+        "description": "Run the graph to completion from a starting state, writing a checkpoint into the store at every super-step boundary."
+      },
+      {
+        "name": "resume",
+        "signature": "resume(graph: dict, store: dict, thread_id: str, checkpoint_id: str | None = None) -> dict",
+        "description": "Continue a run from a saved checkpoint, re-executing only the nodes that come after it."
+      }
+    ]
+  },
+  "eval": {
+    "runner": "python",
+    "metrics": [
+      {
+        "name": "reducer_cases_passed",
+        "threshold": 1,
+        "direction": "gte"
+      },
+      {
+        "name": "routing_cases_passed",
+        "threshold": 1,
+        "direction": "gte"
+      },
+      {
+        "name": "checkpoint_cases_passed",
+        "threshold": 1,
+        "direction": "gte"
+      },
+      {
+        "name": "resume_cases_passed",
+        "threshold": 0.9,
+        "direction": "gte"
+      }
+    ],
+    "spec": ".hidden/eval/c04.eval.py"
+  },
+  "reference": ".hidden/solution"
+}

@@ -1,0 +1,57 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch15",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "reading-order",
+      "kind": "recall",
+      "prompt": "What does a PDF fail to record about its own page content, and what does that absence mean when two extractors disagree about a two-column page?"
+    },
+    {
+      "id": "q2",
+      "concept": "linearization",
+      "kind": "discrimination",
+      "prompt": "A converter returns every character on a page correctly but the output is unreadable. Which of the two jobs in a conversion failed, and how would you tell it apart from a character recognition failure?"
+    },
+    {
+      "id": "q3",
+      "concept": "vlm-ocr",
+      "kind": "recall",
+      "prompt": "How does the olmOCR approach to reading a page differ from a composed pipeline of specialised layout and table models, and what size of model does olmOCR use?"
+    },
+    {
+      "id": "q4",
+      "concept": "document-anchoring",
+      "kind": "application",
+      "prompt": "You are building a VLM-based converter and plan to rasterize each page and prompt on the image alone. What does document-anchoring add, where does the added information come from, and why is discarding it a choice rather than a necessity?"
+    },
+    {
+      "id": "q5",
+      "concept": "unit-test-reward",
+      "kind": "application",
+      "prompt": "Two OCR outputs serialize the same table differently and both are correct to any reader. Explain how a unit-test reward scores them compared with edit distance against a single reference string, and how the reward value is computed?"
+    },
+    {
+      "id": "q6",
+      "concept": "synthetic-training-documents",
+      "kind": "recall",
+      "prompt": "Why does training with unit-test rewards create a data supply problem, and how does generating synthetic pages solve it?"
+    },
+    {
+      "id": "q7",
+      "concept": "cost-per-page",
+      "kind": "application",
+      "prompt": "A colleague budgets a conversion project by citing 176 dollars per million pages with no other detail. What is missing from that citation, and which of the missing pieces decide whether the number holds for their run?"
+    },
+    {
+      "id": "q8",
+      "concept": "teacher-model-failure",
+      "kind": "discrimination",
+      "prompt": "The olmOCR paper reports that GPT-4o omits content, rewrites unfaithfully, and captions images uninstructed. Is that a statement about olmOCR's own residual error rate, and if not, what is it a statement about and why does the distinction matter?"
+    }
+  ],
+  "passing": {
+    "atLeast": 5
+  }
+}

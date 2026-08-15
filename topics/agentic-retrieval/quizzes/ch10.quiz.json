@@ -1,0 +1,57 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch10",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "single-time-retrieval",
+      "kind": "application",
+      "prompt": "A user asks which city the company that acquired a small startup is headquartered in. Explain why a single retrieval built from that question can fail to bring back the second fact, and state the condition FLARE's authors give under which one retrieval from the input is sufficient?"
+    },
+    {
+      "id": "q2",
+      "concept": "fixed-schedule-interleaving",
+      "kind": "recall",
+      "prompt": "In IRCoT, what are the two operations that alternate, what text is used as the retrieval query, and what ends the loop?"
+    },
+    {
+      "id": "q3",
+      "concept": "model-decided-interleaving",
+      "kind": "discrimination",
+      "prompt": "IRCoT and FLARE both retrieve several times while an answer is being produced. What decides the timing of a retrieval in each of them, and why does that difference put them in different categories rather than making them two versions of one idea?"
+    },
+    {
+      "id": "q4",
+      "concept": "query-complexity-routing",
+      "kind": "application",
+      "prompt": "You are adding Adaptive-RAG style routing to a pipeline. What component do you have to build, what does it consume, at what moment in handling a request does it run, and what set of strategies does it choose between?"
+    },
+    {
+      "id": "q5",
+      "concept": "just-in-time-context",
+      "kind": "application",
+      "prompt": "What does a just-in-time agent hold in its context instead of document text, and what happens at the moment the content is actually needed? What evidence does the article that recommends this approach offer for it?"
+    },
+    {
+      "id": "q6",
+      "concept": "interleaving-overhead",
+      "kind": "recall",
+      "prompt": "According to FLARE's limitations section, what does a naive interleaved implementation cost relative to single-time retrieval, and is that statement a measurement or an assertion about implementation?"
+    },
+    {
+      "id": "q7",
+      "concept": "baseline-mismatch",
+      "kind": "discrimination",
+      "prompt": "IRCoT reports up to 22.6 points of retrieval recall improvement, and Self-Ask reports up to 10 percent absolute improvement from adding a search engine. Why can these two numbers not be ranked against each other, and what was each one measured against?"
+    },
+    {
+      "id": "q8",
+      "concept": "single-time-retrieval",
+      "kind": "application",
+      "prompt": "FLARE's limitations section reports two datasets where on-demand retrieval bought little or nothing. Name what the authors report for each, and say what those two results tell you about when to reach for retrieval during generation?"
+    }
+  ],
+  "passing": {
+    "atLeast": 5
+  }
+}

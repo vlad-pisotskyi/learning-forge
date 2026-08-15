@@ -1,0 +1,79 @@
+{
+  "contractVersion": 3,
+  "id": "c05",
+  "title": "Measure a conversion, and the ceiling above it",
+  "afterChapter": "ch15",
+  "exercises": [
+    "document-conversion",
+    "document-layout-analysis",
+    "inter-annotator-agreement",
+    "human-ceiling",
+    "redundant-annotation",
+    "ground-truth-ambiguity",
+    "annotation-independence",
+    "vlm-ocr",
+    "linearization",
+    "cost-per-page"
+  ],
+  "language": "python",
+  "estimatedHours": 5,
+  "brief": "brief.md",
+  "rubric": "rubric.md",
+  "interface": {
+    "entrypoint": "work/conversion.py",
+    "exports": [
+      {
+        "name": "box_iou",
+        "signature": "box_iou(a: tuple[float, float, float, float], b: tuple[float, float, float, float]) -> float",
+        "description": "Intersection over union of two axis-aligned boxes given as left, top, right, bottom."
+      },
+      {
+        "name": "match_boxes",
+        "signature": "match_boxes(predicted: list[dict], truth: list[dict], iou_threshold: float) -> list[tuple[int, int]]",
+        "description": "Greedily pair predicted boxes with ground-truth boxes of the same label above an overlap threshold."
+      },
+      {
+        "name": "mean_average_precision",
+        "signature": "mean_average_precision(predicted: list[dict], truth: list[dict], thresholds: list[float]) -> float",
+        "description": "Average precision averaged over the given overlap thresholds, which is the metric the layout literature reports."
+      },
+      {
+        "name": "pairwise_agreement",
+        "signature": "pairwise_agreement(annotations: list[list[dict]]) -> float",
+        "description": "Agreement across two or more independent annotations of the same page, scored with the same metric a model would be."
+      },
+      {
+        "name": "conversion_coverage",
+        "signature": "conversion_coverage(converted: str, page_text: str) -> float",
+        "description": "Fraction of the page's text that survives into the converted output, which a page that converted into nothing scores zero on."
+      }
+    ]
+  },
+  "eval": {
+    "runner": "python",
+    "metrics": [
+      {
+        "name": "iou_cases_passed",
+        "threshold": 1,
+        "direction": "gte"
+      },
+      {
+        "name": "map_cases_passed",
+        "threshold": 0.9,
+        "direction": "gte"
+      },
+      {
+        "name": "agreement_cases_passed",
+        "threshold": 0.9,
+        "direction": "gte"
+      },
+      {
+        "name": "coverage_cases_passed",
+        "threshold": 1,
+        "direction": "gte"
+      }
+    ],
+    "spec": ".hidden/eval/c05.eval.py"
+  },
+  "reference": ".hidden/solution"
+}

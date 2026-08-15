@@ -1,0 +1,57 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch08",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "reranking",
+      "kind": "application",
+      "prompt": "Your retriever returns 50 passages for a query and the answer appears in none of them. You add a reranker in front of the model. What does the reranker change about the list, and why does it leave this particular failure exactly where it was?"
+    },
+    {
+      "id": "q2",
+      "concept": "marginal-relevance",
+      "kind": "application",
+      "prompt": "Under a marginal relevance criterion a candidate's score changes every time another document is selected, while under a plain relevance ranking it does not. What is in the marginal relevance score that causes that, and what does it force the selection procedure to look like?"
+    },
+    {
+      "id": "q3",
+      "concept": "lambda-parameter",
+      "kind": "recall",
+      "prompt": "What ranking does the 1998 MMR criterion produce at lambda equals 1, and what does the paper say it produces at lambda equals 0?"
+    },
+    {
+      "id": "q4",
+      "concept": "diversity-relevance-tradeoff",
+      "kind": "application",
+      "prompt": "You retrieve 5 passages for a query with two plausible readings, and the top 5 by query similarity are near-duplicates of each other. What does a diversity-aware criterion change about the set the model receives, and what do you give up in exchange?"
+    },
+    {
+      "id": "q5",
+      "concept": "retrieval-metric-versus-answer-metric",
+      "kind": "discrimination",
+      "prompt": "A colleague reports that a new reranker raised nDCG by 8 points and concludes that the assistant now answers better. Which two different quantities has he merged, and what result from this chapter shows those two moving in different directions?"
+    },
+    {
+      "id": "q6",
+      "concept": "best-of-sweep-reporting",
+      "kind": "application",
+      "prompt": "Dartboard's results table reports, for each method with tunable parameters, the best score reached over a grid search. What question does a table like that answer well, and what does it not tell you about running MMR on your own corpus tomorrow?"
+    },
+    {
+      "id": "q7",
+      "concept": "shared-dataset-dependence",
+      "kind": "discrimination",
+      "prompt": "REBEL reports results that line up with ARAGOG's, using a setup and a 107 question dataset taken from ARAGOG. ARAGOG names that dataset as a limit on how far its own findings generalise. Why does REBEL's agreement not answer that limitation?"
+    },
+    {
+      "id": "q8",
+      "concept": "evidence-gap",
+      "kind": "application",
+      "prompt": "This chapter defines MMR precisely and then declines to recommend a value for its diversity parameter. What is the state of the cited evidence that justifies declining, and why would 'the parameter has no measured effect on answer quality' be the wrong way to state it?"
+    }
+  ],
+  "passing": {
+    "atLeast": 5
+  }
+}

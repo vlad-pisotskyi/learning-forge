@@ -1,0 +1,51 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch06",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "multi-document-qa-probe",
+      "kind": "application",
+      "prompt": "You are designing a run to test whether your own pipeline is position-sensitive. In the multi-document QA design, what is the one thing that changes between two runs, what is held fixed, and what does that discipline let you conclude from a difference in accuracy?"
+    },
+    {
+      "id": "q2",
+      "concept": "position-effect",
+      "kind": "recall",
+      "prompt": "With the relevant document placed in the middle of the input, GPT-3.5-Turbo's multi-document QA accuracy fell past a particular reference point. What was that reference point, what was its value, and why is falling below it worse than merely a drop in accuracy?"
+    },
+    {
+      "id": "q3",
+      "concept": "key-value-retrieval-probe",
+      "kind": "discrimination",
+      "prompt": "A model fails a multi-document QA item and also fails a key-value retrieval item. What explanation is still open in the first case that the second case rules out, and what property of the key-value inputs rules it out?"
+    },
+    {
+      "id": "q4",
+      "concept": "query-aware-contextualization",
+      "kind": "application",
+      "prompt": "Query-aware contextualization was measured on both tasks in the Lost in the Middle paper. What did it do to each one, and what should you conclude before applying a mitigation that was validated only on a synthetic probe?"
+    },
+    {
+      "id": "q5",
+      "concept": "u-shaped-attention-bias",
+      "kind": "application",
+      "prompt": "The U-shaped attention pattern was re-measured after randomly shuffling the document order. What would a content-driven bias have done under that shuffle, what actually happened, and what does the result establish?"
+    },
+    {
+      "id": "q6",
+      "concept": "architectural-account",
+      "kind": "discrimination",
+      "prompt": "One paper measures a U-shaped attention bias in two 7B models; another argues the behaviour follows from causal masking and residual connections. How do the two claims differ in scope, and how would you go about checking each one?"
+    },
+    {
+      "id": "q7",
+      "concept": "position-effect",
+      "kind": "discrimination",
+      "prompt": "Someone proposes reranking the best passage into the first slot as a universal fix for position effects. Which two findings from this chapter argue against treating that as universal, and what does each one show?"
+    }
+  ],
+  "passing": {
+    "atLeast": 5
+  }
+}

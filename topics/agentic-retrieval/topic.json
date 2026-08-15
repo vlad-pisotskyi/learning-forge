@@ -1,0 +1,39 @@
+{
+  "contractVersion": 3,
+  "slug": "agentic-retrieval",
+  "title": "Retrieval for Agents",
+  "summary": "Getting a document corpus into a form an agent can search, then searching it well: document conversion and layout analysis, chunking, sparse and dense retrieval, how retrieval is measured, where in its context a model actually reads, diversity in what comes back, the loop that decides whether to retrieve at all, the graph that holds that loop's state, and how a deployed assistant gets measured.",
+  "generatedAt": "2026-08-15",
+  "generator": {
+    "skill": "forge-generate",
+    "version": "0.1.0"
+  },
+  "language": "python",
+  "status": "draft",
+  "chapters": [
+    "ch01",
+    "ch02",
+    "ch03",
+    "ch04",
+    "ch05",
+    "ch06",
+    "ch07",
+    "ch08",
+    "ch09",
+    "ch10",
+    "ch11",
+    "ch12",
+    "ch13",
+    "ch14",
+    "ch15",
+    "ch16"
+  ],
+  "challenges": [
+    "c01",
+    "c02",
+    "c03",
+    "c04",
+    "c05",
+    "c06"
+  ]
+}

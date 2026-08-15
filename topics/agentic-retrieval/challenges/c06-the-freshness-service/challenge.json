@@ -1,0 +1,74 @@
+{
+  "contractVersion": 3,
+  "id": "c06",
+  "title": "Keep a corpus fresh, and prove it matters",
+  "afterChapter": "ch16",
+  "exercises": [
+    "document-conversion",
+    "cost-per-page",
+    "offline-replay",
+    "ground-truth-proxy",
+    "live-traffic-measurement"
+  ],
+  "language": "python",
+  "estimatedHours": 5,
+  "brief": "brief.md",
+  "rubric": "rubric.md",
+  "interface": {
+    "entrypoint": "work/freshness.py",
+    "exports": [
+      {
+        "name": "content_digest",
+        "signature": "content_digest(text: str) -> str",
+        "description": "Stable digest of a document's content, used to decide whether a re-fetched document actually changed."
+      },
+      {
+        "name": "detect_changes",
+        "signature": "detect_changes(previous: dict, current: dict) -> dict",
+        "description": "Compare two corpus snapshots by digest and report which documents were added, changed, removed, and unchanged."
+      },
+      {
+        "name": "plan_reconversion",
+        "signature": "plan_reconversion(changes: dict, cost_per_page: float, budget: float) -> dict",
+        "description": "Choose which changed documents to re-convert within a cost budget, and name what was left out and why."
+      },
+      {
+        "name": "replay_scores",
+        "signature": "replay_scores(questions: list[dict], corpus: dict) -> dict",
+        "description": "Score a replayed question set against a corpus snapshot, recording for each question whether its supporting document was present at all."
+      },
+      {
+        "name": "staleness_report",
+        "signature": "staleness_report(before: dict, after: dict) -> dict",
+        "description": "Compare replay scores across two corpus snapshots, separating questions whose score moved from questions whose supporting document moved."
+      }
+    ]
+  },
+  "eval": {
+    "runner": "python",
+    "metrics": [
+      {
+        "name": "digest_cases_passed",
+        "threshold": 1,
+        "direction": "gte"
+      },
+      {
+        "name": "change_cases_passed",
+        "threshold": 1,
+        "direction": "gte"
+      },
+      {
+        "name": "budget_cases_passed",
+        "threshold": 1,
+        "direction": "gte"
+      },
+      {
+        "name": "replay_cases_passed",
+        "threshold": 0.9,
+        "direction": "gte"
+      }
+    ],
+    "spec": ".hidden/eval/c06.eval.py"
+  },
+  "reference": ".hidden/solution"
+}

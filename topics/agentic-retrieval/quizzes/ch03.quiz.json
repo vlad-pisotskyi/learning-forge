@@ -1,0 +1,57 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch03",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "test-collection",
+      "kind": "discrimination",
+      "prompt": "A colleague scores a retriever by checking whether the returned documents contain all the words of the query. Which part of a test collection is that confusing with which, and what is relevance actually assessed against?"
+    },
+    {
+      "id": "q2",
+      "concept": "precision-and-recall",
+      "kind": "application",
+      "prompt": "A run returns 10 documents, 4 of which are relevant, and the collection holds 20 relevant documents for that need. What are precision and recall here, and what does each fraction divide by?"
+    },
+    {
+      "id": "q3",
+      "concept": "recall-at-k",
+      "kind": "application",
+      "prompt": "Your system returns only 3 documents and you score recall at cutoff 10 with trec_eval. How does the tool treat the 7 positions you never filled, and what does that mean for the tactic of returning a short, confident list?"
+    },
+    {
+      "id": "q4",
+      "concept": "ndcg",
+      "kind": "application",
+      "prompt": "In trec_eval's nDCG loop the gain at array index i is divided by log2(i + 2) rather than log2(i + 1). Why the off-by-one, and what discount does the top-ranked document end up with?"
+    },
+    {
+      "id": "q5",
+      "concept": "reciprocal-rank",
+      "kind": "discrimination",
+      "prompt": "Run A returns one relevant document, at rank 1. Run B returns fifty relevant documents, starting at rank 1. What reciprocal rank does each get, and what in the implementation produces that result?"
+    },
+    {
+      "id": "q6",
+      "concept": "graded-versus-binary-relevance",
+      "kind": "discrimination",
+      "prompt": "nDCG is computable on both binary and graded relevance judgements, while BEIR rules out MRR and MAP on graded ones. What is it about how each measure consumes a judgement that produces that difference?"
+    },
+    {
+      "id": "q7",
+      "concept": "evaluation-cutoff",
+      "kind": "recall",
+      "prompt": "Why does a recall number have to be reported with its cutoff, and does trec_eval settle the cutoff for you?"
+    },
+    {
+      "id": "q8",
+      "concept": "headline-measure",
+      "kind": "application",
+      "prompt": "You are building a benchmark spanning nine different retrieval tasks and need one number to rank systems by. Following BEIR's reasoning, what disqualifies precision and recall, what disqualifies MRR and MAP, and what does settling on a single cutoff give up?"
+    }
+  ],
+  "passing": {
+    "atLeast": 5
+  }
+}

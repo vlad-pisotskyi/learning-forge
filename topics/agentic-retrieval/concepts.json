@@ -1,0 +1,515 @@
+{
+  "contractVersion": 3,
+  "concepts": [
+    {
+      "id": "parametric-memory",
+      "label": "Parametric memory",
+      "blurb": "Knowledge a language model holds in its weights, which cannot be inspected or changed without retraining."
+    },
+    {
+      "id": "non-parametric-memory",
+      "label": "Non-parametric memory",
+      "blurb": "Knowledge held outside the weights in a searchable index, which can be swapped or updated without touching the model."
+    },
+    {
+      "id": "retriever-generator-split",
+      "label": "The retriever and generator split",
+      "blurb": "The two halves of a retrieval-augmented system, and what it means to train them together with no supervision on which document is right."
+    },
+    {
+      "id": "rag-sequence",
+      "label": "RAG-Sequence",
+      "blurb": "The formulation that conditions a whole generated sequence on one retrieved document."
+    },
+    {
+      "id": "rag-token",
+      "label": "RAG-Token",
+      "blurb": "The formulation that draws a different retrieved document for each generated token and marginalises over them."
+    },
+    {
+      "id": "provenance-and-updating",
+      "label": "Provenance and updating",
+      "blurb": "The two problems that motivate retrieval: saying where an answer came from, and changing what a system knows."
+    },
+    {
+      "id": "sparse-retrieval",
+      "label": "Sparse retrieval",
+      "blurb": "Ranking by weighted token overlap between query and document, which is what BM25 computes over high-dimensional sparse vectors."
+    },
+    {
+      "id": "dense-retrieval",
+      "label": "Dense retrieval",
+      "blurb": "Ranking by similarity between query and document embeddings produced by encoders trained for the task."
+    },
+    {
+      "id": "in-batch-negatives",
+      "label": "In-batch negatives",
+      "blurb": "The training arrangement that treats every other passage in a batch as a negative example for the current query."
+    },
+    {
+      "id": "in-domain-versus-zero-shot",
+      "label": "In-domain versus zero-shot",
+      "blurb": "The distinction that decides whether a dense retriever beats a lexical baseline, and the reason benchmark rankings reverse."
+    },
+    {
+      "id": "hybrid-retrieval",
+      "label": "Hybrid retrieval",
+      "blurb": "Combining a lexical and a dense ranker, which the primary sources report improves on either alone in some settings."
+    },
+    {
+      "id": "annotation-artefact",
+      "label": "Annotation artefact",
+      "blurb": "A property of how a dataset was built, rather than of the task, that changes which retrieval method wins on it."
+    },
+    {
+      "id": "precision-and-recall",
+      "label": "Precision and recall",
+      "blurb": "The two base measures of retrieval effectiveness over an unranked result set, and what each fraction counts."
+    },
+    {
+      "id": "recall-at-k",
+      "label": "Recall at k",
+      "blurb": "The fraction of relevant documents retrieved within a cutoff, and why the cutoff has to be stated with the number."
+    },
+    {
+      "id": "ndcg",
+      "label": "nDCG",
+      "blurb": "Discounted cumulative gain normalised against the ideal ranking, which is the measure graded relevance judgements make possible."
+    },
+    {
+      "id": "reciprocal-rank",
+      "label": "Reciprocal rank",
+      "blurb": "One divided by the position of the first relevant result, which suits tasks with a single right answer."
+    },
+    {
+      "id": "graded-versus-binary-relevance",
+      "label": "Graded versus binary relevance",
+      "blurb": "Whether a judgement records relevant or not, or records how relevant, and which measures each one supports."
+    },
+    {
+      "id": "evaluation-cutoff",
+      "label": "The evaluation cutoff",
+      "blurb": "The k in a measure, which is a decision about the application rather than a property of the ranker."
+    },
+    {
+      "id": "headline-measure",
+      "label": "Choosing a headline measure",
+      "blurb": "Why a benchmark picks one number to rank systems by, and what that choice leaves out."
+    },
+    {
+      "id": "fixed-size-chunking",
+      "label": "Fixed-size chunking",
+      "blurb": "Splitting a document sequentially into chunks of a set length, which is the baseline every other strategy gets measured against."
+    },
+    {
+      "id": "semantic-chunking",
+      "label": "Semantic chunking",
+      "blurb": "Splitting on detected topic boundaries rather than on length, and what measuring it against the baseline actually showed."
+    },
+    {
+      "id": "chunk-overlap",
+      "label": "Chunk overlap",
+      "blurb": "Repeating text across chunk boundaries, and the trade-off between continuity and redundancy that repeating it creates."
+    },
+    {
+      "id": "token-level-evaluation",
+      "label": "Token-level evaluation",
+      "blurb": "Scoring a chunking strategy by which tokens it retrieves rather than which chunks, so strategies with different chunk sizes stay comparable."
+    },
+    {
+      "id": "measured-versus-advocated",
+      "label": "Measured versus advocated",
+      "blurb": "The difference between a number somebody ran an experiment to get and a number somebody recommended, and how to tell them apart in a source."
+    },
+    {
+      "id": "default-parameter",
+      "label": "A published default",
+      "blurb": "A number a tool or a tutorial ships as its starting value, which carries no evidence with it unless the source supplies some."
+    },
+    {
+      "id": "internal-inconsistency",
+      "label": "Internal inconsistency in a source",
+      "blurb": "One document recommending two different values for the same parameter, which is itself a signal about how the recommendation was reached."
+    },
+    {
+      "id": "corpus-dependence",
+      "label": "Corpus dependence",
+      "blurb": "The reason chunking advice cannot be stated as fact: the right value depends on the documents, and the sources say so themselves."
+    },
+    {
+      "id": "position-effect",
+      "label": "The position effect",
+      "blurb": "Accuracy on a retrieval-augmented task depending on where in the input the relevant passage sits."
+    },
+    {
+      "id": "u-shaped-attention-bias",
+      "label": "U-shaped attention bias",
+      "blurb": "The measured tendency for tokens at the start and the end of an input to draw more attention regardless of their relevance."
+    },
+    {
+      "id": "multi-document-qa-probe",
+      "label": "The multi-document QA probe",
+      "blurb": "The experimental design that isolates position: hold the documents fixed and move the one that contains the answer."
+    },
+    {
+      "id": "key-value-retrieval-probe",
+      "label": "The key-value retrieval probe",
+      "blurb": "A synthetic task with no semantic content, used to separate a retrieval failure from a comprehension failure."
+    },
+    {
+      "id": "query-aware-contextualization",
+      "label": "Query-aware contextualisation",
+      "blurb": "The intervention Lost in the Middle tested against the position effect, which nearly fixed one task and barely moved the other."
+    },
+    {
+      "id": "architectural-account",
+      "label": "An architectural account",
+      "blurb": "Explaining a behavioural effect from the model's structure rather than from its training data."
+    },
+    {
+      "id": "reader-saturation",
+      "label": "Reader saturation",
+      "blurb": "Reader accuracy flattening while retriever recall is still climbing, which is what caps the useful number of passages."
+    },
+    {
+      "id": "top-k-selection",
+      "label": "Choosing k",
+      "blurb": "How many passages to put in the context, treated as a measured trade-off rather than as a default."
+    },
+    {
+      "id": "distractor-cost",
+      "label": "The cost of a distractor",
+      "blurb": "What adding an irrelevant passage does to accuracy, which is not nothing."
+    },
+    {
+      "id": "input-length-degradation",
+      "label": "Degradation with input length",
+      "blurb": "Reasoning accuracy falling as the input grows even with position held constant, which is a separate effect from position."
+    },
+    {
+      "id": "contested-evidence",
+      "label": "Contested evidence",
+      "blurb": "What to do when primary sources disagree: state the disagreement, name the conditions each measured under, and cite both."
+    },
+    {
+      "id": "reranking",
+      "label": "Reranking",
+      "blurb": "Reordering retrieved passages before they reach the model, which is the practical consequence of the position effect."
+    },
+    {
+      "id": "reflection-tokens",
+      "label": "Reflection tokens",
+      "blurb": "Special vocabulary a model emits to say whether to retrieve and how good the result was, trained as ordinary next-token prediction."
+    },
+    {
+      "id": "adaptive-retrieval",
+      "label": "Adaptive retrieval",
+      "blurb": "Deciding at each step whether to retrieve at all, instead of retrieving a fixed number of passages every time."
+    },
+    {
+      "id": "retrieval-threshold",
+      "label": "The retrieval threshold",
+      "blurb": "Turning a predicted token into a decision by comparing its probability against a bar somebody sets."
+    },
+    {
+      "id": "reasoning-action-interleaving",
+      "label": "Interleaving reasoning and action",
+      "blurb": "Alternating thoughts that change nothing outside the model with actions that do, so each one informs the other."
+    },
+    {
+      "id": "agentic-loop",
+      "label": "The agentic loop",
+      "blurb": "A system that chooses its own retrieval queries as part of reasoning, rather than running a fixed pipeline."
+    },
+    {
+      "id": "ablation-baseline",
+      "label": "The ablation baseline",
+      "blurb": "Comparing against the same method with one half removed, which is what makes a claim about the combination mean anything."
+    },
+    {
+      "id": "document-conversion",
+      "label": "Document conversion",
+      "blurb": "Turning a page-oriented format back into structured machine-readable content, and why the format makes that hard."
+    },
+    {
+      "id": "document-layout-analysis",
+      "label": "Document layout analysis",
+      "blurb": "Deciding which regions of a page are which kind of element, and how those regions group into reading units."
+    },
+    {
+      "id": "layout-label-set",
+      "label": "The layout label set",
+      "blurb": "The classes a layout dataset commits to, and how that choice decides what a model trained on it can learn."
+    },
+    {
+      "id": "layout-domain-shift",
+      "label": "Layout domain shift",
+      "blurb": "A layout model trained on uniformly typeset documents failing on documents that are not, and why the training corpus caused it."
+    },
+    {
+      "id": "reading-order",
+      "label": "Reading order",
+      "blurb": "The sequence a page's content should be read in, which the file format does not record."
+    },
+    {
+      "id": "pipeline-composition",
+      "label": "Pipeline composition",
+      "blurb": "A working conversion system built as an assembly of specialised models rather than as one end-to-end model."
+    },
+    {
+      "id": "inter-annotator-agreement",
+      "label": "Inter-annotator agreement",
+      "blurb": "How far two people labelling the same data agree, measured with the same metric the model is scored with."
+    },
+    {
+      "id": "human-ceiling",
+      "label": "The human ceiling",
+      "blurb": "The score that agreement between annotators sets, which is the target a model is actually chasing rather than a perfect score."
+    },
+    {
+      "id": "redundant-annotation",
+      "label": "Redundant annotation",
+      "blurb": "Labelling the same items more than once on purpose, which is the only way an agreement number can be computed at all."
+    },
+    {
+      "id": "ground-truth-ambiguity",
+      "label": "Ground-truth ambiguity",
+      "blurb": "Cases with more than one defensible correct answer, which put a hard limit on any evaluation that admits only one."
+    },
+    {
+      "id": "annotation-guideline",
+      "label": "The annotation guideline",
+      "blurb": "The written rules that turn a labelling task into a repeatable one, and what consistency looks like without them."
+    },
+    {
+      "id": "annotator-qualification",
+      "label": "Annotator qualification",
+      "blurb": "Screening and training labellers before their work counts, and the attrition that screening produces."
+    },
+    {
+      "id": "annotation-independence",
+      "label": "Annotation independence",
+      "blurb": "Keeping labellers from seeing each other's work, without which an agreement number measures conformity instead."
+    },
+    {
+      "id": "vlm-ocr",
+      "label": "OCR with a vision language model",
+      "blurb": "Reading a page with a model that takes the image and produces text, rather than with a character-recognition pipeline."
+    },
+    {
+      "id": "document-anchoring",
+      "label": "Document anchoring",
+      "blurb": "Feeding a model the element coordinates the file already records alongside the page image, so it is not working from pixels alone."
+    },
+    {
+      "id": "linearization",
+      "label": "Linearisation",
+      "blurb": "Flattening a two-dimensional page into a single sequence of text in a defensible order."
+    },
+    {
+      "id": "unit-test-reward",
+      "label": "Unit tests as a reward",
+      "blurb": "Scoring an output by how many checkable assertions it satisfies, which works where no single correct output exists."
+    },
+    {
+      "id": "synthetic-training-documents",
+      "label": "Synthetic training documents",
+      "blurb": "Generating pages whose ground truth is known because the generator wrote it."
+    },
+    {
+      "id": "cost-per-page",
+      "label": "Cost per page",
+      "blurb": "The number that decides whether a conversion pipeline can run over a corpus, and why quoting it means naming a version."
+    },
+    {
+      "id": "teacher-model-failure",
+      "label": "Inherited failure modes",
+      "blurb": "A distilled model's residual errors tracing back to the model that produced its training data."
+    },
+    {
+      "id": "test-collection",
+      "label": "Test collection",
+      "blurb": "The documents, the information needs, and the relevance judgements that together make a retrieval score reproducible."
+    },
+    {
+      "id": "marginal-relevance",
+      "label": "Marginal relevance",
+      "blurb": "A document scored for what it adds to the set already chosen, rather than for its similarity to the query alone."
+    },
+    {
+      "id": "diversity-relevance-tradeoff",
+      "label": "Diversity against relevance",
+      "blurb": "The choice between filling a result set with the closest matches and covering more of what the query could have meant."
+    },
+    {
+      "id": "lambda-parameter",
+      "label": "The diversity parameter",
+      "blurb": "The single number that places a diversity-aware ranker between pure relevance and pure novelty, and what each endpoint produces."
+    },
+    {
+      "id": "retrieval-metric-versus-answer-metric",
+      "label": "Ranking score against answer score",
+      "blurb": "Measuring the ranking is not measuring what the model wrote from it, and a gain in one need not be a gain in the other."
+    },
+    {
+      "id": "best-of-sweep-reporting",
+      "label": "Best-of-sweep reporting",
+      "blurb": "Reporting a method at the best point of a parameter sweep, and what that hides about how it behaves everywhere else."
+    },
+    {
+      "id": "shared-dataset-dependence",
+      "label": "Shared dataset dependence",
+      "blurb": "Two studies that reuse one benchmark and one setup are one result reported twice, not two confirmations."
+    },
+    {
+      "id": "evidence-gap",
+      "label": "Evidence gap",
+      "blurb": "A question the literature has not answered, named as an absence rather than filled with a plausible number."
+    },
+    {
+      "id": "single-time-retrieval",
+      "label": "Single-time retrieval",
+      "blurb": "Retrieving once from the user's input and generating the whole answer from what came back, and the questions that defeats."
+    },
+    {
+      "id": "fixed-schedule-interleaving",
+      "label": "Fixed-schedule interleaving",
+      "blurb": "Retrieving again on a schedule the system sets, every so many tokens or every reasoning step, regardless of what the model needs."
+    },
+    {
+      "id": "model-decided-interleaving",
+      "label": "Model-decided interleaving",
+      "blurb": "Letting the generator choose when to stop and fetch, from its own confidence or its own emitted question."
+    },
+    {
+      "id": "query-complexity-routing",
+      "label": "Query complexity routing",
+      "blurb": "Choosing the retrieval strategy before generation starts, from a prediction about how hard the question is."
+    },
+    {
+      "id": "just-in-time-context",
+      "label": "Just-in-time context",
+      "blurb": "Holding identifiers rather than content and loading the content at the moment it is needed."
+    },
+    {
+      "id": "interleaving-overhead",
+      "label": "Interleaving overhead",
+      "blurb": "What repeated retrieval costs in activations, latency and recomputation, and why the sources state it rather than measure it."
+    },
+    {
+      "id": "baseline-mismatch",
+      "label": "Baseline mismatch",
+      "blurb": "Two results are not comparable when each was measured against a different baseline, however alike their headline numbers look."
+    },
+    {
+      "id": "graph-state",
+      "label": "Graph state",
+      "blurb": "A single shared object every node reads from and writes to, whose schema is the graph's parameter."
+    },
+    {
+      "id": "state-reducer",
+      "label": "State reducer",
+      "blurb": "The two-argument function that decides how an update to one state key combines with what is already there."
+    },
+    {
+      "id": "node-and-edge",
+      "label": "Nodes and edges",
+      "blurb": "The split between the functions that do work and the wiring that decides which one runs next."
+    },
+    {
+      "id": "conditional-edge",
+      "label": "Conditional edge",
+      "blurb": "Routing chosen at run time by a function of the state, which is how a loop and a branch are expressed in a graph."
+    },
+    {
+      "id": "builder-versus-compiled",
+      "label": "Builder against compiled graph",
+      "blurb": "The object you assemble is not the object you run, and what compiling is for."
+    },
+    {
+      "id": "version-pinned-documentation",
+      "label": "Version-pinned documentation",
+      "blurb": "Citing a moving document by the version and the date it was read, because it will say something else later."
+    },
+    {
+      "id": "checkpoint",
+      "label": "Checkpoint",
+      "blurb": "A snapshot of the whole graph state at one point in a run, written where the runtime says a step boundary is."
+    },
+    {
+      "id": "thread-identity",
+      "label": "Thread identity",
+      "blurb": "The key that decides which accumulated state a run joins, and what reusing or not reusing it buys."
+    },
+    {
+      "id": "super-step",
+      "label": "Super-step",
+      "blurb": "The unit of execution a checkpoint is written after, which is what makes persistence granularity a decision rather than an accident."
+    },
+    {
+      "id": "replay-and-resume",
+      "label": "Replay and resume",
+      "blurb": "Restarting from a saved checkpoint, and knowing exactly which work is skipped and which runs again."
+    },
+    {
+      "id": "node-idempotency",
+      "label": "Node idempotency",
+      "blurb": "Writing node logic that can run twice without corrupting anything, because persistence makes re-execution ordinary."
+    },
+    {
+      "id": "interrupt-and-resume",
+      "label": "Interrupt and resume",
+      "blurb": "Pausing a run from inside a node, surfacing a value to the caller, and continuing from a value the caller supplies."
+    },
+    {
+      "id": "durability-mode",
+      "label": "Durability mode",
+      "blurb": "When state is actually written, and the trade between losing work and paying for the write."
+    },
+    {
+      "id": "llm-as-judge",
+      "label": "LLM as judge",
+      "blurb": "Using a language model to score another model's output, and how agreement with human judgement is defined before it is measured."
+    },
+    {
+      "id": "judge-bias",
+      "label": "Judge bias",
+      "blurb": "The measured failure modes of a model judge: order, length, self-preference, and questions it cannot grade."
+    },
+    {
+      "id": "judge-validation",
+      "label": "Judge validation",
+      "blurb": "Checking a judge against task-specific human labels before trusting it, and how far a validated judge transfers."
+    },
+    {
+      "id": "reference-free-evaluation",
+      "label": "Reference-free evaluation",
+      "blurb": "Scoring a retrieval-augmented answer without a gold answer, by decomposing it and checking each part against the retrieved context."
+    },
+    {
+      "id": "offline-replay",
+      "label": "Offline replay",
+      "blurb": "Measuring a system by running a fixed question set against a fixed corpus, and what that design can and cannot establish."
+    },
+    {
+      "id": "live-traffic-measurement",
+      "label": "Live traffic measurement",
+      "blurb": "Measuring a deployed system from what real users do, and why the two modes answer different questions."
+    },
+    {
+      "id": "ab-test",
+      "label": "A/B test",
+      "blurb": "Splitting live traffic between one change and the current system, and the traffic it needs before it says anything."
+    },
+    {
+      "id": "paired-comparison-evaluation",
+      "label": "Paired comparison",
+      "blurb": "Showing one user both variants at once and reading the preference off their actions, which needs far less traffic than splitting them."
+    },
+    {
+      "id": "ground-truth-proxy",
+      "label": "Ground truth as a proxy",
+      "blurb": "Every evaluation scores against a stand-in somebody chose, and an unexamined stand-in quietly decides what counts as a failure."
+    }
+  ]
+}

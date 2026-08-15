@@ -1,0 +1,51 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch11",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "graph-state",
+      "kind": "recall",
+      "prompt": "A StateGraph is parameterised by a State object. What two things does that State consist of, and what does a node return when it runs?"
+    },
+    {
+      "id": "q2",
+      "concept": "state-reducer",
+      "kind": "application",
+      "prompt": "Your loop retrieves three times, and each retrieval node returns {\"documents\": hits} into a state key you attached no reducer to. What does that key hold when the loop ends, and what rule produces that outcome?"
+    },
+    {
+      "id": "q3",
+      "concept": "state-reducer",
+      "kind": "discrimination",
+      "prompt": "Compare add_messages with a reducer that simply concatenates the left and right lists. What does add_messages do differently when a node returns a message whose id is already present in state?"
+    },
+    {
+      "id": "q4",
+      "concept": "node-and-edge",
+      "kind": "discrimination",
+      "prompt": "Nodes and edges divide the work between them. Which of the two decides what runs next, and what does a node receive and hand back?"
+    },
+    {
+      "id": "q5",
+      "concept": "conditional-edge",
+      "kind": "application",
+      "prompt": "You want a graph that retrieves again unless the passages already in state are good enough to answer from. Which method wires that up, what does its routing function take as input, and what does it return in each of the two cases?"
+    },
+    {
+      "id": "q6",
+      "concept": "builder-versus-compiled",
+      "kind": "application",
+      "prompt": "You finish adding nodes and edges to a StateGraph and call invoke() on it directly. Why does that fail, and what call produces an object that does support invoke()?"
+    },
+    {
+      "id": "q7",
+      "concept": "version-pinned-documentation",
+      "kind": "application",
+      "prompt": "You are citing a framework's documentation site for a claim about its API. What do you record alongside the URL and the quoted passage, and why is a source file cited at a pinned commit in a better position than that documentation page?"
+    }
+  ],
+  "passing": {
+    "atLeast": 5
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch05",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "measured-versus-advocated",
+      "kind": "discrimination",
+      "prompt": "A vendor's chunking page carries one table, showing how different parameter choices change the total number of chunks produced from a sample e-book. Why is that not a measurement of whether those parameters are any good, and what would an actual measurement have contained instead?"
+    },
+    {
+      "id": "q2",
+      "concept": "default-parameter",
+      "kind": "application",
+      "prompt": "You copy chunk_size=1000 and chunk_overlap=200 out of the LangChain RAG tutorial into your own pipeline. What do those two numbers entitle you to claim, and what do they not?"
+    },
+    {
+      "id": "q3",
+      "concept": "internal-inconsistency",
+      "kind": "application",
+      "prompt": "One Microsoft page recommends a 25 percent overlap in one section and 10 to 15 percent in another. What do you conclude from the disagreement, and what are the two wrong things to do with the pair of figures?"
+    },
+    {
+      "id": "q4",
+      "concept": "corpus-dependence",
+      "kind": "application",
+      "prompt": "The Azure page departs from its own standard recommendation of 2,000 characters with 500 characters of overlap when it chunks one sample document. What reason does it give, and what does that departure show about chunking parameters?"
+    },
+    {
+      "id": "q5",
+      "concept": "measured-versus-advocated",
+      "kind": "discrimination",
+      "prompt": "The LangChain tutorial gives a reason for splitting documents at all, separate from any particular chunk size. What is that reason, and why does it not justify the specific values 1000 and 200?"
+    }
+  ],
+  "passing": {
+    "atLeast": 3
+  }
+}

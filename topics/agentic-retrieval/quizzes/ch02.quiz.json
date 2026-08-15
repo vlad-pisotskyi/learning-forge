@@ -1,0 +1,45 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch02",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "sparse-retrieval",
+      "kind": "application",
+      "prompt": "A query and the passage that answers it share no words beyond stopwords. What score does a BM25-style ranker give that pair, and which property of its sparse vector representation causes that?"
+    },
+    {
+      "id": "q2",
+      "concept": "dense-retrieval",
+      "kind": "application",
+      "prompt": "A dual encoder maps queries and passages into a vector space independently of each other. What does that independence let a search system compute before any query arrives, and why is it possible?"
+    },
+    {
+      "id": "q3",
+      "concept": "in-batch-negatives",
+      "kind": "recall",
+      "prompt": "DPR's main experiments used a batch of 128 question-passage pairs in the in-batch negative setting, plus one extra negative per question. For a single question in that batch, where do its in-batch negatives come from, and where does the extra one come from?"
+    },
+    {
+      "id": "q4",
+      "concept": "in-domain-versus-zero-shot",
+      "kind": "discrimination",
+      "prompt": "DPR reports beating BM25 by a wide margin, while BEIR reports BM25 as a strong baseline that many neural systems fail to beat. What condition makes both results true at once, and what did BEIR find specifically about DPR's generalization?"
+    },
+    {
+      "id": "q5",
+      "concept": "annotation-artefact",
+      "kind": "application",
+      "prompt": "SQuAD is the one dataset in DPR's main table where BM25 stays ahead. What did the DPR authors conjecture about how SQuAD was collected, and why does that make the outcome a fact about the dataset rather than about question answering?"
+    },
+    {
+      "id": "q6",
+      "concept": "hybrid-retrieval",
+      "kind": "application",
+      "prompt": "You are building retrieval for a domain with no labelled queries of your own. What do DPR and BEIR each contribute to the case for running a lexical ranker alongside a dense one, and what scope limit does the DPR paper attach to combining them?"
+    }
+  ],
+  "passing": {
+    "atLeast": 4
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch16",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "llm-as-judge",
+      "kind": "recall",
+      "prompt": "The MT-Bench paper reports 85 percent agreement between GPT-4 and humans, and 81 percent among humans. Why is the second number reported alongside the first, and what did the authors have to fix before either number meant anything?"
+    },
+    {
+      "id": "q2",
+      "concept": "judge-bias",
+      "kind": "application",
+      "prompt": "You are building a harness that asks a model judge which of two assistant answers is better. Which two measured judge failure modes does the chapter cover, and what concrete change to the harness addresses each one?"
+    },
+    {
+      "id": "q3",
+      "concept": "judge-validation",
+      "kind": "application",
+      "prompt": "Your judge was validated against human labels on English prose question answering, and the assistant is about to start returning code snippets and citation lists. What does the chapter say about whether that validation still holds, and what does it recommend you do?"
+    },
+    {
+      "id": "q4",
+      "concept": "reference-free-evaluation",
+      "kind": "application",
+      "prompt": "RAGAS estimates faithfulness by extracting statements from the answer and decomposing long sentences into shorter assertions. What does that decomposition buy you when an answer mixes grounded and invented claims in one paragraph?"
+    },
+    {
+      "id": "q5",
+      "concept": "ab-test",
+      "kind": "recall",
+      "prompt": "What are the mechanics of an A/B test as the chapter gives them, including what proportion of traffic goes to the variant, and what reason does the same source offer for why the method is so widely used?"
+    },
+    {
+      "id": "q6",
+      "concept": "paired-comparison-evaluation",
+      "kind": "discrimination",
+      "prompt": "Interleaving and A/B testing both compare two variants on live traffic. What does interleaving do differently, what speedup was measured for it, and why should you not carry that number straight over to a retrieval-augmented assistant?"
+    },
+    {
+      "id": "q7",
+      "concept": "offline-replay",
+      "kind": "discrimination",
+      "prompt": "A colleague says the assistant's faithfulness score rose 8 points on the replay set, so users are getting better answers. Which part of that is established by the measurement, which part is not, and what do the sources in this chapter say about the link between the two?"
+    },
+    {
+      "id": "q8",
+      "concept": "ground-truth-proxy",
+      "kind": "application",
+      "prompt": "WikiEval was built from 50 Wikipedia pages on events since 2022, with answers generated from an introductory section and labels from two annotators. What kind of real failure can a system score well on that set and still have, and why does the score stay silent about it?"
+    },
+    {
+      "id": "q9",
+      "concept": "live-traffic-measurement",
+      "kind": "application",
+      "prompt": "An internal assistant is consulted a handful of times a year by each person on a renewals team, and you want evidence that a new reranker helped them. What does watching real traffic establish that replaying a fixed question set cannot, what sets how long that evidence takes to arrive on a product with this usage pattern, and how direct is the signal you are left holding at the end?"
+    }
+  ],
+  "passing": {
+    "atLeast": 6
+  }
+}

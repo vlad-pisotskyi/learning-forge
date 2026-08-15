@@ -1,0 +1,51 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch12",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "thread-identity",
+      "kind": "discrimination",
+      "prompt": "Two services call the same compiled graph. One generates a fresh uuid4 for the thread id on every call; the other passes the same string every time a given user writes in. What behaviour does each one get, and what does the checkpointer lose if no thread id is supplied at all?"
+    },
+    {
+      "id": "q2",
+      "concept": "checkpoint",
+      "kind": "application",
+      "prompt": "You have fetched a StateSnapshot for a thread. Which field tells you whether the run finished, and what value does it hold when it did? Which field lets you address one specific earlier checkpoint rather than just the thread, and what does that field contain?"
+    },
+    {
+      "id": "q3",
+      "concept": "super-step",
+      "kind": "application",
+      "prompt": "A sequential graph is shaped START -> node_a -> node_b -> END and you invoke it once. How many checkpoints exist afterwards, what does each one hold, and what is it about the definition of a super-step that produces that count rather than one per node?"
+    },
+    {
+      "id": "q4",
+      "concept": "replay-and-resume",
+      "kind": "discrimination",
+      "prompt": "A run crashed. You resume it by invoking the graph with a checkpoint_id from partway through. Which work is skipped and why, which work happens a second time, and what categories of side effect does the documentation say are re-triggered?"
+    },
+    {
+      "id": "q5",
+      "concept": "node-idempotency",
+      "kind": "application",
+      "prompt": "One of your nodes inserts a row into a database and then calls a model. Why does attaching a checkpointer to the graph turn this node into a defect, and what property does the node body need instead?"
+    },
+    {
+      "id": "q6",
+      "concept": "interrupt-and-resume",
+      "kind": "discrimination",
+      "prompt": "A node computes an expensive summary, calls interrupt to ask a reviewer for approval, then writes the result. The reviewer answers and the client resumes with a Command. Where exactly does execution pick up, and what does that mean for the summary? What must be configured for interrupt to work at all?"
+    },
+    {
+      "id": "q7",
+      "concept": "durability-mode",
+      "kind": "application",
+      "prompt": "Name the three durability modes and say when each one actually writes. If a long run under the exit mode is killed halfway through, what has been persisted, and which two features from this chapter are affected by that?"
+    }
+  ],
+  "passing": {
+    "atLeast": 5
+  }
+}

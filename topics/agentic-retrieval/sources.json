@@ -564,6 +564,22 @@
     {
       "kind": "paper",
       "title": "Searching for Best Practices in Retrieval-Augmented Generation",
+      "authors": [
+        "Xiaohua Wang",
+        "Zhenghua Wang",
+        "Xuan Gao",
+        "Feiran Zhang",
+        "Yixin Wu",
+        "Zhibo Xu",
+        "Tianyuan Shi",
+        "Zhengyuan Wang",
+        "Shizheng Li",
+        "Qi Qian",
+        "Ruicheng Yin",
+        "Changze Lv",
+        "Xiaoqing Zheng",
+        "Xuanjing Huang"
+      ],
       "published": "2024-07",
       "url": "https://ar5iv.labs.arxiv.org/html/2407.01219",
       "identifier": "arXiv:2407.01219",

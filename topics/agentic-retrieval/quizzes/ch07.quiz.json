@@ -1,0 +1,45 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch07",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "reader-saturation",
+      "kind": "application",
+      "prompt": "You plot retriever recall and reader accuracy against the number of retrieved documents. In the Lost in the Middle case study, which curve flattens first, what does the gap between the two tell you about how many passages are worth sending, and what was measured past twenty documents?"
+    },
+    {
+      "id": "q2",
+      "concept": "top-k-selection",
+      "kind": "discrimination",
+      "prompt": "One study reports three to five documents as most effective; another finds only marginal gains past twenty. A colleague concludes that one of them must be wrong. Why is that the wrong reading, and what part of those two results transfers to your own system?"
+    },
+    {
+      "id": "q3",
+      "concept": "distractor-cost",
+      "kind": "recall",
+      "prompt": "In The Power of Noise, what happened to accuracy as the number of related documents in the context increased, and how much of the tested set of models did that pattern hold across?"
+    },
+    {
+      "id": "q4",
+      "concept": "input-length-degradation",
+      "kind": "discrimination",
+      "prompt": "Chapter 6 measured a position effect. Same Task, More Tokens measured something else. What varied and what was held fixed in the second design, which result rules out position as the explanation, and why would reranking the context not address it?"
+    },
+    {
+      "id": "q5",
+      "concept": "contested-evidence",
+      "kind": "application",
+      "prompt": "Counting-Stars reports that its findings could not strongly corroborate lost-in-the-middle. How would you write that disagreement into a design document, including what its authors saw instead, the conditions they measured under, and the explanation they offer for the divergence?"
+    },
+    {
+      "id": "q6",
+      "concept": "distractor-cost",
+      "kind": "application",
+      "prompt": "A teammate cites The Power of Noise to justify padding every prompt with irrelevant documents up to the context limit. What did that study actually report, and what makes the general design rule unsupported by it?"
+    }
+  ],
+  "passing": {
+    "atLeast": 4
+  }
+}

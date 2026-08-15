@@ -1,0 +1,73 @@
+{
+  "contractVersion": 3,
+  "id": "c03",
+  "title": "Decide whether to retrieve, then choose what to keep",
+  "afterChapter": "ch10",
+  "exercises": [
+    "adaptive-retrieval",
+    "retrieval-threshold",
+    "agentic-loop",
+    "top-k-selection",
+    "distractor-cost",
+    "reranking",
+    "lambda-parameter",
+    "diversity-relevance-tradeoff",
+    "model-decided-interleaving"
+  ],
+  "language": "python",
+  "estimatedHours": 6,
+  "brief": "brief.md",
+  "rubric": "rubric.md",
+  "interface": {
+    "entrypoint": "work/agent_loop.py",
+    "exports": [
+      {
+        "name": "should_retrieve",
+        "signature": "should_retrieve(query: str, state: dict, threshold: float) -> bool",
+        "description": "Decide whether this step needs retrieval at all, given what the loop has already gathered."
+      },
+      {
+        "name": "rerank_mmr",
+        "signature": "rerank_mmr(passages: list[dict], query: list[float], lam: float, k: int) -> list[dict]",
+        "description": "Select k passages one at a time, scoring each for query similarity against its similarity to what is already selected."
+      },
+      {
+        "name": "select_k",
+        "signature": "select_k(passages: list[dict], budget: int) -> list[dict]",
+        "description": "Choose how many of the scored passages to keep, within a token budget."
+      },
+      {
+        "name": "run_loop",
+        "signature": "run_loop(query: str, retrieve, generate, max_steps: int) -> dict",
+        "description": "Run the loop to an answer using the supplied retrieve and generate callables, recording every retrieval decision it made."
+      }
+    ]
+  },
+  "eval": {
+    "runner": "python",
+    "metrics": [
+      {
+        "name": "mmr_cases_passed",
+        "threshold": 1,
+        "direction": "gte"
+      },
+      {
+        "name": "loop_cases_passed",
+        "threshold": 0.9,
+        "direction": "gte"
+      },
+      {
+        "name": "answer_accuracy",
+        "threshold": 0.7,
+        "direction": "gte"
+      },
+      {
+        "name": "retrievals_per_query",
+        "threshold": 2.5,
+        "direction": "lte"
+      }
+    ],
+    "spec": ".hidden/eval/c03.eval.py"
+  },
+  "reference": ".hidden/solution"
+}

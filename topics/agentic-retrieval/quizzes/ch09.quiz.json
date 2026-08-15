@@ -1,0 +1,45 @@
+{
+  "contractVersion": 3,
+  "chapter": "ch09",
+  "questions": [
+    {
+      "id": "q1",
+      "concept": "reflection-tokens",
+      "kind": "recall",
+      "prompt": "In Self-RAG, where does the retrieval decision come from mechanically, and what was done to the model so that it could produce one?"
+    },
+    {
+      "id": "q2",
+      "concept": "adaptive-retrieval",
+      "kind": "application",
+      "prompt": "You have a pipeline that retrieves the top 5 passages for every question before generation starts. Which two things does Self-RAG's abstract say that arrangement gets wrong, and why can a fixed k express neither?"
+    },
+    {
+      "id": "q3",
+      "concept": "retrieval-threshold",
+      "kind": "application",
+      "prompt": "Self-RAG can decide to retrieve by threshold instead of by prediction. What quantity is compared against the threshold, where does the threshold value come from, and what happens to how often the system retrieves if you lower it?"
+    },
+    {
+      "id": "q4",
+      "concept": "reasoning-action-interleaving",
+      "kind": "discrimination",
+      "prompt": "In ReAct, what distinguishes a thought from any other action the model can take, and what follows from that difference for the step that comes after it?"
+    },
+    {
+      "id": "q5",
+      "concept": "agentic-loop",
+      "kind": "discrimination",
+      "prompt": "Self-RAG and ReAct both let the model drive retrieval, but they decide different things. What is each one deciding?"
+    },
+    {
+      "id": "q6",
+      "concept": "ablation-baseline",
+      "kind": "application",
+      "prompt": "ReAct is compared against Act, which is ReAct with the reasoning removed. Why is that comparison worth more than beating an unrelated baseline, and what does the WebShop result add that the ALFWorld result alone would hide?"
+    }
+  ],
+  "passing": {
+    "atLeast": 4
+  }
+}
