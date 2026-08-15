@@ -126,7 +126,7 @@
         "Wen-tau Yih"
       ],
       "published": "2020-04",
-      "url": "https://arxiv.org/abs/2004.04906",
+      "url": "https://ar5iv.labs.arxiv.org/abs/2004.04906",
       "identifier": "arXiv:2004.04906",
       "retrieved": "2026-08-13",
       "primary": true,
@@ -180,7 +180,7 @@
         "Iryna Gurevych"
       ],
       "published": "2021-04",
-      "url": "https://arxiv.org/abs/2104.08663",
+      "url": "https://ar5iv.labs.arxiv.org/abs/2104.08663",
       "identifier": "arXiv:2104.08663",
       "retrieved": "2026-08-13",
       "primary": true,
@@ -1650,6 +1650,1207 @@
         }
       ],
       "id": "S28"
+    },
+    {
+      "kind": "docs",
+      "title": "Graph API (LangGraph, Python) - docs.langchain.com, read against langgraph 1.2.11",
+      "published": "2026",
+      "url": "https://docs.langchain.com/oss/python/langgraph/graph-api.md",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section \"Graph\" / \"StateGraph\", the two sentences introducing the class. Read as the raw markdown served at the `.md` URL; the rendered page carries the same sentences with `StateGraph` hyperlinked to the API reference.",
+          "quote": "The `StateGraph` class is the main graph class to use. This is parameterized by a user defined `State` object."
+        },
+        {
+          "key": "b",
+          "locator": "Section \"State\", opening sentence. The rendered page hyperlinks \"schema of the graph\" and \"`reducer` functions\" to the two subsections named in the sentence.",
+          "quote": "The `State` consists of the schema of the graph as well as `reducer` functions which specify how to apply updates to the state."
+        },
+        {
+          "key": "c",
+          "locator": "Section \"Reducers\", the sentence introducing the signature together with the two bullets that follow it. The bullet labels are bold in the source markdown and the bullets are rendered as a list, so the run appears with list markers between the three sentences.",
+          "quote": "Every reducer is a binary function with two positional arguments: Left argument: The current value already stored in state for that key. Right argument: The update for that key returned by a node."
+        },
+        {
+          "key": "d",
+          "locator": "Section \"Reducers\", subsection on the default reducer. This is the sentence that makes last-write-wins the default rather than accumulation.",
+          "quote": "The default reducer ignores the left argument and replaces the state value with the right argument."
+        },
+        {
+          "key": "e",
+          "locator": "Section on working with messages in graph state, the sentence describing what the `add_messages` reducer does with new versus existing messages.",
+          "quote": "For brand new messages, it will simply append to existing list, but it will also handle the updates for existing messages correctly"
+        },
+        {
+          "key": "f",
+          "locator": "Section \"MessagesState\", the sentence defining the prebuilt state class. The rendered page hyperlinks `add_messages` to the API reference.",
+          "quote": "`MessagesState` is defined with a single `messages` key which is a list of `AnyMessage` objects and uses the `add_messages` reducer."
+        },
+        {
+          "key": "g",
+          "locator": "Section \"Nodes\", the sentence defining what a node is.",
+          "quote": "Functions that encode the logic of your agents. They receive the current state as input, perform some computation or side-effect, and return an updated state."
+        },
+        {
+          "key": "h",
+          "locator": "Section \"Edges\", subsection \"Normal edges\". The bold markers around \"always\" are in the source markdown.",
+          "quote": "If you **always** want to go from node A to node B, you can use the `add_edge` method directly."
+        },
+        {
+          "key": "i",
+          "locator": "Section \"Edges\", subsection \"Conditional edges\". The bold markers around \"optionally\" are in the source markdown; the rendered page hyperlinks `add_conditional_edges` to the API reference.",
+          "quote": "If you want to **optionally** route to one or more edges (or optionally terminate), you can use the `add_conditional_edges` method. This method accepts the name of a node and a 'routing function' to call after that node is executed."
+        },
+        {
+          "key": "j",
+          "locator": "Section \"Nodes\", the idempotency note among the considerations that apply once a graph is compiled with a checkpointer. This is the cost the persistence model imposes on node authors.",
+          "quote": "Design node logic so re-execution does not corrupt state. If a node inserts a database row, running it twice should not create duplicate rows unless that is intentional."
+        }
+      ],
+      "id": "S29"
+    },
+    {
+      "kind": "docs",
+      "title": "Checkpointers (LangGraph, Python) - docs.langchain.com, read against langgraph 1.2.11",
+      "published": "2026",
+      "url": "https://docs.langchain.com/oss/python/langgraph/checkpointers.md",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section \"Threads\", first paragraph.",
+          "quote": "A thread is a unique ID or thread identifier assigned to each checkpoint saved by a checkpointer. It contains the accumulated state of a sequence of runs. When a run is executed, the state of the underlying graph of the assistant will be persisted to the thread."
+        },
+        {
+          "key": "b",
+          "locator": "Section \"Threads\", the final paragraph. The rendered page hyperlinks the word \"interrupt\" to /oss/python/langgraph/interrupts.",
+          "quote": "The checkpointer uses `thread_id` as the primary key for storing and retrieving checkpoints. Without it, the checkpointer cannot save state or resume execution after an interrupt, since the checkpointer uses `thread_id` to load the saved state."
+        },
+        {
+          "key": "c",
+          "locator": "Section \"Checkpoints\", opening definition. The rendered page hyperlinks \"super-step\" and \"StateSnapshot fields\"; the trailing parenthetical pointing at the field reference is cut from this quote.",
+          "quote": "The state of a thread at a particular point in time is called a checkpoint. A checkpoint is a snapshot of the graph state saved at each super-step and is represented by a `StateSnapshot` object"
+        },
+        {
+          "key": "d",
+          "locator": "Section \"Checkpoints\" > \"Super-steps\", first paragraph, first three sentences. States the granularity at which state is written.",
+          "quote": "LangGraph creates a checkpoint at each **super-step** boundary. A super-step is a single \"tick\" of the graph where all nodes scheduled for that step execute (potentially in parallel). For a sequential graph like `START -> A -> B -> END`, there are separate super-steps for the input, node A, and node B — producing a checkpoint after each one."
+        },
+        {
+          "key": "e",
+          "locator": "Section \"Checkpoints\" > \"Super-steps\", the paragraph on node-level (task) writes and fault tolerance.",
+          "quote": "LangGraph also persists writes from individual node executions within a super-step. These writes are stored as tasks and used for fault tolerance: if another node in the same super-step fails, successful node writes do not need to be recomputed when you resume."
+        },
+        {
+          "key": "f",
+          "locator": "Section \"Checkpoints\", the sentence and four-item list stating what is saved after the worked example graph (START -> node_a -> node_b -> END) is invoked once. Rendered as a bulleted list.",
+          "quote": "After you run the graph, there will be exactly 4 checkpoints:\n\n* Empty checkpoint with `START` as the next node to be executed\n* Checkpoint with the user input `{'foo': '', 'bar': []}` and `node_a` as the next node to be executed\n* Checkpoint with the outputs of `node_a` `{'foo': 'a', 'bar': ['a']}` and `node_b` as the next node to be executed\n* Checkpoint with the outputs of `node_b` `{'foo': 'b', 'bar': ['a', 'b']}` and no next nodes to be executed"
+        },
+        {
+          "key": "g",
+          "locator": "Section \"StateSnapshot fields\", the description cell of the `values` row of the field table (type `dict`). Cell text only; the table pipes and column padding are not reproduced.",
+          "quote": "State channel values at this checkpoint."
+        },
+        {
+          "key": "h",
+          "locator": "Section \"StateSnapshot fields\", the description cell of the `next` row of the field table (type `tuple[str, ...]`). Cell text only.",
+          "quote": "Node names to execute next. Empty `()` means the graph is complete."
+        },
+        {
+          "key": "i",
+          "locator": "Section \"StateSnapshot fields\", the description cell of the `config` row (type `dict`). Cell text only. This is the triple that addresses one checkpoint.",
+          "quote": "Contains `thread_id`, `checkpoint_ns`, and `checkpoint_id`."
+        },
+        {
+          "key": "j",
+          "locator": "Section \"StateSnapshot fields\", the description cell of the `metadata` row (type `dict`). Cell text only.",
+          "quote": "Execution metadata. Contains `source` (`\"input\"`, `\"loop\"`, or `\"update\"`), `writes` (node outputs), and `step` (super-step counter)."
+        },
+        {
+          "key": "k",
+          "locator": "Section \"Get state\", first paragraph. The rendered page hyperlinks \"thread identifier\" to the Threads section; \"must\" is bold and \"latest\" italic in the source markdown.",
+          "quote": "When interacting with the saved graph state, you **must** specify a thread identifier. You can view the *latest* state of the graph by calling `graph.get_state(config)`. This will return a `StateSnapshot` object that corresponds to the latest checkpoint associated with the thread ID provided in the config"
+        },
+        {
+          "key": "l",
+          "locator": "Section \"Replay\", first paragraph. Says explicitly what re-runs and what does not when a thread is resumed from a past checkpoint.",
+          "quote": "Replay re-executes steps from a prior checkpoint. Invoke the graph with a prior `checkpoint_id` to re-run nodes after that checkpoint. Nodes before the checkpoint are skipped (their results are already saved). Nodes after the checkpoint re-execute, including any LLM calls, API requests, or interrupts — which are always re-triggered during replay."
+        }
+      ],
+      "id": "S30"
+    },
+    {
+      "kind": "code",
+      "title": "langgraph/checkpoint/base/__init__.py - BaseCheckpointSaver and Checkpoint (langgraph-checkpoint, main branch)",
+      "published": "2026",
+      "url": "https://raw.githubusercontent.com/langchain-ai/langgraph/644815f9e5bc52ad8f7a5227a456227e9c3e639b/libs/checkpoint/langgraph/checkpoint/base/__init__.py",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "`class BaseCheckpointSaver(Generic[V])`, first two paragraphs of the class docstring. Continuation lines carry the file's four-space docstring indentation.",
+          "quote": "Base class for creating a graph checkpointer.\n\n    Checkpointers allow LangGraph agents to persist their state\n    within and across multiple interactions."
+        },
+        {
+          "key": "b",
+          "locator": "`class BaseCheckpointSaver`, class docstring, the paragraph immediately after the `config = {\"configurable\": {\"thread_id\": \"my-thread\"}}` example. The source's own statement of what the thread id buys.",
+          "quote": "The `thread_id` is the primary key used to store and retrieve checkpoints. Without\n    it, the checkpointer cannot save state, resume from interrupts, or enable\n    time-travel debugging."
+        },
+        {
+          "key": "c",
+          "locator": "`class BaseCheckpointSaver`, class docstring, the two bullets under the line \"How you choose ``thread_id`` depends on your use case:\". Indentation is the file's.",
+          "quote": "- **Single-shot workflows**: Use a unique ID (e.g., uuid4) for each run when\n        executions are independent.\n    - **Conversational memory**: Reuse the same `thread_id` across invocations\n        to accumulate state (e.g., chat history) within a conversation."
+        },
+        {
+          "key": "d",
+          "locator": "`class Checkpoint(TypedDict)`, the one-line class docstring.",
+          "quote": "State snapshot at a given point in time."
+        },
+        {
+          "key": "e",
+          "locator": "`class Checkpoint(TypedDict)`, the second and third lines of the `id` field docstring (the summary line is \"The ID of the checkpoint.\").",
+          "quote": "This is both unique and monotonically increasing, so can be used for sorting\n    checkpoints from first to last."
+        },
+        {
+          "key": "f",
+          "locator": "`class Checkpoint(TypedDict)`, the one-line `ts` field docstring.",
+          "quote": "The timestamp of the checkpoint in ISO 8601 format."
+        },
+        {
+          "key": "g",
+          "locator": "`class Checkpoint(TypedDict)`, summary line of the `channel_values` field docstring. This is the field that holds the state itself.",
+          "quote": "The values of the channels at the time of the checkpoint."
+        },
+        {
+          "key": "h",
+          "locator": "`class Checkpoint(TypedDict)`, summary line of the `channel_versions` field docstring.",
+          "quote": "The versions of the channels at the time of the checkpoint."
+        },
+        {
+          "key": "i",
+          "locator": "`class Checkpoint(TypedDict)`, summary line of the `versions_seen` field docstring. This is the bookkeeping that decides which nodes run next.",
+          "quote": "Map from node ID to map from channel name to version seen."
+        }
+      ],
+      "id": "S31"
+    },
+    {
+      "kind": "code",
+      "title": "langgraph/graph/state.py - StateGraph and add_conditional_edges (langgraph, main branch)",
+      "published": "2026",
+      "url": "https://raw.githubusercontent.com/langchain-ai/langgraph/644815f9e5bc52ad8f7a5227a456227e9c3e639b/libs/langgraph/langgraph/graph/state.py",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "`class StateGraph(Generic[StateT, ContextT, InputT, OutputT])`, first three paragraphs of the class docstring. Continuation lines carry the file's four-space docstring indentation.",
+          "quote": "A graph whose nodes communicate by reading and writing to a shared state.\n\n    The signature of each node is `State -> Partial<State>`.\n\n    Each state key can optionally be annotated with a reducer function that\n    will be used to aggregate the values of that key received from multiple nodes.\n    The signature of a reducer function is `(Value, Value) -> Value`."
+        },
+        {
+          "key": "b",
+          "locator": "`class StateGraph`, class docstring, the body of the `!!! warning` admonition that follows the reducer paragraph. The builder/compiled split is stated here.",
+          "quote": "`StateGraph` is a builder class and cannot be used directly for execution.\n        You must first call `.compile()` to create an executable graph that supports\n        methods like `invoke()`, `stream()`, `astream()`, and `ainvoke()`."
+        },
+        {
+          "key": "c",
+          "locator": "`StateGraph.add_conditional_edges`, summary line of the method docstring. The signature above it reads `add_conditional_edges(self, source: str, path: Callable[..., Hashable | Sequence[Hashable]] | ... | Runnable[Any, Hashable | Sequence[Hashable]], path_map: dict[Hashable, str] | list[str] | None = None) -> Self`.",
+          "quote": "Add a conditional edge from the starting node to any number of destination nodes."
+        },
+        {
+          "key": "d",
+          "locator": "`StateGraph.add_conditional_edges`, the `source` and `path` entries of the docstring Args section. Indentation is the file's.",
+          "quote": "source: The starting node. This conditional edge will run when\n            exiting this node.\n        path: The callable that determines the next node or nodes.\n\n            If not specifying `path_map` it should return one or more nodes.\n\n            If it returns `'END'`, the graph will stop execution."
+        }
+      ],
+      "id": "S32"
+    },
+    {
+      "kind": "code",
+      "title": "langgraph/graph/message.py - add_messages (langgraph, main branch)",
+      "published": "2026",
+      "url": "https://raw.githubusercontent.com/langchain-ai/langgraph/644815f9e5bc52ad8f7a5227a456227e9c3e639b/libs/langgraph/langgraph/graph/message.py",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "`def add_messages`, summary line of the docstring. The signature is `add_messages(left: Messages, right: Messages, *, format: Literal[\"langchain-openai\"] | None = None) -> Messages`, wrapped in `@_add_messages_wrapper`. Merging by message ID is what separates this reducer from list concatenation.",
+          "quote": "Merges two lists of messages, updating existing messages by ID."
+        },
+        {
+          "key": "b",
+          "locator": "`def add_messages`, docstring Args section, the `right` entry. Names what the right-hand argument of the reducer is allowed to be.",
+          "quote": "The list of `Messages` (or single `Message`) to merge into the base list."
+        }
+      ],
+      "id": "S33"
+    },
+    {
+      "kind": "code",
+      "title": "langgraph/types.py - interrupt and Durability (langgraph, main branch)",
+      "published": "2026",
+      "url": "https://raw.githubusercontent.com/langchain-ai/langgraph/644815f9e5bc52ad8f7a5227a456227e9c3e639b/libs/langgraph/langgraph/types.py",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "`def interrupt(value: Any) -> Any`, summary line of the docstring plus the paragraph that follows it. Continuation lines carry the file's four-space indentation.",
+          "quote": "Interrupt the graph with a resumable exception from within a node.\n\n    The `interrupt` function enables human-in-the-loop workflows by pausing graph\n    execution and surfacing a value to the client. This value can communicate context\n    or request input required to resume execution."
+        },
+        {
+          "key": "b",
+          "locator": "`def interrupt`, docstring, the paragraph describing the first call inside a node.",
+          "quote": "In a given node, the first invocation of this function raises a `GraphInterrupt`\n    exception, halting execution. The provided `value` is included with the exception\n    and sent to the client executing the graph."
+        },
+        {
+          "key": "c",
+          "locator": "`def interrupt`, docstring, the paragraph on how a client resumes. The bracketed cross-reference is mkdocstrings link syntax in the source.",
+          "quote": "A client resuming the graph must use the [`Command`][langgraph.types.Command]\n    primitive to specify a value for the interrupt and continue execution.\n    The graph resumes from the start of the node, **re-executing** all logic."
+        },
+        {
+          "key": "d",
+          "locator": "`def interrupt`, docstring, the sentence stating the checkpointer prerequisite.",
+          "quote": "To use an `interrupt`, you must enable a checkpointer, as the feature relies\n    on persisting the graph state."
+        },
+        {
+          "key": "e",
+          "locator": "Module-level `Durability = Literal[\"sync\", \"async\", \"exit\"]` and the docstring under it, listing the three persistence modes.",
+          "quote": "Durability mode for the graph execution.\n\n- `'sync'`: Changes are persisted synchronously before the next step starts.\n- `'async'`: Changes are persisted asynchronously while the next step executes.\n- `'exit'`: Changes are persisted only when the graph exits."
+        }
+      ],
+      "id": "S34"
+    },
+    {
+      "kind": "docs",
+      "title": "LangGraph overview - docs.langchain.com, read against langgraph 1.2.11",
+      "published": "2026",
+      "url": "https://docs.langchain.com/oss/python/langgraph/overview.md",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Opening paragraph of the overview page. The vendor's own framing of what the framework is for. It is a claim rather than a finding: the page reports no measurement of any kind.",
+          "quote": "LangGraph is a low-level orchestration framework and runtime for building, managing, and deploying long-running, stateful agents. It gives you fine-grained control to mix deterministic, hand-coded steps with LLM-driven agentic steps in the same graph, so you can build bespoke agents that behave exactly the way your application requires."
+        },
+        {
+          "key": "b",
+          "locator": "The paragraph after the opening, on mixing deterministic and agentic steps. Asserted: no benchmark, ablation, or comparison against a chain or a hand-written loop appears anywhere on the page.",
+          "quote": "One of LangGraph's core strengths is the ability to mix deterministic steps with LLM-driven agentic steps in a single graph. This lets you build bespoke workflows where parts of the logic are fully predictable and auditable while other parts are flexible and model-driven, giving you fine-grained control over exactly where and how AI is applied."
+        },
+        {
+          "key": "c",
+          "locator": "The \"Core benefits\" bulleted list, first three bullets (mixing steps, persistence, human-in-the-loop). Each is a capability statement with no supporting number.",
+          "quote": "* Mix deterministic and agentic steps: Combine hand-coded, deterministic logic with LLM-driven decision-making in a single graph. Use deterministic steps where you need reliability and predictability, and agentic steps where you need flexibility—giving you precise control over every part of your agent's behavior.\n* Persistence: Build agents that persist through failures and can run for extended periods, resuming from where they left off.\n* Human-in-the-loop: Incorporate human oversight by inspecting and modifying agent state at any point."
+        },
+        {
+          "key": "d",
+          "locator": "Closing paragraph, on choosing between LangGraph and LangChain's prebuilt agents. The criterion offered is a preference about control, not a measured outcome.",
+          "quote": "LangGraph is very low-level and focused entirely on agent orchestration. If you are just getting started with agents or want a higher-level abstraction, LangChain's agents provide prebuilt architectures for common LLM and tool-calling loops. LangGraph is best for those needing fine-grained control over orchestration."
+        }
+      ],
+      "id": "S35"
+    },
+    {
+      "kind": "paper",
+      "title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+      "authors": [
+        "Lianmin Zheng",
+        "Wei-Lin Chiang",
+        "Ying Sheng",
+        "Siyuan Zhuang",
+        "Zhanghao Wu",
+        "Yonghao Zhuang",
+        "Zi Lin",
+        "Zhuohan Li",
+        "Dacheng Li",
+        "Eric P. Xing",
+        "Hao Zhang",
+        "Joseph E. Gonzalez",
+        "Ion Stoica"
+      ],
+      "published": "2023-06",
+      "url": "https://arxiv.org/html/2306.05685v4",
+      "identifier": "arXiv:2306.05685",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section 4.1, Setup, the sentence that defines the agreement statistic before any number is reported",
+          "quote": "We define the agreement between two types of judges as the probability of randomly selected individuals (but not identical) of each type agreeing on a randomly selected question."
+        },
+        {
+          "key": "b",
+          "locator": "Section 4.2, High agreement between GPT-4 and humans, the sentence carrying the headline figure for MT-bench",
+          "quote": "The agreement under setup S2 (w/o tie) between GPT-4 and humans reaches 85%, which is even higher than the agreement among humans (81%)."
+        },
+        {
+          "key": "c",
+          "locator": "Section 3.3, Limitations of LLM-as-a-judge, opening sentence of the position bias paragraph",
+          "quote": "Position bias is when an LLM exhibits a propensity to favor certain positions over others."
+        },
+        {
+          "key": "d",
+          "locator": "Section 3.3, Limitations of LLM-as-a-judge, the measured consistency result reported for position bias when the two answers are presented in both orders",
+          "quote": "Only GPT-4 outputs consistent results in more than 60% of cases."
+        },
+        {
+          "key": "e",
+          "locator": "Section 3.3, Limitations of LLM-as-a-judge, opening sentence of the verbosity bias paragraph",
+          "quote": "Verbosity bias is when an LLM judge favors longer, verbose responses, even if they are not as clear, high-quality, or accurate as shorter alternatives."
+        },
+        {
+          "key": "f",
+          "locator": "Section 3.3, Limitations of LLM-as-a-judge, the clause that introduces the term self-enhancement bias. The rendered HTML wraps the term in double quotation marks; the mark glyphs may differ between the arXiv HTML render and the printed PDF.",
+          "quote": "We adopt the term \"self-enhancement bias\" from social cognition literature"
+        },
+        {
+          "key": "g",
+          "locator": "Section 3.3, Limitations of LLM-as-a-judge, the paragraph on limited capability in grading math and reasoning questions",
+          "quote": "LLMs are known to have limited math and reasoning capability, which results in its failure of grading such questions because they do not know the correct answers."
+        },
+        {
+          "key": "h",
+          "locator": "Section 3.4, Addressing limitations, the clause reporting the measured effect of the few-shot judge on self-consistency. It sits mid-sentence, which is why the quote opens lower case.",
+          "quote": "the few-shot judge can significantly increase the consistency of GPT-4 from 65.0% to 77.5%"
+        },
+        {
+          "key": "i",
+          "locator": "Section 3.4, Addressing limitations, the sentence reporting the measured effect of reference-guided grading, referring to Table 4",
+          "quote": "In Table 4, we see a significant improvement in failure rate (from 70% to 15%) over the default prompt."
+        }
+      ],
+      "id": "S36"
+    },
+    {
+      "kind": "paper",
+      "title": "LLMs instead of Human Judges? A Large Scale Empirical Study across 20 NLP Evaluation Tasks",
+      "authors": [
+        "Anna Bavaresco",
+        "Raffaella Bernardi",
+        "Leonardo Bertolazzi",
+        "Desmond Elliott",
+        "Raquel Fernandez",
+        "Albert Gatt",
+        "Esam Ghaleb",
+        "Mario Giulianelli",
+        "Michael Hanna",
+        "Alexander Koller",
+        "Andre F. T. Martins",
+        "Philipp Mondorf",
+        "Vera Neplenbroek",
+        "Sandro Pezzelle",
+        "Barbara Plank",
+        "David Schlangen",
+        "Alessandro Suglia",
+        "Aditya K. Surikuchi",
+        "Ece Takmaz",
+        "Alberto Testoni"
+      ],
+      "published": "2024-06",
+      "url": "https://arxiv.org/html/2406.18403v3",
+      "identifier": "arXiv:2406.18403",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, the sentence describing the released benchmark",
+          "quote": "We provide Judge-Bench, a benchmark which includes, upon release, a total of over 70,000 test instances with associated human judgments with an extensible codebase."
+        },
+        {
+          "key": "b",
+          "locator": "Abstract, the summary finding sentence on how far the judges can be relied on",
+          "quote": "Models are reliable evaluators on some tasks, but overall display substantial variability depending on the property being evaluated, the expertise level of the human judges, and whether the language is human or model-generated."
+        },
+        {
+          "key": "c",
+          "locator": "Section 1, Introduction, closing recommendation of the section",
+          "quote": "Altogether, at the current stage of LLM development, we recommend validating LLM judges against task-specific human annotations before deploying them for any particular task."
+        }
+      ],
+      "id": "S37"
+    },
+    {
+      "kind": "book",
+      "title": "Introduction to Information Retrieval, section 8.1: Information retrieval system evaluation",
+      "authors": [
+        "Christopher D. Manning",
+        "Prabhakar Raghavan",
+        "Hinrich Schutze"
+      ],
+      "published": "2008",
+      "url": "https://nlp.stanford.edu/IR-book/html/htmledition/information-retrieval-system-evaluation-1.html",
+      "retrieved": "2026-08-14",
+      "primary": false,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section 8.1, first sentence, immediately preceding the three-item list of test collection components",
+          "quote": "To measure ad hoc information retrieval effectiveness in the standard way, we need a test collection consisting of three things:"
+        },
+        {
+          "key": "b",
+          "locator": "Section 8.1, the paragraph following the three-item list, first sentence",
+          "quote": "Relevance is assessed relative to an information need, not a query."
+        },
+        {
+          "key": "c",
+          "locator": "Section 8.1, same paragraph, the sentence separating relevance from lexical match",
+          "quote": "A document is relevant if it addresses the stated information need, not because it just happens to contain all the words in the query."
+        },
+        {
+          "key": "d",
+          "locator": "Section 8.1, the sentence giving the rule of thumb for how many information needs a test collection needs",
+          "quote": "As a rule of thumb, 50 information needs has usually been found to be a sufficient minimum."
+        }
+      ],
+      "id": "S38"
+    },
+    {
+      "kind": "book",
+      "title": "Introduction to Information Retrieval, section 8.6.2: User utility",
+      "authors": [
+        "Christopher D. Manning",
+        "Prabhakar Raghavan",
+        "Hinrich Schutze"
+      ],
+      "published": "2008",
+      "url": "https://nlp.stanford.edu/IR-book/html/htmledition/user-utility-1.html",
+      "retrieved": "2026-08-14",
+      "primary": false,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section 8.6.2, the sentence stating why relevance stands in for the thing actually wanted",
+          "quote": "User happiness is elusive to measure, and this is part of why the standard methodology uses the proxy of relevance of search results."
+        },
+        {
+          "key": "b",
+          "locator": "Section 8.6.2, the sentence naming return visits as an indirect signal of satisfied users",
+          "quote": "One indirect measure of such users is that they tend to return to the same engine."
+        }
+      ],
+      "id": "S39"
+    },
+    {
+      "kind": "book",
+      "title": "Introduction to Information Retrieval, section 8.6.3: Refining a deployed system",
+      "authors": [
+        "Christopher D. Manning",
+        "Prabhakar Raghavan",
+        "Hinrich Schutze"
+      ],
+      "published": "2008",
+      "url": "https://nlp.stanford.edu/IR-book/html/htmledition/refining-a-deployed-system-1.html",
+      "retrieved": "2026-08-14",
+      "primary": false,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section 8.6.3, the sentence defining the mechanics of an A/B test, immediately after the term is introduced. The range is printed with a plain hyphen as 1-10%.",
+          "quote": "For such a test, precisely one thing is changed between the current system and a proposed system, and a small proportion of traffic (say, 1-10% of users) is randomly directed to the variant system, while most users use the current system."
+        },
+        {
+          "key": "b",
+          "locator": "Section 8.6.3, the sentence stating why the method is adopted despite testing one variable at a time",
+          "quote": "A/B tests are easy to deploy, easy to understand, and easy to explain to management."
+        }
+      ],
+      "id": "S40"
+    },
+    {
+      "kind": "paper",
+      "title": "Harnessing the Power of Interleaving and Counterfactual Evaluation for Airbnb Search Ranking",
+      "authors": [
+        "Qing Zhang",
+        "Alex Deng",
+        "Michelle Du",
+        "Huiji Gao",
+        "Liwei He",
+        "Sanjeev Katariya"
+      ],
+      "published": "2025-08",
+      "url": "https://arxiv.org/html/2508.00751v1",
+      "identifier": "arXiv:2508.00751",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section 1, Introduction, the sentence stating why live A/B testing alone is not enough on this platform",
+          "quote": "A/B testing alone, however, is often insufficient due to the long running times required for experiments on e-commerce platforms like Airbnb."
+        },
+        {
+          "key": "b",
+          "locator": "Section 1, Introduction, the sentence giving the traffic reason behind the long running times",
+          "quote": "Since Airbnb users generally travel only twice a year, the traffic for experiments is significantly lower compared to search engines."
+        },
+        {
+          "key": "c",
+          "locator": "Section 3.1, the two sentences that define interleaving and the mechanism it uses",
+          "quote": "The central idea is to provide the same user with two variants that we want to compare (e.g., results from two rankers) and to infer their preferences based on the user actions"
+        },
+        {
+          "key": "d",
+          "locator": "Section 6.2.1, the sentence reporting the measured sensitivity gain of interleaving over A/B testing on Airbnb traffic",
+          "quote": "We observed about 50X speedup from A/B."
+        },
+        {
+          "key": "e",
+          "locator": "Abstract, the sentence stating the role both cheaper methods play relative to A/B testing",
+          "quote": "Both techniques are utilized for selecting treatment candidates for A/B testing."
+        },
+        {
+          "key": "f",
+          "locator": "Section 1, Introduction, the sentence explaining why purely offline evaluation is not accurate enough to pick A/B candidates",
+          "quote": "The primary reason is that the ranker we aim to evaluate only has the visibility of what has been shown by the logging ranker but not all the candidate items"
+        }
+      ],
+      "id": "S41"
+    },
+    {
+      "kind": "paper",
+      "title": "RAGAS: Automated Evaluation of Retrieval Augmented Generation",
+      "authors": [
+        "Shahul Es",
+        "Jithin James",
+        "Luis Espinosa-Anke",
+        "Steven Schockaert"
+      ],
+      "published": "2023-09",
+      "url": "https://arxiv.org/html/2309.15217v1",
+      "identifier": "arXiv:2309.15217",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section 1, Introduction, the sentence stating the reference-free stance of the metric suite",
+          "quote": "We focus on metrics that are fully self-contained and reference-free."
+        },
+        {
+          "key": "b",
+          "locator": "Section 3, Evaluation Strategies, first step of the faithfulness procedure. The rest of that sentence names the statement set in mathematical notation, which the HTML render doubles, so only the leading clause is quoted.",
+          "quote": "To estimate faithfulness, we first use an LLM to extract a set of statements"
+        },
+        {
+          "key": "c",
+          "locator": "Section 3, Evaluation Strategies, the sentence explaining why the answer is decomposed before verification",
+          "quote": "The aim of this step is to decompose longer sentences into shorter and more focused assertions."
+        },
+        {
+          "key": "d",
+          "locator": "Section 3, Evaluation Strategies, the embedding step of the answer relevance procedure",
+          "quote": "We then obtain embeddings for all questions using the text-embedding-ada-002 model."
+        },
+        {
+          "key": "e",
+          "locator": "Section 4, The WikiEval Dataset, the sentence describing how the corpus was chosen",
+          "quote": "To construct the dataset, we first selected 50 Wikipedia pages covering events that have happened since the start of 2022."
+        },
+        {
+          "key": "f",
+          "locator": "Section 4, The WikiEval Dataset, the sentence describing how the answers under evaluation were produced",
+          "quote": "We also used ChatGPT to answer the generated question, when given the corresponding introductory section as context."
+        },
+        {
+          "key": "g",
+          "locator": "Section 4, The WikiEval Dataset, the sentence describing the human annotation",
+          "quote": "All questions were annotated along the three considered quality dimensions by two annotators."
+        },
+        {
+          "key": "h",
+          "locator": "Section 5, Experiments, the prose sentence comparing the metrics against the baselines. The per-dimension agreement figures live only in Table 1 and were not transcribed.",
+          "quote": "Our proposed metrics are much closer aligned with the human judgements than the predictions from the two baselines."
+        },
+        {
+          "key": "i",
+          "locator": "Section 5, Experiments, the prose sentence conceding where agreement is weakest",
+          "quote": "For answer relevance, the agreement is lower, but this is largely due to the fact that the differences between the two candidate answers are often very subtle."
+        }
+      ],
+      "id": "S42"
+    },
+    {
+      "kind": "paper",
+      "title": "ARES: An Automated Evaluation Framework for Retrieval-Augmented Generation Systems",
+      "authors": [
+        "Jon Saad-Falcon",
+        "Omar Khattab",
+        "Christopher Potts",
+        "Matei Zaharia"
+      ],
+      "published": "2023-11",
+      "url": "https://arxiv.org/html/2311.09476v2",
+      "identifier": "arXiv:2311.09476",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section 1, Introduction, the sentence naming the three scores the framework reports",
+          "quote": "ARES reports three evaluation scores: context relevance (is the retrieved information pertinent to the test question), answer faithfulness (is the response generated by the language model properly grounded in the retrieved context), and answer relevance (is the response also relevant to the question)."
+        },
+        {
+          "key": "b",
+          "locator": "Section 1, Introduction, the sentence listing the three inputs the framework needs, including the size of the human validation set",
+          "quote": "ARES significantly improves data efficiency during evaluation by only requiring three inputs: an in-domain passage set, a human preference validation set of approximately 150 annotated datapoints or more, and few-shot examples of in-domain queries and answers."
+        },
+        {
+          "key": "c",
+          "locator": "Section 3, the sentence describing prediction-powered inference and what the human validation set buys",
+          "quote": "PPI is a recent statistical method that provides tighter confidence intervals on a small set of annotated datapoints (i.e., our validation set) by leveraging predictions on a much larger set of non-annotated datapoints."
+        },
+        {
+          "key": "d",
+          "locator": "Abstract, the sentence stating the datasets used for validation and the measured margin over RAGAS",
+          "quote": "We conduct extensive empirical evaluations, demonstrating that ARES accurately scores RAG systems across the six knowledge-intensive datasets in KILT and SuperGLUE, beating existing automated evaluation approaches like RAGAS by 59.3 and 14.4 percentage points on average across context relevance and answer relevance evaluation accuracy, respectively."
+        },
+        {
+          "key": "e",
+          "locator": "Section 5.1, the sentence reporting the rank-correlation comparison against RAGAS",
+          "quote": "The Kendall's τ for ARES was 0.065 higher on average for scoring context relevance and 0.132 higher on average for scoring answer relevance than RAGAS."
+        },
+        {
+          "key": "f",
+          "locator": "Section 3.3, the sentence stating what an unvalidated score from a synthetically trained judge is worth",
+          "quote": "However, these scores reflect entirely unlabeled data with predictions from a synthetically-trained LLM judge, and hence they may not be entirely accurate."
+        },
+        {
+          "key": "g",
+          "locator": "Section 5.4, the sentence naming the domain shifts under which the judges stop generalising",
+          "quote": "LLM judges are unable to generalize when making more drastic shifts in domain, such as: switching languages (e.g. English to Spanish, German, and other languages), switching from text to code (e.g. questions + passages to coding functions + documentation), and switching from retrieving text to extraction of entities, webpages, or citations."
+        }
+      ],
+      "id": "S43"
+    },
+    {
+      "kind": "paper",
+      "title": "The Use of MMR, Diversity-Based Reranking for Reordering Documents and Producing Summaries",
+      "authors": [
+        "Jaime Carbonell",
+        "Jade Goldstein"
+      ],
+      "published": "1998",
+      "url": "https://www.cs.cmu.edu/~jgc/publication/The_Use_MMR_Diversity_Based_LTMIR_1998.pdf",
+      "identifier": "10.1145/290941.291025",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Section 2, Maximal Marginal Relevance, page 335, the sentences that name and define the criterion",
+          "quote": "A first approximation to measuring relevant novelty is to measure relevance and novelty independently and provide a linear combination as the metric. We call the linear combination \"marginal relevance\" - i.e. a document has high marginal relevance if it is both relevant to the query and contains minimal similarity to previously selected documents. We strive to maximize marginal relevance in retrieval and summarization, hence we label our method \"maximal marginal relevance\" (MMR)."
+        },
+        {
+          "key": "b",
+          "locator": "Section 2, page 335, the displayed MMR equation, transcribed from the typeset formula into plain text",
+          "quote": "MMR def= Arg max [D_i in R\\S] [ lambda(Sim_1(D_i, Q) - (1-lambda) max [D_j in S] Sim_2(D_i, D_j)) ]"
+        },
+        {
+          "key": "c",
+          "locator": "Section 2, page 335, the paragraph beginning \"Where C is a document collection\", which defines every symbol in the equation",
+          "quote": "Where C is a document collection (or document stream); Q is a query or user profile; R = IR(C, Q, θ), i.e., the ranked list of documents retrieved by an IR system, given C and Q and a relevance threshold θ, below which it will not retrieve documents (θ can be degree of match or number of documents); S is the subset of documents in R already selected; R\\S is the set difference, i.e, the set of as yet unselected documents in R; Sim1 is the similarity metric used in document retrieval and relevance ranking between documents (passages) and a query; and Sim2 can be the same as Sim1 or a different metric."
+        },
+        {
+          "key": "d",
+          "locator": "Section 2, page 335, the sentences stating what the two endpoints of lambda produce",
+          "quote": "Given the above definition, MMR computes incrementally the standard relevance-ranked list when the parameter λ=1, and computes a maximal diversity ranking among the documents in R when λ=0. For intermediate values of λ in the interval [0,1], a linear combination of both criteria is optimized."
+        },
+        {
+          "key": "e",
+          "locator": "Section 2, page 335, the advice to users on setting lambda, immediately after the endpoint sentences",
+          "quote": "Users wishing to sample the information space around the query, should set λ at a smaller value, and those wishing to focus in on multiple potentially overlapping or reinforcing relevant documents, should set λ to a value closer to λ. We found that a particularly effective search strategy (reinforced by the user study discussed below) is to start with a small λ (e.g. λ = .3) in order to understand the information space in the region of the query, and then to focus on the most important parts using a reformulated query (possibly via relevance feedback) and a larger value of λ (e.g. λ = .7)."
+        },
+        {
+          "key": "f",
+          "locator": "Abstract, page 335, the sentences characterising the strength of the evidence",
+          "quote": "Preliminary results indicate some benefits for MMR diversity ranking in document retrieval and in single document summarization. The latter are borne out by the recent results of the SUMMAC conference in the evaluation of summarization systems. However, the clearest advantage is demonstrated in constructing non-redundant multi-document summaries, where MMR results are clearly superior to non-MMR passage selection."
+        },
+        {
+          "key": "g",
+          "locator": "Section 3, Document Reordering, page 335, the opening description of the study",
+          "quote": "We performed a pilot experiment with five users who were undergraduates from various disciplines. The purpose of the study was to find out if they could tell what was the difference between a standard ranking method and MMR."
+        },
+        {
+          "key": "h",
+          "locator": "Section 3, Document Reordering, page 336, the reported outcome of the five-user pilot",
+          "quote": "The majority of people said they preferred the method which gave in their opinion the most broad and interesting topics (MMR). In the final section they were asked to select a search method and use it for a search task. 80% chose the method MMR. The users indicated a differential preference for MMR in navigation and for locating the relevant candidate documents more quickly, and pure- relevance ranking when looking at related documents within that band. Three of the five users clearly discovered the differential utility of diversity search and relevance-only search."
+        },
+        {
+          "key": "i",
+          "locator": "Section 4, Summarization, page 336, the assessor study set up to price the relevance loss against the diversity gain",
+          "quote": "In order to evaluate what the relevance loss for a diversity gain in single document summarization, three assessors went through 50 articles from 200 articles of a TIPSTER topic and marked each sentence as relevant, somewhat relevant and irrelevant. The article was also marked as relevant or irrelevant. The assessor scores were compared against the TREC relevance judgments provided for the topic."
+        },
+        {
+          "key": "j",
+          "locator": "Section 4, Summarization, page 336, the result read off Table 1",
+          "quote": "From these scores we can see there is no significant statistical difference between the λ=1, λ=.7, and λ=.3 scores. This is often explained by cases where the λ=1 summary failed to pick up a piece of relevant information and the reranking with λ=.7 or .3 might."
+        },
+        {
+          "key": "k",
+          "locator": "Table 1, Precision Scores, page 336, transcribed row by row from the typeset table; columns are Document Percentage, lambda, TREC and CMU Relevant, CMU Relevant",
+          "quote": "Sentence Precision. 10, 1, .78, .83; 10, .7, .76, .83; 10, .3, .74, .79; 10, Lead Sentences, .74, .83; 25, 1, .74, .76; 25, .7, .73, .74; 25, .3, .74, .76; 25, Lead Sentences, .60, .65"
+        },
+        {
+          "key": "l",
+          "locator": "Section 4, Summarization, page 336, the SUMMAC evaluation results and the caveat attached to them",
+          "quote": "In the May 1998 SUMMAC conference [6], featuring a government-run evaluation of 15 summarization systems, our MMR-based summarizer produced the highest-utility query-relevant summaries with an F-score of .73 - derived from precision and recall by assessors making topic-relevance judgements from summaries. Our system also scored highest (70% accuracy) on informative summaries, where the assessor judged whether the summary contained the information required to answer a set of key questions. It should be noted that some parameters, such as summary length, varied among systems and therefore the evaluation results are indicative but not definitive measures of comparative performance."
+        },
+        {
+          "key": "m",
+          "locator": "Section 4, Summarization, page 336, the multi-document claim, reported without numbers",
+          "quote": "Our preliminary results for multi-document summarization show that in the top 10 passages returned for news story collections in response to a query, there is significant repetition in content over the retrieved passages and the passages often contain duplicate or near-replication in the sentences. MMR reduces or eliminates such redundancy."
+        }
+      ],
+      "id": "S44"
+    },
+    {
+      "kind": "paper",
+      "title": "ARAGOG: Advanced RAG Output Grading",
+      "authors": [
+        "Matouš Eibich",
+        "Shivay Nagpal",
+        "Alexander Fred-Ojala"
+      ],
+      "published": "2024-04",
+      "url": "https://arxiv.org/html/2404.01037v1",
+      "identifier": "arXiv:2404.01037",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, the sentences naming the two metrics and the MMR result",
+          "quote": "This study begins to address this gap by assessing various RAG methods' impacts on retrieval precision and answer similarity. We found that Hypothetical Document Embedding (HyDE) and LLM reranking significantly enhance retrieval precision. However, Maximal Marginal Relevance (MMR) and Cohere rerank did not exhibit notable advantages over a baseline Naive RAG system, and Multi-query approaches underperformed. Sentence Window Retrieval emerged as the most effective for retrieval precision, despite its variable performance on answer similarity."
+        },
+        {
+          "key": "b",
+          "locator": "Section 2.5, Maximum Marginal Relevance, the paper's description of the technique it evaluated",
+          "quote": "The Maximal Marginal Relevance (MMR) technique (Carbonell and Goldstein, 1998) aims to refine the retrieval process by striking a balance between relevance and diversity in the documents retrieved. By employing MMR, the retrieval system evaluates potential documents not only for their closeness to the query's intent but also for their uniqueness compared to documents already selected. This approach mitigates the issue of redundancy, ensuring that the set of retrieved documents covers a broader range of information."
+        },
+        {
+          "key": "c",
+          "locator": "Section 3.3.2, Answer Similarity, the definition of the end-to-end metric and its demotion to secondary",
+          "quote": "As a complementary metric, Answer Similarity assesses how well the answers generated by the RAG system align with reference answers, scored on a scale from 0 to 5. While this end-to-end test provides valuable insights into the system's overall performance, it was considered secondary to the primary objective of evaluating retrieval techniques. This is because Answer Similarity could be influenced by the generative capabilities of the LLM, potentially confounding the assessment of retrieval effectiveness alone."
+        },
+        {
+          "key": "d",
+          "locator": "Section 4.1, Comparative Performance Analysis: Boxplots, on MMR's retrieval precision",
+          "quote": "Techniques utilizing LLM Rerank and Hypothetical Document Embedding (HyDE) show enhanced precision, markedly outperforming the Naive RAG baseline. Conversely, Maximal Marginal Relevance (MMR) and Cohere Rerank demonstrate limited benefits, with median precision scores comparable to or below the baseline."
+        },
+        {
+          "key": "e",
+          "locator": "Section 4.2, Statistical Validation of Differences, the scope of the significance testing",
+          "quote": "An ANOVA test applied to these results confirmed significant differences in Retrieval Precision across the various techniques, validating that observed variations were not due to random chance but reflect true performance disparities. Following this, Tukey's Honestly Significant Difference (HSD) test provided a more granular understanding of these performance differentials. The statistical tests focus only on the primary metric of this study, retrieval precision."
+        },
+        {
+          "key": "f",
+          "locator": "Table 1, Tukey's HSD test results comparing RAG techniques to Naive RAG within the Classic VDB framework; the MMR row transcribed with its column headings",
+          "quote": "Technique, Comparison, Mean Diff., P-adj, Reject Null. Maximal Marginal Relevance (MMR), Naive RAG, -0.0156, 0.3787, False"
+        },
+        {
+          "key": "g",
+          "locator": "Section 4.1, the paragraph reading the answer-similarity boxplots against the retrieval-precision ones",
+          "quote": "The analysis of answer similarity (Figure 8) presents intriguing patterns that both align with and diverge from those observed in retrieval precision. For Classic Vector Database (VDB) techniques and Document Summary Index, there is a notable positive correlation between retrieval precision and answer similarity, suggesting that when relevant information is accurately retrieved, it can lead to answers that more closely mirror reference responses. In contrast, Sentence Window Retrieval displays a disparity between high retrieval precision and lower answer similarity scores."
+        },
+        {
+          "key": "h",
+          "locator": "Section 5, Limitations, the Data and question scope bullet",
+          "quote": "Data and question scope: The study was conducted using a singular dataset and a set of 107 questions, which may affect the generalizability of the findings across different LLM applications. Expanding the variety of datasets and questions could potentially yield more comprehensive insights."
+        },
+        {
+          "key": "i",
+          "locator": "Section 6, Conclusion, the restatement of the MMR finding",
+          "quote": "Surprisingly, established techniques like MMR and Cohere rerank did not demonstrate significant benefits, and Multi-query was found to be less effective than baseline Naive RAG."
+        }
+      ],
+      "id": "S45"
+    },
+    {
+      "kind": "paper",
+      "title": "Better RAG using Relevant Information Gain",
+      "authors": [
+        "Marc Pickett",
+        "Jeremy Hartman",
+        "Ayan Kumar Bhowmick",
+        "Raquib-ul Alam",
+        "Aditya Vempaty"
+      ],
+      "published": "2024-07",
+      "url": "https://arxiv.org/html/2407.12101v1",
+      "identifier": "arXiv:2407.12101",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, on what MMR does and what the paper measures against it",
+          "quote": "Most prior methods that encourage diversity among retrieved results, such as Maximal Marginal Relevance (MMR), do so by incorporating an objective that explicitly trades off diversity and relevance. We propose a novel simple optimization metric based on relevant information gain, a probabilistic measure of the total information relevant to a query for a set of retrieved results. By optimizing this metric, diversity organically emerges from our system. When used as a drop-in replacement for the retrieval component of a RAG system, this method yields state-of-the-art performance on question answering tasks from the Retrieval Augmented Generation Benchmark (RGB), outperforming existing metrics that directly optimize for relevance and diversity."
+        },
+        {
+          "key": "b",
+          "locator": "Section 3, Experiments, the paragraph describing the two scores measured and how the end-to-end score is computed",
+          "quote": "Given a query and the full set of thousands of passage embeddings, we measured both a direct retrieval score and the overall end-to-end performance of the system with the only change being the retrieval algorithm. For the direct retrieval score, we computed the Normalized Discounted Cumulative Gain (NDCG) score (Wang et al., 2013) on retrieving any one of the \"positive\" passages relevant to a specific query. [...] For the end-to-end score, given an LLM's response to the query (generated from retrieved passages), we use the same evaluation as (Chen et al., 2023), which does a string match of the response on a set of correct answers, marking each response as either correct or incorrect."
+        },
+        {
+          "key": "c",
+          "locator": "Section 3, Experiments, the final paragraph before the results, on parameter tuning",
+          "quote": "Some of the methods (described in Appendix A.2), including Dartboard, have tunable parameters. For instance, Maximal Marginal Relevance (MMR) has a diversity parameter that varies from 0 to 1. We performed a grid search over these parameters, reporting the best results for each method."
+        },
+        {
+          "key": "d",
+          "locator": "Table 2, page 4, transcribed row by row; the four columns are Simple QA, Simple NDCG, Integrated QA, Integrated NDCG",
+          "quote": "Oracle 89.3% 1.000 36% .826; D-H (ours) 85.6% 0.973 41% .609; D-CC (ours) 84.3% 0.971 42% .595; D-CS (ours) 83.0% 0.975 36% .545; MMR Crosscoder 84.3% 0.971 40% .598; MMR Cossim 81.0% 0.974 36% .541; KNN Crosscoder 84.3% 0.968 36% .580; KNN Cossim 80.0% 0.973 25% .514; Empty 3.3% 0.000 3% .000; Random 3.3% 0.044 2% .028"
+        },
+        {
+          "key": "e",
+          "locator": "Table 2 caption, page 4",
+          "quote": "Table 2: Results for the Dartboard retrieval system on the QA benchmarks using k = 5. For methods with tunable parameters (Dartboard and MMR), the best score over a parameter sweep is reported."
+        },
+        {
+          "key": "f",
+          "locator": "Figure 2 caption, page 4, the only place where end-to-end answer accuracy is plotted against MMR's diversity parameter",
+          "quote": "Figure 2: Performance on end-to-end QA task (simple) as parameters vary. For Dartboard, we show its performance as σ varies. For MMR, we show its performance as the diversity parameter varies."
+        },
+        {
+          "key": "g",
+          "locator": "Section 4, Related Work, the two limitations the paper attributes to MMR",
+          "quote": "However, MMR suffers from few limitations. First is that MMR requires the diversity parameter to control the balance between relevance and novelty. This parameter is often dataset-specific and requires careful tuning, making it impractical for real-world applications. Second is that MMR can favor exact duplicates of previously retrieved documents as they retain a high relevance score while minimally impacting the average novelty score (See Appendix A.7)."
+        },
+        {
+          "key": "h",
+          "locator": "Appendix A.5, Dartboard inherently promotes diversity, where diversity is defined as a ranking-level metric distinct from answer accuracy",
+          "quote": "In Figure 3, we show the diversity of the retrieved passages from RGB for both Dartboard and MMR, measured as one minus the average cosine similarity between pairs of retrieved passages. While MMR explicitly encourages diversity, Dartboard does not."
+        },
+        {
+          "key": "i",
+          "locator": "Section 6, Limitations, on the scope of the experiments",
+          "quote": "Our experimental results are limited to a single benchmark and a single LLM i.e. ChatGLM (Hou et al., 2024). It remains to be seen whether our results would generalize to other benchmarks and LLMs."
+        },
+        {
+          "key": "j",
+          "locator": "Section 6, Limitations, on the hyperparameter both methods carry",
+          "quote": "One shortcoming of our method (also shared by MMR) is that it requires a hyperparameter that affects how much diversity is encouraged. While we show that Dartboard is robust to the choice of this hyperparameter, it would be ideal to have a method that does not require manual tuning."
+        }
+      ],
+      "id": "S46"
+    },
+    {
+      "kind": "paper",
+      "title": "Relevance Isn't All You Need: Scaling RAG Systems With Inference-Time Compute Via Multi-Criteria Reranking",
+      "authors": [
+        "Will LeVine",
+        "Bijan Varjavand"
+      ],
+      "published": "2025-03",
+      "url": "https://arxiv.org/html/2504.07104v1",
+      "identifier": "arXiv:2504.07104",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, the claim about relevance-only retrieval and downstream answer quality",
+          "quote": "These RAG systems typically optimize strictly towards retrieving context that is maximally relevant to the query. However, conventional theory suggests that retrieval systems which seek to maximize context relevance without any additional explicit criteria can create information bottlenecks. We reaffirm this finding in the modern age of LLM's by showing that in standard RAG pipelines, maximizing for context relevance alone can degrade downstream response quality."
+        },
+        {
+          "key": "b",
+          "locator": "Section 1, Introduction, the paragraph reporting the tradeoff and citing the earlier ARAGOG result",
+          "quote": "While many systems prioritize maximizing relevance, our findings demonstrate that doing so without considering secondary criteria leads to a tradeoff: methods that optimize solely for relevance may boost context relevance yet degrade the overall quality of the generated answer. For instance, our experiments show that while Cohere and LLM Rerank achieve high retrieval relevance, they do so at the expense of answer quality. These observations build upon results reported in works such as Eibich, Nagpal, and Fred-Ojala (2024), where the highest-performing RAG systems in terms of retrieval relevance often exhibited the lowest answer quality"
+        },
+        {
+          "key": "c",
+          "locator": "Section 1, Introduction, placing the work in the line that starts with MMR",
+          "quote": "This aligns with theoretical results from information theory (Tishby, Pereira, and Bialek, 1999), multi-criteria decision making (Figueira, Greco, and Ehrgott, 2005), and information retrieval (Robertson, 1977), and also aligns with more classical multi-criteria information retrieval methods such as Maximum Marginal Relevance (Carbonell and Goldstein, 1998), xQuAD (Santos, Macdonald, and Ounis, 2010), and PM-2 (Dang and Croft, 2013)."
+        },
+        {
+          "key": "d",
+          "locator": "Section 2.1, One-Turn Multi-Criteria Strategy, the criteria list where diversity appears as one of five",
+          "quote": "Secondary Criteria Evaluation: The prompt defines a set of criteria beyond basic relevance that capture qualities essential for LLM context evaluation: Depth of Content: Measuring thoroughness and comprehensive coverage of the topic. Diversity of Perspectives: Evaluating the representation of multiple viewpoints or angles."
+        },
+        {
+          "key": "e",
+          "locator": "Figure 1 caption, page 2, describing what the five-criteria reranker achieved",
+          "quote": "The one-turn version uses five fixed criteria (depth, diversity, clarity, authoritativeness, and recency) to achieve both higher retrieval relevance and answer quality than vanilla RAG (No Rerank). The two-turn version further improves performance by adapting criteria to each query through a two-turn prompting process."
+        },
+        {
+          "key": "f",
+          "locator": "Section 3.1, End-to-End System Evaluations, the definition of the answer-quality metric",
+          "quote": "The primary goal of our work is to improve the quality of answers generated by RAG systems. To this end, we adopt answer similarity (Tonic AI, 2024) as our primary evaluation metric. Answer similarity estimates how well the generated answer aligns with a reference answer via a rubric-based LLM - on a scale from 0 to 5."
+        },
+        {
+          "key": "g",
+          "locator": "Section 5, Results, and Section 5.1, where the entire result is delegated to a figure",
+          "quote": "For our experimental results, see Figure 1. Information about other methods involved in these experiments can be found in Appendix Section C. [...] Our experiments show that both versions of REBEL, along with no reranking, establish a new relationship that defies the information bottleneck of existing single-criteria relevance-only RAG methods. In this new relationship, answer quality increases as context relevance increases."
+        },
+        {
+          "key": "h",
+          "locator": "Section 4, Experimental Setup, and Section 4.1.3, on the dataset shared with ARAGOG",
+          "quote": "The following setup (and textual description) is largely taken from Eibich, Nagpal, and Fred-Ojala (2024) [...] The evaluation dataset comprises 107 question-answer (QA) pairs generated with the assistance of GPT-4. [...] The QA dataset is available in the ARAGOG (Eibich, Nagpal, and Fred-Ojala, 2024) Github repository that originally proposed this experimental setup."
+        }
+      ],
+      "id": "S47"
+    },
+    {
+      "kind": "paper",
+      "title": "Active Retrieval Augmented Generation",
+      "authors": [
+        "Zhengbao Jiang",
+        "Frank F. Xu",
+        "Luyu Gao",
+        "Zhiqing Sun",
+        "Qian Liu",
+        "Jane Dwivedi-Yu",
+        "Yiming Yang",
+        "Jamie Callan",
+        "Graham Neubig"
+      ],
+      "published": "2023-05",
+      "url": "https://ar5iv.labs.arxiv.org/html/2305.06983",
+      "identifier": "arXiv:2305.06983",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, from the third sentence through the end of the abstract proper. The paper's own statement of what single-time retrieval is, why it is limiting, and what FLARE replaces it with. The trailing footnote marker pointing at the code repository is not included in the quoted span.",
+          "quote": "Most existing retrieval augmented LMs employ a retrieve-and-generate setup that only retrieves information once based on the input. This is limiting, however, in more general scenarios involving generation of long texts, where continually gathering information throughout generation is essential. In this work, we provide a generalized view of active retrieval augmented generation, methods that actively decide when and what to retrieve across the course of the generation. We propose Forward-Looking Active REtrieval augmented generation (FLARE), a generic method which iteratively uses a prediction of the upcoming sentence to anticipate future content, which is then utilized as a query to retrieve relevant documents to regenerate the sentence if it contains low-confidence tokens. We test FLARE along with baselines comprehensively over 4 long-form knowledge-intensive generation tasks/datasets. FLARE achieves superior or competitive performance on all tasks, demonstrating the effectiveness of our method."
+        },
+        {
+          "key": "b",
+          "locator": "Section 1, Introduction, opening sentence of the paragraph describing existing practice. The span is cut before the citation list that follows \"retrieved documents\" in the same sentence, because the ar5iv render inlines those citations as markdown links.",
+          "quote": "Retrieval augmented LMs commonly use a retrieve-and-generate setup where they retrieve documents based on the user's input, and then generate a complete answer conditioning on the retrieved documents"
+        },
+        {
+          "key": "c",
+          "locator": "Section 1, Introduction, the italicised clause closing the same sentence that begins \"These single-time retrieval augmented LMs outperform purely parametric LMs\". Quoted from mid-sentence because a citation list sits between this clause and the start of the sentence. This is the condition the paper says single-time retrieval is adequate for.",
+          "quote": "where the information needs are clear in the user's input, and it is sufficient to retrieve relevant knowledge once solely based on the input"
+        },
+        {
+          "key": "d",
+          "locator": "Section 3.3 (experimental setup for the method), first two sentences. Names the single language model everything in this paper is measured on.",
+          "quote": "We validate our method on one of the most advanced GPT-3.5 LMs text-davinci-003 by iteratively querying their API. Since we focus on the integration of retrieval and generation, we use off-the-shelf retrievers that take queries as inputs and return a list of relevant documents."
+        },
+        {
+          "key": "e",
+          "locator": "Section 3.3, the sentence covering open-web datasets. The preceding sentence, which names the Wikipedia dump and BM25, carries an inline citation and is not quoted here.",
+          "quote": "For datasets that rely on knowledge from the open web, we use the Bing search engine as our retriever."
+        },
+        {
+          "key": "f",
+          "locator": "Section 6.1, Overall results, second sentence. The headline claim. The sentence before it points at Figure 4, which is where the actual numbers live and which did not survive markdown conversion; no FLARE score is transcribed anywhere in this shard.",
+          "quote": "FLARE outperforms all baseline on all tasks/datasets, indicating that FLARE is a generic method that can effectively retrieve additional information throughout the generation."
+        },
+        {
+          "key": "g",
+          "locator": "Limitations section (numbered 9 in this render), the sentence about Wizard of Wikipedia. The condition under which the authors say on-demand retrieval bought them nothing. Contains a tilde character rendered as \"~20 tokens\" in the source.",
+          "quote": "Wizard of Wikipedia is a knowledge-intensive dialogue generation dataset where the output is relatively short (∼20 tokens on average) so retrieving multiple disparate pieces of information might not be necessary."
+        },
+        {
+          "key": "h",
+          "locator": "Limitations section, closing clause of the sentence about ELI5. Quoted from mid-sentence because a citation link sits earlier in it. This is the negative result: on this dataset neither on-demand nor pre-assembled retrieval beat no retrieval.",
+          "quote": "both single-time retrieval and FLARE did not provide significant gains over not using retrieval"
+        },
+        {
+          "key": "i",
+          "locator": "Limitations section, the two consecutive sentences on engineering cost. Corroborated across two separate fetches of the same page, character for character. This is the paper's own statement of what interleaving costs, and it is an assertion about implementation rather than a measurement.",
+          "quote": "From an engineering perspective, interleaving generation and retrieval with a naive implementation increases both overheads and the cost of generation. LMs need to be activated multiple times (once for each retrieval) and a caching-free implementation also requires recomputing the previous activation each time after retrieval."
+        },
+        {
+          "key": "j",
+          "locator": "Appendix A, efficiency discussion, the sentence pointing back at the limitations section. Repeats the overhead claim with the comparison baseline named explicitly.",
+          "quote": "Compared to single-time retrieval, however, interleaving retrieval and generation with a naive implementation indeed increases overheads, which we discuss in the limitation section (section 9)."
+        },
+        {
+          "key": "k",
+          "locator": "Section 4, multi-time retrieval baselines, the two run-in definitions. The formula lines that follow each definition, and the citation lists naming RETRO, IC-RALM, KNN-LM and IRCoT, are not included in the quoted span. These are the two families of fixed-schedule interleaving that FLARE measures itself against.",
+          "quote": "Previous-window approaches trigger retrieval every l tokens, where l represents the window size."
+        }
+      ],
+      "id": "S48"
+    },
+    {
+      "kind": "paper",
+      "title": "Interleaving Retrieval with Chain-of-Thought Reasoning for Knowledge-Intensive Multi-Step Questions",
+      "authors": [
+        "Harsh Trivedi",
+        "Niranjan Balasubramanian",
+        "Tushar Khot",
+        "Ashish Sabharwal"
+      ],
+      "published": "2022-12",
+      "url": "https://ar5iv.labs.arxiv.org/html/2212.10509",
+      "identifier": "arXiv:2212.10509",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, from the first sentence through the sentence naming the four datasets. The abstract continues past this point with two further sentences on out-of-distribution settings and hallucination; those are pinned separately as excerpt f.",
+          "quote": "Prompting-based large language models (LLMs) are surprisingly powerful at generating natural language reasoning steps or Chains-of-Thoughts (CoT) for multi-step question answering (QA). They struggle, however, when the necessary knowledge is either unavailable to the LLM or not up-to-date within its parameters. While using the question to retrieve relevant text from an external knowledge source helps LLMs, we observe that this one-step retrieve-and-read approach is insufficient for multi-step QA. Here, what to retrieve depends on what has already been derived, which in turn may depend on what was previously retrieved. To address this, we propose IRCoT, a new approach for multi-step QA that interleaves retrieval with steps (sentences) in a CoT, guiding the retrieval with CoT and in turn using retrieved results to improve CoT. Using IRCoT with GPT3 substantially improves retrieval (up to 21 points) as well as downstream QA (up to 15 points) on four datasets: HotpotQA, 2WikiMultihopQA, MuSiQue, and IIRC."
+        },
+        {
+          "key": "b",
+          "locator": "Section 1, Introduction, the two sentences contrasting one-shot retrieval with iterative retrieval. This is the paper's statement of why a fixed pre-assembled context fails on multi-step questions.",
+          "quote": "While a one-shot retrieval from a knowledge source based solely on the question can successfully augment LMs with relevant knowledge for many factoid-based tasks, this strategy has clear limitations for more complex multi-step reasoning questions. For such questions, one often must retrieve partial knowledge, perform partial reasoning, retrieve additional information based on the outcome of the partial reasoning done so far, and iterate."
+        },
+        {
+          "key": "c",
+          "locator": "Method section, the enumerated definition of the two alternating steps together with the termination condition. The quoted span begins at the \"(i)\" marker.",
+          "quote": "(i) extend CoT: use the question, the paragraphs collected thus far, and the CoT sentences generated thus far to generate the next CoT sentence; (ii) expand retrieved information: use the last CoT sentence as a query to retrieve additional paragraphs to add to the collected set. We repeat these steps till the CoT reports an answer or we reach the maximum allowed number of reasoning steps."
+        },
+        {
+          "key": "d",
+          "locator": "Results section, the retrieval-recall paragraph. Corroborated across two separate fetches of the same page, character for character. The baseline named here is one-step retrieval, not the absence of retrieval.",
+          "quote": "For both models, IRCoT significantly outperforms one-step retrieval across all datasets. For Flan-T5-XXL, IRCoT improves our recall metric relative to one-step retrieval, on HotpotQA by 7.9, on 2WikiMultihopQA by 14.3, on MuSiQue by 3.5, and on IIRC by 10.2 points. For GPT3, this improvement is by 11.3, 22.6, 12.5, and 21.2 points, respectively."
+        },
+        {
+          "key": "e",
+          "locator": "Results section, the QA paragraph immediately following the retrieval paragraph. Corroborated across two separate fetches, character for character. Includes the one dataset where improved retrieval did not improve the answer, and the authors' explanation for it.",
+          "quote": "For Flan-T5-XXL, IRCoT QA outperforms OneR QA on HotpotQA by 9.4, on 2WikiMultihopQA by 15.3, on MuSiQue by 5.0 and IIRC by 2.5 F1 points. For GPT3, the corresponding numbers (except for IIRC) are 7.1, 13.2, and 7.1 F1 points. For GPT3, IRCoT doesn't improve the QA score on IIRC, despite significantly improved retrieval (21 points as shown in Fig. 3). This is likely because IIRC relevant knowledge may already be present in GPT3, as also evidenced by its NoR QA score being similar."
+        },
+        {
+          "key": "f",
+          "locator": "Abstract, final sentence. An assertion of a downstream effect; the abstract gives no number for it.",
+          "quote": "IRCoT reduces model hallucination, resulting in factually more accurate CoT reasoning."
+        },
+        {
+          "key": "g",
+          "locator": "Experimental setup, the sentence naming the retriever. The retriever is sparse and lexical, which bounds every recall figure this paper reports.",
+          "quote": "We use BM25 implemented in Elasticsearch as our base retriever"
+        }
+      ],
+      "id": "S49"
+    },
+    {
+      "kind": "paper",
+      "title": "Measuring and Narrowing the Compositionality Gap in Language Models",
+      "authors": [
+        "Ofir Press",
+        "Muru Zhang",
+        "Sewon Min",
+        "Ludwig Schmidt",
+        "Noah A. Smith",
+        "Mike Lewis"
+      ],
+      "published": "2022-10",
+      "url": "https://ar5iv.labs.arxiv.org/html/2210.03350",
+      "identifier": "arXiv:2210.03350",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, in full. The last two sentences are the ones this shard rests on: the search engine is plugged into the gaps that the prompt format creates, rather than being run once before generation.",
+          "quote": "We investigate the ability of language models to perform compositional reasoning tasks where the overall solution depends on correctly composing the answers to sub-problems. We measure how often models can correctly answer all sub-problems but not generate the overall solution, a ratio we call the compositionality gap. We evaluate this ratio by asking multi-hop questions with answers that require composing multiple facts unlikely to have been observed together during pretraining. In the GPT-3 family of models, as model size increases we show that the single-hop question answering performance improves faster than the multi-hop performance does, therefore the compositionality gap does not decrease. This surprising result suggests that while more powerful models memorize and recall more factual knowledge, they show no corresponding improvement in their ability to perform this kind of compositional reasoning. We then demonstrate how elicitive prompting (such as chain of thought) narrows the compositionality gap by reasoning explicitly. We present a new method, self-ask, that further improves on chain of thought. In our method, the model explicitly asks itself (and answers) follow-up questions before answering the initial question. We finally show that self-ask's structured prompting lets us easily plug in a search engine to answer the follow-up questions, which additionally improves accuracy."
+        },
+        {
+          "key": "b",
+          "locator": "The sentence defining the compositionality gap, in the section introducing the measurement.",
+          "quote": "We refer to the fraction of questions for which the model correctly answers individual sub-questions but not the compositional question as the compositionality gap."
+        },
+        {
+          "key": "c",
+          "locator": "Section 3.3, Improving Self-ask with a Search Engine, the two sentences explaining why the prompt format is what makes an external call possible mid-generation.",
+          "quote": "Unlike chain of thought, self-ask clearly demarcates the beginning and end of every sub-question. Therefore, we can use a search engine to answer the sub-questions instead of the LM."
+        },
+        {
+          "key": "d",
+          "locator": "Section 3.3, the mechanical description of the interleaving: where generation is halted, what is sent out, and what is spliced back in. This is the concrete form of loading context during generation rather than before it.",
+          "quote": "We input the prompt to the language model; if the LM outputs 'Follow up:', we let it finish generating the question, indicated by outputting the string 'Intermediate answer:'. Upon this response, we stop the LM, and, instead of having it output its own answer, we input the full sub-question the model asked to a search engine API. We then add the answer returned by the search engine to the prompt before asking the LM to continue generating its answer."
+        },
+        {
+          "key": "e",
+          "locator": "Results section, the sentence reporting the gain from adding the search engine. Corroborated across two separate fetches of the same page. Note the baseline: self-ask answering its own sub-questions from parametric knowledge, not a pre-assembled retrieved context.",
+          "quote": "Integrating the search engine into self-ask further improves performance on all datasets, sometimes by as much as 10% (absolute)."
+        },
+        {
+          "key": "f",
+          "locator": "Results section, the sentence introducing Table 1. Names the model and the three evaluation datasets. Seen in one fetch only; see openQuestions.",
+          "quote": "Table 1 presents results of the baselines and our methods on 2WikiMultiHopQA, Musique, and Bamboogle, using Davinci-002."
+        }
+      ],
+      "id": "S50"
+    },
+    {
+      "kind": "paper",
+      "title": "Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity",
+      "authors": [
+        "Soyeong Jeong",
+        "Jinheon Baek",
+        "Sukmin Cho",
+        "Sung Ju Hwang",
+        "Jong C. Park"
+      ],
+      "published": "2024-03",
+      "url": "https://arxiv.org/html/2403.14403v2",
+      "identifier": "arXiv:2403.14403",
+      "retrieved": "2026-08-14",
+      "primary": true,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "Abstract, opening two sentences. States the two-sided failure: fixed multi-step retrieval overpays on simple queries, fixed single-step retrieval underserves complex ones.",
+          "quote": "Retrieval-Augmented Large Language Models (LLMs), which incorporate the non-parametric knowledge from external knowledge bases into LLMs, have emerged as a promising approach to enhancing response accuracy in several tasks, such as Question-Answering (QA). However, even though there are various approaches dealing with queries of different complexities, they either handle simple queries with unnecessary computational overhead or fail to adequately address complex multi-step queries; yet, not all user requests fall into only one of the simple or complex categories."
+        },
+        {
+          "key": "b",
+          "locator": "Abstract, the sentences describing the proposed framework. Note that the adaptation here is per query and decided before generation by a separate classifier, not decided by the generator mid-generation.",
+          "quote": "In this work, we propose a novel adaptive QA framework that can dynamically select the most suitable strategy for (retrieval-augmented) LLMs from the simplest to the most sophisticated ones based on the query complexity. Also, this selection process is operationalized with a classifier, which is a smaller LM trained to predict the complexity level of incoming queries with automatically collected labels, obtained from actual predicted outcomes of models and inherent inductive biases in datasets. This approach offers a balanced strategy, seamlessly adapting between the iterative and single-step retrieval-augmented LLMs, as well as the no-retrieval methods, in response to a range of query complexities."
+        },
+        {
+          "key": "c",
+          "locator": "Section 1, Introduction, the clause stating the cost of applying a multi-step strategy uniformly. Seen in one fetch only; see openQuestions.",
+          "quote": "a multi-step QA approach could give rise to unnecessary computational overhead for simple queries, even though it would be vital for complex queries"
+        },
+        {
+          "key": "d",
+          "locator": "Results section, the sentence summarising the efficiency comparison against the always-multi-step strategy. The numbers behind it are in Table 1, which did not survive markdown conversion and is not transcribed.",
+          "quote": "As shown in Table 1, compared to the complex multi-step strategy, our proposed adaptive strategy is significantly more efficient across all model sizes."
+        },
+        {
+          "key": "e",
+          "locator": "Caption of Table 3. Pinned because it establishes that wall-clock time per query is one of the measured quantities in this paper; the table body itself is not transcribed.",
+          "quote": "Table 3: The exact elapsed time per query and the percentage of the predicted labels from the classifier over all samples."
+        }
+      ],
+      "id": "S51"
+    },
+    {
+      "kind": "docs",
+      "title": "Effective context engineering for AI agents",
+      "published": "2025-09-29",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "retrieved": "2026-08-14",
+      "primary": false,
+      "excerpts": [
+        {
+          "key": "a",
+          "locator": "The section on just-in-time context strategies, the sentence defining the approach. This is the source of the phrase the shard is named for. It is a recommendation, not a measurement.",
+          "quote": "Rather than pre-processing all relevant data up front, agents built with the 'just in time' approach maintain lightweight identifiers (file paths, stored queries, web links, etc.) and use these references to dynamically load data into context at runtime using tools."
+        },
+        {
+          "key": "b",
+          "locator": "The same section, the two sentences placing just-in-time against embedding-based pre-inference retrieval. An account of what the author observes teams doing, with no data behind it.",
+          "quote": "Today, many AI-native applications employ some form of embedding-based pre-inference time retrieval to surface important context for the agent to reason over. As the field transitions to more agentic approaches, we increasingly see teams augmenting these retrieval systems with 'just in time' context strategies."
+        },
+        {
+          "key": "c",
+          "locator": "The same section, the stated tradeoff. Directionally the same claim FLARE makes in its limitations section, but asserted rather than measured.",
+          "quote": "Of course, there's a trade-off: runtime exploration is slower than retrieving pre-computed data. Not only that, but opinionated and thoughtful engineering is required to ensure that an LLM has the right tools and heuristics for effectively navigating its information landscape."
+        }
+      ],
+      "id": "S52"
     }
   ]
 }

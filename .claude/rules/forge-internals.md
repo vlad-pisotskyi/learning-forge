@@ -90,6 +90,14 @@ mechanically, taking the more precise date, the later retrieval, the less flatte
 the validator warning it should be, rather than being decided by which shard sorted
 first.
 
+Which URL survives the fold is settled there too, and it has to be, because folding is
+what creates the choice. An abstract page carries the abstract and nothing else, so a
+folded entry that keeps it leaves every full-text quote pinned to a page that cannot
+contain it. The retrieval topic shipped thirteen such quotes across two papers before
+anyone noticed, and `sources --verify` scored them 1/7 and 1/13 while every quote was
+genuine. `locatorRank` prefers a full-text render, then the PDF, then the abstract page,
+and it only applies where the two URLs already key to the same arXiv identifier.
+
 ## Two conventions the code depends on
 
 `.hidden/solution/` mirrors `work/`, so `referenceEntrypoint` can map an entrypoint to

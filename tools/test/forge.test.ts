@@ -322,6 +322,69 @@ describe("forge sources", () => {
     expect(at(written.sources, 1).excerpts).toHaveLength(1);
   });
 
+  it("keeps the full-text URL when it folds an abstract page into a render", () => {
+    // The retrieval topic shipped thirteen full-text quotes pinned to two abstract pages,
+    // because the shard that found the abstract sorted first and kept its URL. Every quote
+    // was genuine; the page named could not hold any of them.
+    const root = makeRoot();
+    initTopic(root, SLUG, clock);
+    writeFileSync(
+      join(paths.researchDir(root, SLUG), "a-dense.json"),
+      JSON.stringify(
+        shard("a-dense", [
+          draft("https://arxiv.org/abs/2004.04906", ["The abstract states the margin over BM25."]),
+        ]),
+      ),
+    );
+    writeFileSync(
+      join(paths.researchDir(root, SLUG), "b-dense.json"),
+      JSON.stringify(
+        shard("b-dense", [
+          draft("https://ar5iv.labs.arxiv.org/abs/2004.04906", ["Section 5 reports the training conditions."]),
+        ]),
+      ),
+    );
+
+    const result = mergeSources(root, SLUG, clock);
+    expect(result.problems).toEqual([]);
+    expect(result.sources).toBe(1);
+
+    const written = sourcesFileSchema.parse(
+      JSON.parse(readFileSync(join(paths.topicDir(root, SLUG), "sources.json"), "utf8")),
+    );
+    expect(at(written.sources, 0).url).toBe("https://ar5iv.labs.arxiv.org/abs/2004.04906");
+    expect(at(written.sources, 0).excerpts).toHaveLength(2);
+  });
+
+  it("prefers a full-text render over the PDF, and the PDF over the abstract page", () => {
+    const root = makeRoot();
+    initTopic(root, SLUG, clock);
+    writeFileSync(
+      join(paths.researchDir(root, SLUG), "a-mmr.json"),
+      JSON.stringify(
+        shard("a-mmr", [draft("https://arxiv.org/abs/2407.12101", ["The abstract names the criterion."])]),
+      ),
+    );
+    writeFileSync(
+      join(paths.researchDir(root, SLUG), "b-mmr.json"),
+      JSON.stringify(
+        shard("b-mmr", [draft("https://arxiv.org/pdf/2407.12101v1", ["Table 2 reports the end-to-end scores."])]),
+      ),
+    );
+    writeFileSync(
+      join(paths.researchDir(root, SLUG), "c-mmr.json"),
+      JSON.stringify(
+        shard("c-mmr", [draft("https://arxiv.org/html/2407.12101v1", ["Section 3 describes the experiments."])]),
+      ),
+    );
+
+    expect(mergeSources(root, SLUG, clock).problems).toEqual([]);
+    const written = sourcesFileSchema.parse(
+      JSON.parse(readFileSync(join(paths.topicDir(root, SLUG), "sources.json"), "utf8")),
+    );
+    expect(at(written.sources, 0).url).toBe("https://arxiv.org/html/2407.12101v1");
+  });
+
   it("takes the more precise date, the later retrieval, and the honest primary flag", () => {
     const root = makeRoot();
     initTopic(root, SLUG, clock);

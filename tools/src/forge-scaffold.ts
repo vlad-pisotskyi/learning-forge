@@ -238,6 +238,31 @@ export function sourceKey(url: string): string {
 }
 
 /**
+ * Which spelling of a paper a reader can actually find a quoted passage in. An abstract
+ * page carries the abstract and nothing else, so a locator naming section 5.1 against one
+ * can never be checked, and the contract asks for a locator precise enough to find the
+ * passage again. A real run pinned thirteen full-text quotes to two abstract pages this
+ * way, and `sources --verify` scored them 1/7 and 1/13 while every quote was genuine.
+ *
+ * ar5iv ranks as full text whatever the path says, because it serves the rendered paper
+ * and redirects `/abs/` to `/html/`. The PDF sits between the two: it holds the passage,
+ * so a reader can find it, but no checker in this repo extracts PDF text.
+ */
+function locatorRank(url: string): number {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return 0;
+  }
+  const host = parsed.host.toLowerCase().replace(/^www\./, "");
+  if (/^ar5iv\./.test(host)) return 2;
+  if (parsed.pathname.startsWith("/html/")) return 2;
+  if (parsed.pathname.startsWith("/pdf/")) return 1;
+  return 0;
+}
+
+/**
  * Two shards describing one document rarely describe it identically. Nothing here is
  * a judgement call: take the more precise date, the later retrieval, and the less
  * flattering `primary`, so a disagreement about whether a source is primary surfaces
@@ -255,6 +280,12 @@ function reconcile(
   // only about the document. Keep the pointer that is true of both of them.
   if (held.url.includes("#") && draft.url !== held.url) {
     held.url = draft.url.includes("#") ? held.url.slice(0, held.url.indexOf("#")) : draft.url;
+  }
+  // Folding the mirrors onto one identifier is the point; keeping whichever one sorted
+  // first is not a decision anybody made. Where they name the same paper, keep the
+  // spelling a reader can find the quoted passage in.
+  if (sourceKey(held.url).startsWith("arxiv:") && locatorRank(draft.url) > locatorRank(held.url)) {
+    held.url = draft.url;
   }
 }
 
