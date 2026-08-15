@@ -303,7 +303,7 @@ What the Teacher reads and the learner may read.
 | Field | Rule |
 |---|---|
 | `chapter` | The owning chapter id. Must match the filename and an existing chapter. |
-| `questions` | 3 to 8 questions. |
+| `questions` | 3 to 10 questions, and never fewer than the number of concepts the chapter teaches. |
 | `questions[].id` | `^q\d+$`, unique within the file. |
 | `questions[].concept` | A concept id that the owning chapter `teaches`. |
 | `questions[].kind` | `recall`, `application`, or `discrimination`. |
@@ -342,7 +342,11 @@ What the quiz grader reads, and nothing else does.
 | `answers[].sourceRefs` | Optional excerpt refs (`S07.a`) backing the answer. Must resolve. |
 
 Every concept the chapter `teaches` is covered by at least one question, and at
-least one question is `application` or `discrimination`. A quiz made only of
+least one question is `application` or `discrimination`. Those two rules together
+put a ceiling on a chapter: it cannot teach more concepts than a quiz has room for
+questions, because one question names exactly one concept. The map stage checks
+that, so a chapter overreaching is caught before any prose is written rather than
+after sixteen chapters exist. A quiz made only of
 `recall` questions tests whether the chapter was read, not whether it was
 understood.
 

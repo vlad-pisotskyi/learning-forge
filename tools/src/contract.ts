@@ -166,6 +166,18 @@ export const chapterFrontmatterSchema = z
   .strict();
 
 /**
+ * The ceiling on a quiz, and therefore on a chapter.
+ *
+ * A question names exactly one concept and every taught concept needs a question, so
+ * this number is also the most concepts a chapter may teach. That coupling is easy to
+ * miss: a real run approved a sixteen-chapter map whose last chapter taught nine
+ * concepts, wrote all sixteen chapters, and only then discovered the last quiz could
+ * not be written. `checkPlan` now enforces it at map time, where the fix costs a
+ * paragraph instead of a chapter.
+ */
+export const MAX_QUIZ_QUESTIONS = 10;
+
+/**
  * The visible half of a quiz: prompts and the bar, no answers.
  *
  * `.strict()` is what enforces the split. A generator that leaves `answer` or
@@ -187,7 +199,7 @@ export const quizFileSchema = z
           .strict(),
       )
       .min(3)
-      .max(8),
+      .max(MAX_QUIZ_QUESTIONS),
     passing: z.object({ atLeast: z.number().int().min(2) }).strict(),
   })
   .strict();
@@ -209,7 +221,7 @@ export const quizKeyFileSchema = z
           .strict(),
       )
       .min(3)
-      .max(8),
+      .max(MAX_QUIZ_QUESTIONS),
   })
   .strict();
 

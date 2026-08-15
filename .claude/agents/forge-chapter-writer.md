@@ -89,10 +89,15 @@ frontmatter and leave the frontmatter exactly as you found it.
 
 The quiz is two files, and you write both.
 
-`quizzes/<chapterId>.quiz.json` holds the questions. Three to eight of them, at least one
-per concept the chapter teaches, and at least one that is not `recall`. It holds no
-answers at all, and the schema rejects an `answer` field rather than trusting anyone to
-leave it out.
+`quizzes/<chapterId>.quiz.json` holds the questions. At least one per concept the chapter
+teaches and at least one that is not `recall`; the quiz section of the contract gives the
+count the file must land between. It holds no answers at all, and the schema rejects an
+`answer` field rather than trusting anyone to leave it out.
+
+Every `prompt` ends with a question mark, and the schema enforces it. The way this gets
+missed is a prompt that asks something and then adds an instruction: "What does IDF do to
+its weight? Name the two terms it divides." That ends on a full stop and is rejected. Fold
+the instruction into the question instead.
 
 `quizzes/.hidden/<chapterId>.key.json` holds the answers, one entry per question id, same
 count and same ids. The Teacher asks the questions and cannot read this file. A grader

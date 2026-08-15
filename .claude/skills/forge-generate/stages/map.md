@@ -22,6 +22,10 @@ chapter exists because there is material to teach and excerpts to teach it from.
 - Concepts first. Name every concept the topic teaches, give each a one-sentence
   blurb, and assign each to the chapter that introduces it. A concept no chapter
   teaches is either a missing chapter or noise, and the plan check rejects it.
+- A chapter cannot teach more concepts than its quiz has room for questions, because
+  a question names one concept and every taught concept needs one. The plan check
+  enforces the ceiling; the contract's quiz section carries the number. A chapter
+  pressing against it is usually two chapters.
 - Order by dependency. `requires` names chapters that must come earlier. Forward
   references and cycles are rejected.
 - Allocate every excerpt to exactly one chapter. The chapter that owns an excerpt is

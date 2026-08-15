@@ -14,7 +14,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { parse as parseYaml } from "yaml";
-import { sourcesFileSchema } from "../src/contract.ts";
+import { MAX_QUIZ_QUESTIONS, sourcesFileSchema } from "../src/contract.ts";
 import {
   PLAN_VERSION,
   paths,
@@ -642,6 +642,35 @@ describe("forge check", () => {
       }),
     );
     expect(checkPlanFile(root, SLUG).problems.join(" ")).toMatch(/S99\.z, which is not in sources\.json/);
+  });
+
+  it("rejects a chapter teaching more concepts than a quiz can hold", () => {
+    const root = makeRoot();
+    const plan = planFromFixture();
+    initTopic(root, SLUG, clock);
+    cpSync(join(FIXTURE, "sources.json"), join(paths.topicDir(root, SLUG), "sources.json"));
+
+    // One question names one concept and every taught concept needs a question, so a
+    // chapter over the quiz ceiling can never be finished. Without this check the map
+    // passes and the cost is only discovered once the chapter is written.
+    const extra = Array.from({ length: MAX_QUIZ_QUESTIONS + 1 }, (_, i) => ({
+      id: `filler-${i}`,
+      label: `Filler ${i}`,
+      blurb: `A concept that exists only to overflow the quiz ceiling, number ${i}.`,
+    }));
+    writeFileSync(
+      paths.planDraft(root, SLUG),
+      JSON.stringify({
+        ...plan,
+        concepts: [...plan.concepts, ...extra],
+        chapters: plan.chapters.map((c, i) =>
+          i === 0 ? { ...c, teaches: extra.map((e) => e.id) } : c,
+        ),
+      }),
+    );
+    expect(checkPlanFile(root, SLUG).problems.join(" ")).toMatch(
+      new RegExp(`ch01 teaches ${MAX_QUIZ_QUESTIONS + 1} concepts, but a quiz holds at most ${MAX_QUIZ_QUESTIONS}`),
+    );
   });
 });
 

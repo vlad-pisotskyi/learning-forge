@@ -17,6 +17,7 @@ import {
   CONCEPT_ID,
   CONTRACT_VERSION,
   EXCERPT_REF,
+  MAX_QUIZ_QUESTIONS,
   SLUG,
   challengeManifestSchema,
   conceptsFileSchema,
@@ -440,6 +441,16 @@ export function checkPlan(plan: TopicPlan): string[] {
     }
     for (const concept of chapter.teaches) {
       if (!conceptIds.has(concept)) problems.push(`${chapter.id} teaches ${concept}, which is not a planned concept`);
+    }
+
+    // A quiz question names exactly one concept and every taught concept needs one, so
+    // a chapter teaching more concepts than a quiz holds cannot be finished. Caught here
+    // because the alternative is discovering it after the chapter is written: a real run
+    // reached the sixteenth chapter before the ninth concept had nowhere to go.
+    if (chapter.teaches.length > MAX_QUIZ_QUESTIONS) {
+      problems.push(
+        `${chapter.id} teaches ${chapter.teaches.length} concepts, but a quiz holds at most ${MAX_QUIZ_QUESTIONS} questions and each covers one concept; split the chapter`,
+      );
     }
   }
 
