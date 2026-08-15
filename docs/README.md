@@ -42,6 +42,9 @@ document is maintenance. Correcting a plan is vandalism.
 - [HANDOFF.md](plans/HANDOFF.md). The original plan of record, from the planning session that preceded any code. Lists every phase. Frozen.
 - [DRIFT-GUARDS.md](plans/DRIFT-GUARDS.md). Why instruction files go stale, the four options that were on the table, which of them got built and at what strength, and what was left out on purpose. Frozen.
 - [SOURCE-LOCATOR-FIX.md](plans/SOURCE-LOCATOR-FIX.md). What the first `--verify` run over a real topic found, why the research playbook caused it, and the re-run it needs. Frozen.
+- [BENNIE-ALIGNMENT.md](plans/BENNIE-ALIGNMENT.md). What the agentic-retrieval map must cover to serve real work, the four decisions settled before approval, and the phases that follow. Frozen.
+- [BENNIE-ALIGNMENT-PHASE0.md](plans/BENNIE-ALIGNMENT-PHASE0.md). What the scan found, the four premises of the previous document it overturned, and the thirteen-chapter map that replaced them. Frozen. Read the previous document first.
+- [BENNIE-ALIGNMENT-PHASE3.md](plans/BENNIE-ALIGNMENT-PHASE3.md). The map as approved: why it grew to sixteen chapters, the two decisions it made rather than deferred, and what it still owes. Frozen. Read the other two first.
 
 ## Not here
 
