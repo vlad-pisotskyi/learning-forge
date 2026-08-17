@@ -183,3 +183,42 @@ stage or to cut the quiz question, not to write the sentence and hope.
 Two consequences are now in `stages/verify.md`: revision rounds are capped, and a critic
 finding that calls for new material is checked against `sources.json` before a writer acts
 on it.
+
+## Measured here, on 2026-08-16: what a capped loop still costs
+
+The cap stops a chapter from revising forever. It says nothing about what each round costs,
+and re-auditing agentic-retrieval's ch08, ch10, and ch14 answered that. Every round, capped
+or not, was re-decomposing the entire chapter from scratch regardless of how small the fix
+was, because `stages/verify.md` at the time said to re-run both agents on any revision with
+no narrower option offered.
+
+ch14 took four rounds (the owner approved a round past the cap for a one-line marker fix) to
+land three findings, each a single-sentence or single-marker change, each round re-ruling
+30-plus claims. ch08 and ch10 each ran their full three-round cap for the same reason: small,
+real fixes, full-chapter re-decomposition every time. Total cost across the four re-audited
+chapters ran past 700,000 tokens for what was, in the end, about eight sentence-level edits.
+
+**The single largest cost was never in question.** Every round in the 2026-08-13 measurement
+above was also a full re-decomposition, and the finding that later passes catch things
+earlier passes missed rests on that design. This run does not overturn that finding. It shows
+the finding was never tested against its price: nobody had compared a full re-pass to a
+scoped one on the same revision to see whether the scoped version misses anything the full
+one would have caught. Absent that comparison, paying full-chapter price on every round past
+the first was a default nobody had chosen on purpose.
+
+**Round three surfaced findings a round two full pass had already resolved.** ch10's final
+round flagged a clause as `unreachable` for carrying no marker. That clause had carried a
+marker in round one, which round one's own audit ruled wrong; the marker was removed on
+exactly that basis and round two confirmed the removal was correct. Round three, re-reading
+the whole chapter cold, flagged the same spot from the opposite direction. This is the
+instability the 2026-08-13 section already named, but it is also a case where a scoped
+check, told what round two settled and why, would not have re-opened it.
+
+**The change:** `stages/verify.md` now scopes rounds two and three to the specific fix and
+its immediate paragraph, and reserves full re-decomposition for round one. It also asks the
+agent for confirmation before a finding past round one gets fixed and re-checked, rather than
+fixing on sight the way round one does. The tradeoff is named where the change lives, because
+it is real: a scoped pass will not catch an unrelated defect elsewhere in the chapter the way
+a full re-pass sometimes does. Whether that tradeoff is worth eight hundred thousand tokens
+per topic is not something this section resolves either. It is the owner's call, made once
+here, not a default worth re-deriving from first principles every time the loop runs long.

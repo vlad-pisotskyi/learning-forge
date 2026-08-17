@@ -6,20 +6,20 @@ requires: [ch11]
 teaches: [checkpoint, thread-identity, super-step, replay-and-resume, node-idempotency, interrupt-and-resume, durability-mode]
 quiz: quizzes/ch12.quiz.json
 estimatedMinutes: 35
-status: draft
+status: verified
 audit:
   faithfulness:
-    verdict: fail
-    at: 2026-08-15
-    claims: 37
-    supported: 36
+    verdict: pass
+    at: 2026-08-16
+    claims: 45
+    supported: 45
     unsupported: 0
-    overstated: 1
+    overstated: 0
     contradicted: 0
     unreachable: 0
   critique:
     verdict: pass
-    at: 2026-08-15
+    at: 2026-08-16
     notes: 0 blocking, 3 advisory
 ---
 
@@ -27,7 +27,7 @@ audit:
 
 A graph that finishes inside one process and then forgets everything is a function with extra ceremony. Persistence is what makes it something else: checkpointers allow LangGraph agents to persist their state within and across multiple interactions. {{S31.a}} Every concept in this chapter falls out of that one capability, including the ones that send you back to rewrite your own node bodies. The material here is pinned to langgraph 1.2.11 read on 2026-08-14, the same pin ch11 established.
 
-The unit of persisted state is a thread. A thread is a unique identifier assigned to each checkpoint a checkpointer saves, it holds the accumulated state of a sequence of runs, and when a run executes, the state of the underlying graph is persisted to that thread. {{S30.a}} Both the documentation and the library source state the same rule about it, and they agree word for word on the mechanism: the checkpointer uses `thread_id` as the primary key for storing and retrieving checkpoints, and without it the checkpointer cannot save state or resume execution after an interrupt, because `thread_id` is what loads the saved state back. {{S30.b}} The class docstring on `BaseCheckpointSaver` repeats the primary key claim and names a third capability that disappears with it: without a `thread_id`, the checkpointer cannot save state, resume from interrupts, or enable time travel debugging. {{S31.b}}
+The unit of persisted state is a thread. A thread is a unique identifier assigned to each checkpoint a checkpointer saves, it holds the accumulated state of a sequence of runs, and when a run executes, the state of the underlying graph is persisted to that thread. {{S30.a}} Both the documentation and the library source state the same rule about it, in their own words rather than identical ones: the checkpointer uses `thread_id` as the primary key for storing and retrieving checkpoints, and without it the checkpointer cannot save state or resume execution after an interrupt, because `thread_id` is what loads the saved state back. {{S30.b}} The class docstring on `BaseCheckpointSaver` repeats the primary key claim and names a third capability that disappears with it: without a `thread_id`, the checkpointer cannot save state, resume from interrupts, or enable time travel debugging. {{S31.b}}
 
 Read "primary key" literally, because the consequence is a design decision you make on every invocation. The docstring gives the two patterns directly. For single shot workflows, use a unique id such as a uuid4 for each run, when executions are independent. For conversational memory, reuse the same `thread_id` across invocations so state such as chat history accumulates within the conversation. {{S31.c}} Whether your agent remembers the last conversation is not a feature you build. It is which string you put in that field.
 
@@ -49,7 +49,7 @@ That `config` triple is what makes an individual checkpoint addressable. The thr
 
 The second view is the type a storage backend deals in. `Checkpoint` lives in the module that defines the base class for creating a graph checkpointer {{S31.a}}, and its fields are lower level. The checkpoint id is both unique and monotonically increasing, so it can sort checkpoints from first to last. {{S31.e}} `ts` is the timestamp of the checkpoint in ISO 8601 format. {{S31.f}} `channel_values` holds the values of the channels at the time of the checkpoint {{S31.g}}, which is the same content the documentation calls `values` {{S30.g}}. Then two maps that are not state at all: `channel_versions` holds the versions of the channels at the time of the checkpoint {{S31.h}}, and `versions_seen` maps a node id to a map from channel name to the version that node has seen {{S31.i}}.
 
-Take the two views for what each is good for. The caller view tells you where the run is, because `next` is empty exactly when there is nothing left to do. {{S30.h}} The storage view tells you how a backend orders and reconstructs a thread without trusting a clock: the id sorts {{S31.e}}, the timestamp is for people reading the row {{S31.f}}, and the version maps are bookkeeping about the state rather than the state itself {{S31.h}} {{S31.i}}.
+Take the two views for what each is good for. The caller view tells you where the run is, because `next` is empty exactly when there is nothing left to do. {{S30.h}} The storage view tells you how a backend orders and reconstructs a thread without trusting a clock: the id sorts {{S31.e}}, `ts` is a timestamp alongside it {{S31.f}}, and the version maps are bookkeeping about the state rather than the state itself {{S31.h}} {{S31.i}}.
 
 ## The step boundary the runtime writes at
 
@@ -57,7 +57,7 @@ A checkpoint is written at each super-step boundary. A super-step is a single ti
 
 The documentation's worked example makes the count concrete. Run its two node graph once and there are exactly four checkpoints: an empty one with `START` as the next node, one holding the user input `{'foo': '', 'bar': []}` with `node_a` next, one holding `node_a`'s outputs `{'foo': 'a', 'bar': ['a']}` with `node_b` next, and one holding `node_b`'s outputs `{'foo': 'b', 'bar': ['a', 'b']}` with no next nodes. {{S30.f}} Two nodes, four checkpoints, because the input arrives as its own super-step. Predicting that number for a graph you wrote is the test of whether you understand the granularity.
 
-Those quoted values also show ch11's reducers from the persistence side. Across the three writes `foo` goes from empty to `a` to `b` while `bar` goes from empty to `['a']` to `['a', 'b']`. {{S30.f}} One key is replaced on each write and the other accumulates, and the checkpoint records whatever the reducer produced rather than the raw node return.
+Those quoted values also show ch11's reducers from the persistence side. Across the three writes `foo` goes from empty to `a` to `b` while `bar` goes from empty to `['a']` to `['a', 'b']`. {{S30.f}} One key is replaced on each write and the other accumulates, exactly as chapter 11 described the two reducer behaviors.
 
 Underneath the super-step there is a finer grain that matters when a step fans out. Writes from individual node executions within a super-step are also persisted, stored as tasks and used for fault tolerance, so that if another node in the same super-step fails, the successful node writes do not need to be recomputed when you resume. {{S30.e}} Three parallel retrievers, one of which throws, does not cost you the two that came back.
 

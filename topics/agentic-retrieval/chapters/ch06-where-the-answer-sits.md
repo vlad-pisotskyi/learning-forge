@@ -6,21 +6,21 @@ requires: [ch01]
 teaches: [position-effect, u-shaped-attention-bias, multi-document-qa-probe, key-value-retrieval-probe, query-aware-contextualization, architectural-account]
 quiz: quizzes/ch06.quiz.json
 estimatedMinutes: 30
-status: draft
+status: verified
 audit:
   faithfulness:
-    verdict: fail
+    verdict: pass
     at: 2026-08-15
-    claims: 31
-    supported: 30
-    unsupported: 1
+    claims: 28
+    supported: 28
+    unsupported: 0
     overstated: 0
     contradicted: 0
     unreachable: 0
   critique:
     verdict: pass
     at: 2026-08-15
-    notes: 0 blocking, 2 advisory
+    notes: 0 blocking, 1 advisory
 ---
 
 The previous chapter ended on an assertion offered without a measurement: that models have trouble finding information inside very long inputs. The measurement exists. Accuracy is often highest when the relevant information sits at the beginning or the end of the input context, and it degrades significantly when the model has to use information sitting in the middle of a long context, including in models sold explicitly as long-context models. {{S09.e}} The same work also produced evaluation protocols for testing long-context models, and that half is the part you can reuse on a system nobody has published a paper about. {{S09.a}}
@@ -49,7 +49,7 @@ The result splits the models. Claude-1.3 and Claude-1.3 (100K) do nearly perfect
 
 ## One intervention, and the two different effects it had
 
-The paper tests one intervention, which it calls query-aware contextualization, against both tasks, and the two tasks answer differently. On key-value retrieval it improves performance dramatically, with all models reaching near-perfect scores. {{S09.q}} On multi-document question answering the same intervention minimally affects the performance trends. {{S09.r}}
+The paper tests one intervention, which it calls query-aware contextualization, against both tasks, and the two tasks answer differently. The intervention itself is a change to where the query sits: instead of placing the query once, after the documents or key-value pairs, it places a copy before them as well. {{S09.v}} On key-value retrieval it improves performance dramatically, with all models reaching near-perfect scores. {{S09.q}} On multi-document question answering the same intervention minimally affects the performance trends. {{S09.r}}
 
 Resist averaging those into a verdict. One intervention producing two outcomes is information about the two tasks: whatever the synthetic probe was measuring, the intervention addresses it, and whatever else multi-document QA is measuring survives untouched. The practical form of this is a warning about probes in general. A probe earns its place by isolating one failure mode, and that same isolation is why a fix validated on the probe is not yet a fix for the task the probe stands in for. Carry the mitigation across only after you have measured it on the task you actually run.
 

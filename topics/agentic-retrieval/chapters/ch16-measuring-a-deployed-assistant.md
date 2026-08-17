@@ -6,20 +6,20 @@ requires: [ch03, ch10, ch14]
 teaches: [llm-as-judge, judge-bias, judge-validation, reference-free-evaluation, offline-replay, live-traffic-measurement, ab-test, paired-comparison-evaluation, ground-truth-proxy]
 quiz: quizzes/ch16.quiz.json
 estimatedMinutes: 40
-status: draft
+status: verified
 audit:
   faithfulness:
-    verdict: fail
-    at: 2026-08-15
-    claims: 45
-    supported: 43
-    unsupported: 1
+    verdict: pass
+    at: 2026-08-16
+    claims: 44
+    supported: 44
+    unsupported: 0
     overstated: 0
     contradicted: 0
-    unreachable: 1
+    unreachable: 0
   critique:
     verdict: pass
-    at: 2026-08-15
+    at: 2026-08-16
     notes: 0 blocking, 3 advisory
 ---
 
@@ -85,7 +85,7 @@ A validated judge also has a range, and ARES reports where the range ends. Judge
 
 ## Scoring without a gold answer at all
 
-Reference-guided grading needs a gold answer per question. Production question sets rarely have one, which is the gap RAGAS aims at with metrics that are fully self-contained and reference-free {{S42.a}}.
+Reference-guided grading needs a gold answer per question. A real user typing a real question in production has not supplied one, and nobody is labelling the query before the assistant answers it, which is the gap RAGAS aims at with metrics that are fully self-contained and reference-free {{S42.a}}.
 
 The mechanism is worth understanding rather than naming. To estimate faithfulness, a model first extracts a set of statements from the answer {{S42.b}}, and the stated aim of that step is to decompose longer sentences into shorter and more focused assertions {{S42.c}}. The reason this matters: a three-clause paragraph where two clauses are grounded in the retrieved context and one is invented is neither true nor false as a unit. Split into assertions, each one can be checked against the retrieved context on its own, and the score becomes a count rather than an impression. Answer relevance runs a different route, and part of it is obtaining embeddings for all questions with the text-embedding-ada-002 model {{S42.d}}. The metric is therefore defined partly by a named embedding model rather than by a specification alone.
 
@@ -113,7 +113,7 @@ Live measurement establishes what people did after a change was shipped to a ran
 
 Ch10 gave you baseline-mismatch: two results are not comparable when each was measured against a different baseline. Mode-mismatch is its sibling. A faithfulness score from a replayed dataset and a click-through difference from an A/B arm are not two readings of one quantity, and averaging them or trading them off is arithmetic on unlike units. When you read a claim about an assistant being better, the first question is which mode produced it.
 
-Now the finding this chapter is built around. None of the sources cited in this chapter establishes what a reference-free score on a replayed dataset predicts about live outcomes. RAGAS validates against annotator judgements on WikiEval {{S42.g}}, ARES validates against a human preference set and reports rank correlations {{S43.b}} {{S43.e}}, and neither follows a scored system into production. The nearest thing to a bridge is Airbnb's observation that offline evaluation was not accurate enough for candidate selection because the ranker only sees what the logging ranker showed {{S41.f}}, and that is a ranking system on a travel marketplace, telling you offline was insufficient rather than telling you how the two relate. Their answer was to keep the live test and use the cheap methods to feed it {{S41.e}}.
+Now the finding this chapter is built around. No excerpt pinned for this chapter establishes what a reference-free score on a replayed dataset predicts about live outcomes, so that question stands here as open rather than answered. RAGAS validates against annotator judgements on WikiEval {{S42.g}}, ARES validates against a human preference set and reports rank correlations {{S43.b}} {{S43.e}}, and neither follows a scored system into production. The nearest thing to a bridge is Airbnb's observation that offline evaluation was not accurate enough for candidate selection because the ranker only sees what the logging ranker showed {{S41.f}}, and that is a ranking system on a travel marketplace, telling you offline was insufficient rather than telling you how the two relate. Their answer was to keep the live test and use the cheap methods to feed it {{S41.e}}.
 
 So the honest engineering position is that a reference-free score is a fast regression detector on a dataset you control, and a live measurement is evidence about users, and the inference from the first to the second is yours to make and yours to defend.
 

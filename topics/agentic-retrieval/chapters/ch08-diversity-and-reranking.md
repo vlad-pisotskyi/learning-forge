@@ -6,38 +6,38 @@ requires: [ch03, ch05, ch07]
 teaches: [reranking, marginal-relevance, diversity-relevance-tradeoff, lambda-parameter, retrieval-metric-versus-answer-metric, best-of-sweep-reporting, shared-dataset-dependence, evidence-gap]
 quiz: quizzes/ch08.quiz.json
 estimatedMinutes: 35
-status: draft
+status: verified
 audit:
   faithfulness:
-    verdict: fail
-    at: 2026-08-15
-    claims: 58
-    supported: 51
+    verdict: pass
+    at: 2026-08-16
+    claims: 60
+    supported: 60
     unsupported: 0
-    overstated: 3
+    overstated: 0
     contradicted: 0
-    unreachable: 4
+    unreachable: 0
   critique:
     verdict: pass
-    at: 2026-08-15
-    notes: 0 blocking, 4 advisory
+    at: 2026-08-16
+    notes: 0 blocking, 3 advisory
 ---
 
 Chapter seven closed on a direction its authors named without measuring: reorder the retrieved list, or truncate it, before the model reads it. Reordering is the cheaper half, because the documents are already in hand and nothing has to be fetched again.
 
 ## Reordering what came back, and why the position chapter demanded it
 
-Reranking is a second ordering pass over a list you already have. The first pass gives you a ranked list of documents retrieved from a collection for a query, subject to a relevance threshold below which nothing is returned at all; the reranker then works inside that list, holding a subset of documents already selected and choosing the next one from the documents not yet selected. {{S44.c}} Nothing new enters at this stage. A reranker cannot repair a recall failure, because a document the first pass never returned is not a candidate. What it changes is order, and, once the list is truncated to fit a context budget, membership.
+Reranking is a second ordering pass over a list you already have. The first pass gives you a ranked list of documents retrieved from a collection for a query, subject to a relevance threshold below which nothing is returned at all; the reranker then works inside that list, holding a subset of documents already selected and choosing the next one from the documents not yet selected. {{S44.c}} Nothing new enters at this stage: a reranker works only on documents the first pass already returned, which by construction means it cannot repair a recall failure. What it changes is order, and, once the list is truncated to fit a context budget, membership.
 
-The reason to bother is that a pure relevance ranking repeats itself. Carbonell and Goldstein report that among the top ten passages returned for news story collections in response to a query, there is significant repetition of content across the passages, which often contain duplicate or near-duplicate sentences. {{S44.m}} That follows from what the ranking optimises. Documents are ordered by similarity to the query, and documents highly similar to the same query are frequently similar to each other, so the top of the list converges on one way of saying one thing.
+The reason to bother is that a pure relevance ranking repeats itself. Carbonell and Goldstein report that among the top ten passages returned for news story collections in response to a query, there is significant repetition of content across the passages, which often contain duplicate or near-duplicate sentences. {{S44.m}} Read as a mechanism rather than a second measurement, this chapter takes that repetition to follow from what the ranking optimises: documents are ordered by similarity to the query, and two documents both close to the same query tend to sit close to each other too, so the top of the list converges on one way of saying one thing.
 
-Chapter six is what turns that from an aesthetic complaint into a cost. Position inside the context changes whether the model uses a passage at all, so the slots near the front and the back of the input are a budget. Ten slots spent on one fact restated ten times is a budget spent once.
+Chapter six is what turns that from an aesthetic complaint into a cost. Accuracy sags for a passage placed in the middle of the context and is often highest at both ends {{S09.e}}, so the slots near the front and the back of the input are a budget. Ten slots spent on one fact restated ten times is a budget spent once.
 
 ## Scoring a document for what it adds rather than what it matches
 
-The move in the 1998 paper is to stop scoring a candidate against the query alone. Carbonell and Goldstein measure relevance and novelty independently and take a linear combination of the two, which they call marginal relevance: a document has high marginal relevance when it is relevant to the query and also has minimal similarity to the documents already selected. {{S44.a}} A document's score therefore depends on the set built so far, not only on the query, and it changes every time that set grows by one. {{S44.c}}
+The move in the 1998 paper is to stop scoring a candidate against the query alone. Carbonell and Goldstein measure relevance and novelty independently and take a linear combination of the two, which they call marginal relevance: a document has high marginal relevance when it is relevant to the query and also has minimal similarity to the documents already selected. {{S44.a}} The formula printed below makes the dependence explicit: the novelty term maxes a candidate's similarity against every document already in S, so a document's score depends on the set built so far and not only on the query, and the term it is compared against changes each time S grows by one. {{S44.b}}
 
-That dependence is the whole idea, and it is what makes the algorithm greedy rather than a sort. The measures from chapter three score each document against the query and then order by the result, so the score of the tenth document does not depend on which nine came before it. Marginal relevance breaks that independence deliberately. Selection is incremental: pick the best candidate, move it from the unselected set into the selected set, then rescore everything left, because what counts as novel has just changed. {{S44.c}}
+That dependence is the whole idea, and it is what makes the algorithm greedy rather than a sort. An ordinary ranking score is computed per document against the query, so the score of the tenth document does not depend on which nine came before it. Marginal relevance breaks that independence deliberately: the same formula selects over R\S, the candidates not yet chosen, which is only well defined if picking one candidate moves it out of that set for the next round.
 
 Later work restates the criterion the same way. ARAGOG describes MMR as evaluating candidate documents not only for closeness to the query's intent but for their uniqueness compared with the documents already selected, which reduces redundancy in the retrieved set. {{S45.b}} The Dartboard paper characterises MMR and its relatives as methods that encourage diversity by carrying an objective that explicitly trades diversity off against relevance. {{S46.a}} The word "explicitly" is doing real work there, and section six comes back to it.
 
@@ -59,7 +59,7 @@ The paper's advice on choosing a value carries a second slip, and it is worth se
 
 > Users wishing to sample the information space around the query, should set λ at a smaller value, and those wishing to focus in on multiple potentially overlapping or reinforcing relevant documents, should set λ to a value closer to λ.
 
-That last clause compares lambda to itself, which fixes nothing. {{S44.e}} The direction is still unambiguous from the sentence around it: the first clause takes the smaller value, and the endpoint sentence puts pure relevance at 1. {{S44.d}} The concrete strategy the same paragraph recommends is to start at a small lambda, for instance 0.3, to understand the information space around the query, then reformulate the query and focus with a larger value, for instance 0.7. {{S44.e}} Note the shape of that recommendation. It is a two-step interactive search procedure for a human at a terminal, not a fixed setting for an automated pipeline.
+That last clause compares lambda to itself, which fixes nothing. {{S44.e}} The direction is still unambiguous from the sentence around it: the first clause takes the smaller value, and the endpoint sentence puts pure relevance at 1. {{S44.d}} The concrete strategy the same paragraph recommends is to start at a small lambda, for instance 0.3, to understand the information space around the query, then reformulate the query and focus with a larger value, for instance 0.7. {{S44.e}} Note the shape of that recommendation: sample, then reformulate the query and focus, which is two steps a person carries out in sequence rather than a single value a pipeline sets once. {{S44.e}}
 
 ## What the original paper actually measured, on five users
 
@@ -102,7 +102,7 @@ ARAGOG also watched the two metrics come apart within its own results. It report
 
 Counting papers is not counting evidence, and this chapter cites four papers over noticeably fewer independent setups.
 
-ARAGOG states its own limit first: the study used a singular dataset and a set of 107 questions, which the authors say affects the generalizability of the findings across different LLM applications. {{S45.h}} REBEL then reports that its setup and textual description are largely taken from ARAGOG, that its evaluation dataset comprises 107 question-answer pairs generated with the assistance of GPT-4, and that the dataset comes from the ARAGOG GitHub repository that originally proposed the experimental setup. {{S47.h}} So on the axis ARAGOG flagged, REBEL is a second result on the same corpus rather than a check of whether the first one generalises.
+ARAGOG states its own limit first: the study used a singular dataset and a set of 107 questions, and the authors flag this as a threat to how far the findings generalize across different LLM applications. {{S45.h}} REBEL then reports that its setup and textual description are largely taken from ARAGOG, that its evaluation dataset comprises 107 question-answer pairs generated with the assistance of GPT-4, and that the dataset comes from the ARAGOG GitHub repository that originally proposed the experimental setup. {{S47.h}} So on the axis ARAGOG flagged, REBEL is a second result on the same corpus rather than a check of whether the first one generalises.
 
 REBEL is still the counterweight to the section above, because it pushes in the other direction. It reports that in standard RAG pipelines, maximizing for context relevance alone can degrade downstream response quality. {{S47.a}} The concrete instance is named: Cohere and LLM Rerank achieved high retrieval relevance at the expense of answer quality, which the paper connects to ARAGOG's observation that the highest-performing systems on retrieval relevance often had the lowest answer quality. {{S47.b}} Its own method is a reranker whose prompt defines criteria beyond basic relevance, among them depth of content and diversity of perspectives. {{S47.d}} The one-turn version uses five fixed criteria, depth, diversity, clarity, authoritativeness and recency, and is reported to achieve both higher retrieval relevance and higher answer quality than vanilla RAG with no reranking. {{S47.e}} Read the denominator there too: diversity is one criterion of five, so that result is not a measurement of diversity by itself. The paper positions the whole approach in the line of classical multi-criteria retrieval methods that starts with MMR, alongside xQuAD and PM-2. {{S47.c}} The numbers are another matter. The results section directs the reader to Figure 1 for the experimental results, so there is no quotable value in the text of the paper for what those gains were. {{S47.g}}
 
@@ -114,12 +114,12 @@ Every limitation in this section is stated by the paper that carries it. Five us
 
 ## The number nobody has: what the parameter does to the answer
 
-Here is the question a working engineer arrives with, after chapters six and seven: I am about to set a diversity parameter, and I want to know what moving it does to the quality of the answers my system produces. No source cited in this chapter reports that measurement outside a swept optimum.
+Here is the question a working engineer arrives with, after chapters six and seven: I am about to set a diversity parameter, and I want to know what moving it does to the quality of the answers my system produces. The table caption behind the numbers in the previous section says the best score over a parameter sweep is what gets reported {{S46.e}}, and no excerpt pinned for this chapter reports that measurement outside a swept optimum, so it stands here as open rather than answered {{S46.c}}{{S46.e}}.
 
-The closest thing here is a figure caption. Dartboard's Figure 2 plots performance on the end-to-end QA task as parameters vary, showing Dartboard as its sigma varies and MMR as its diversity parameter varies. {{S46.f}} That caption names exactly the right axes, and a caption is not a number: the curve is in a figure, and no value from it is transcribed in the excerpts behind this chapter. Everything else that touches the parameter reports one point on that curve, the best one. {{S46.c}}{{S46.e}} The 1998 table is the other partial answer, and it is a summarization precision score rather than an answer score, on three lambda values that the authors themselves could not separate statistically. {{S44.k}}{{S44.j}}
+The closest thing here is a figure caption. Dartboard's Figure 2 plots performance on the end-to-end QA task as parameters vary, showing Dartboard as its sigma varies and MMR as its diversity parameter varies. {{S46.f}} That caption names exactly the right axes, and a caption is not a number: the curve is in a figure, and no excerpt pinned for this chapter transcribes a value from it. {{S46.f}} Everything else that touches the parameter reports one point on that curve, the best one. {{S46.c}}{{S46.e}} The 1998 table is the other partial answer, and it is a summarization precision score rather than an answer score, on three lambda values that the authors themselves could not separate statistically. {{S44.k}}{{S44.j}}
 
 So the honest state of this chapter's evidence is: the diversity parameter has a clear definition, two well-specified endpoints, and no measured relationship to answer quality across its range in any source pinned here. That is a gap in what these sources establish, and naming it is more useful than filling it with a default value that would look like a finding.
 
-What the sources do support is a warning about the parameter's cost. Dartboard's authors report two limitations of MMR: the diversity parameter is needed to control the balance between relevance and novelty, it is often dataset-specific and requires careful tuning, which they call impractical for real-world applications, and MMR can favour exact duplicates of previously retrieved documents, since a duplicate retains a high relevance score while minimally affecting the average novelty score. {{S46.g}} That second objection is framed against an average novelty score, while the criterion as printed in 1998 subtracts the largest similarity to any single already-selected document, which is the harshest penalty available to a duplicate. {{S44.b}}{{S44.c}} Before assuming the objection applies to your pipeline, find out which of the two your library implements.
+What the sources do support is a warning about the parameter's cost. Dartboard's authors report two limitations of MMR: the diversity parameter is needed to control the balance between relevance and novelty, it is often dataset-specific and requires careful tuning, which they call impractical for real-world applications, and MMR can favour exact duplicates of previously retrieved documents, since a duplicate retains a high relevance score while minimally affecting the average novelty score. {{S46.g}} That second objection is framed against an average novelty score, while the criterion as printed in 1998 subtracts the largest similarity to any single already-selected document, a harsher penalty on a duplicate than an average-based score would apply. {{S44.b}}{{S44.c}} Before assuming the objection applies to your pipeline, find out which of the two your library implements.
 
 The parameter cost is not unique to MMR either, and Dartboard says so. Its own method requires a hyperparameter affecting how much diversity is encouraged, the authors report their method is not sensitive to the choice of it, and they state that a method requiring no manual tuning would be preferable. {{S46.j}} That is where this leaves you. Diversity reranking is a real technique with a precise definition, its parameter is a real operating cost, and the effect of moving that parameter on what your model writes is something you will have to measure yourself, against an answer metric and not only a ranking one.

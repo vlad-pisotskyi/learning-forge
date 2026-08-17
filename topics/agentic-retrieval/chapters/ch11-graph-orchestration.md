@@ -6,24 +6,24 @@ requires: [ch09, ch10]
 teaches: [graph-state, state-reducer, node-and-edge, conditional-edge, builder-versus-compiled, version-pinned-documentation]
 quiz: quizzes/ch11.quiz.json
 estimatedMinutes: 30
-status: draft
+status: verified
 audit:
   faithfulness:
-    verdict: fail
-    at: 2026-08-15
-    claims: 33
-    supported: 29
-    unsupported: 2
-    overstated: 1
+    verdict: pass
+    at: 2026-08-16
+    claims: 30
+    supported: 30
+    unsupported: 0
+    overstated: 0
     contradicted: 0
-    unreachable: 1
+    unreachable: 0
   critique:
     verdict: pass
-    at: 2026-08-15
+    at: 2026-08-16
     notes: 0 blocking, 2 advisory
 ---
 
-Everything below is pinned to one release and one day: the package version is 1.2.11, and the documentation pages quoted here were read on 2026-08-14. The documentation site is not version pinned, so opening the same URL later returns whatever is current, not what is quoted. That is a problem this chapter has and the other chapters in this topic do not, and the last section turns it into a habit.
+Everything below is pinned to one release and one day: the package version is 1.2.11, and the documentation pages quoted here were read on 2026-08-14. These are facts about this chapter's own source record rather than claims a quoted excerpt states, so they appear here directly rather than behind a marker. The documentation URL itself carries no version or revision in its path, unlike the package source's URLs, which are pinned to a commit; opening the documentation URL later returns whatever is current, not what is quoted here. That is a problem this chapter has and the other chapters in this topic do not, and the last section turns it into a habit.
 
 ## One shared state object, and the schema that parameterises it
 
@@ -35,7 +35,7 @@ Read those two signatures together, because the second exists only because of th
 
 ## Reducers: what happens when two nodes write the same key
 
-A reducer is a binary function with two positional arguments. The left argument is the value already stored in state for that key. The right argument is the update for that key returned by a node. {{S29.c}} Whatever it returns becomes the stored value.
+A reducer is a binary function with two positional arguments. The left argument is the value already stored in state for that key. The right argument is the update for that key returned by a node. {{S29.c}} The worked example below shows what one reducer does with those two arguments.
 
 ```python
 # a node: State -> Partial<State>
@@ -60,11 +60,11 @@ The counter-case ships in the package. `add_messages` merges two lists of messag
 
 ## Nodes, edges, and routing decided at run time
 
-Nodes hold the logic. They receive the current state as input, perform some computation or side effect, and return an updated state. {{S29.g}} Edges hold the wiring, and the split is the point: a node never names its successor.
+Nodes hold the logic. They receive the current state as input, perform some computation or side effect, and return an updated state. {{S29.g}} A node's signature is `State -> Partial<State>`, which names no successor. {{S32.a}} Edges hold the wiring instead. {{S29.h}}{{S29.i}}
 
 There are two kinds of wiring. When control always goes from node A to node B, `add_edge` states that directly. {{S29.h}} When you want to route optionally to one or more edges, or optionally terminate, `add_conditional_edges` takes the name of a node and a routing function to call after that node has executed. {{S29.i}} The source describes the same method as adding a conditional edge from the starting node to any number of destination nodes. {{S32.c}} Its `path` argument is the callable that determines the next node or nodes, it runs when execution exits the source node, and returning `'END'` stops the graph. {{S32.d}}
 
-That single argument is where an agentic loop lives. A routing function that returns the name of an earlier node sends control backwards, and the graph runs that node again against the updated state. A routing function that returns `'END'` is the termination condition. {{S32.d}} Chapter 9's threshold on whether the retrieved passages are good enough to answer from is not framework machinery at all; it is the body of this function, written by you, reading the state that previous nodes wrote.
+That single argument is where an agentic loop lives, on this chapter's own reading rather than the documentation's: the callable returns the name of whichever node should run next, or `'END'` to stop, and neither S32.d nor anything else pinned here states a restriction to a node ahead of the current one. {{S32.d}} Nothing pinned here rules it out, so this chapter treats returning the name of a node that already ran as valid, in which case the graph runs it again against the updated state, which is what a loop is. Chapter 9's threshold on whether the retrieved passages are good enough to answer from is not framework machinery at all; it is the body of this function, written by you, reading the state that previous nodes wrote.
 
 ## The builder you assemble against the graph you run
 
@@ -81,7 +81,7 @@ Every one of those is a capability claim published without a number behind it. T
 
 ## Citing a document that will say something else next month
 
-Every other chapter in this topic cites papers, and a paper carries its own version in its identifier, so a locator is enough to point a reader at the sentence you read. Documentation is not like that, and neither is a source file on a moving branch. The Graph API page cited throughout this chapter was read on 2026-08-14 against version 1.2.11. {{S29.a}}{{S29.b}} The two quotes taken from the package source name one commit rather than a branch tip. {{S32.b}}{{S33.a}} That is the difference between a quote someone can retrieve and a quote someone can only take your word for.
+A documentation page and a source file on a moving branch are not fixed the way this chapter's own citations need them to be. This fact is not the kind a quoted excerpt carries, since it describes the source record rather than anything the source itself says, so it is stated here directly rather than marked: the Graph API page cited throughout this chapter was read on 2026-08-14 against version 1.2.11, and the two quotes taken from the package source name one commit rather than a branch tip. That is the difference between a quote someone can retrieve and a quote someone can only take your word for.
 
 Carry three things into your own notes whenever you cite a moving document. Record the version you ran, because the page you read was serving that release and the next reader's page will not be. Record the date you read it. And prefer a permalink that pins a revision over a URL that always serves the current one, since the pinned form stays checkable after the API moves.
 

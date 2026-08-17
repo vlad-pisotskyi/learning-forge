@@ -10,16 +10,16 @@ status: draft
 audit:
   faithfulness:
     verdict: fail
-    at: 2026-08-15
+    at: 2026-08-16
     claims: 42
     supported: 40
     unsupported: 0
-    overstated: 2
-    contradicted: 0
+    overstated: 1
+    contradicted: 1
     unreachable: 0
   critique:
     verdict: pass
-    at: 2026-08-15
+    at: 2026-08-16
     notes: 0 blocking, 3 advisory
 ---
 
@@ -53,12 +53,12 @@ one-dimensional. Linearization is the mapping between them, and it is a mapping 
 format does not carry. {{S27.q}}
 
 Separating linearization from character recognition is what makes failures
-diagnosable. A system can read every character on a page perfectly and still produce
-unusable text, because it spliced a pull quote into the middle of a sentence or ran
-two columns together line by line. Those are different defects with different fixes,
-and a single quality score over the whole output hides which one you have. Note also
-how the paper scopes the difficulty: it is layout-rich documents that make
-linearization hard, not long ones. {{S27.r}}
+diagnosable, and that diagnostic value is this chapter's own reading rather than a
+claim the paper makes: a system can read every character on a page perfectly and
+still produce unusable text, because it spliced a pull quote into the middle of a
+sentence or ran two columns together line by line. Those are different defects with
+different fixes, and a single quality score over the whole output hides which one you
+have. The paper scopes the difficulty to layout-rich documents. {{S27.r}}
 
 ## Reading the page as an image
 
@@ -82,9 +82,9 @@ types that remain challenging even for the best tools and VLMs. {{S27.f}} {{S27.
 Evaluation runs on olmOCR-Bench, a curated set of 1,400 PDFs capturing content types
 that remain challenging even for the best tools and VLMs, including formulas, tables,
 tiny fonts, and old scans. {{S27.f}} On that comparison, olmOCR outperforms even top
-VLMs including GPT-4o, Gemini Flash 2, and Qwen-2.5-VL. {{S27.g}} A separate head to
-head on human preference puts olmOCR at an ELO score over 1800, far exceeding all
-other PDF linearization tools in that comparison. {{S27.p}} Read that result narrowly.
+VLMs including GPT-4o, Gemini Flash 2, and Qwen-2.5-VL. {{S27.g}} A separate comparison puts olmOCR at an ELO score over 1800, far exceeding all
+other PDF linearization tools in that comparison; the excerpt pinned here does not say
+how the comparison was judged. {{S27.p}} Read that result narrowly.
 A 7B model specialised on one task beat general-purpose VLMs at that task, on a
 benchmark built from content those tools find hard. {{S27.g}} {{S27.f}}
 
@@ -109,12 +109,12 @@ PDF. {{S27.j}} If you are coming to Python from TypeScript, pypdf is the plain
 file-parsing dependency you would reach for anyway; nothing about this step is
 learned.
 
-Sit with what that arrangement implies. The file already records where the text
-blocks and images are and what characters they contain. {{S27.i}} A pipeline that
-rasterizes the page and throws the rest away is choosing to solve a harder problem
-than the one it has: recovering from pixels what it deleted a moment earlier. The
-model still gets the image, because the image is where layout, ruling lines, and scan
-artifacts live. It gets both. {{S27.i}}
+Sit with what that arrangement implies, a framing this chapter draws rather than one
+either paper states. The file already records where the text blocks and images are and
+what characters they contain. {{S27.i}} A pipeline that rasterizes the page and throws
+the rest away is choosing to solve a harder problem than the one it has: recovering
+from pixels what it deleted a moment earlier. The model still gets the image as well,
+alongside the anchored text it now also has. {{S27.i}}
 
 ## What the page image alone made the model do
 
@@ -122,13 +122,16 @@ The evidence for that design is a failure the authors report from prompting with
 it. Prompting with just the page image was prone to models completing unfinished
 sentences, or to inventing larger texts when the image data was ambiguous. {{S27.k}}
 
-The mechanism generalises past OCR, so it is worth stating plainly. A vision
-language model is still a language model. Where the image underdetermines the text, a
-blurred word or a clipped line, the model falls back on what text usually looks like,
-and emits the most plausible continuation. That is not a bug in the decoding; it is
-the model doing exactly what it was trained to do, applied to a place where the right
-behaviour is to copy rather than to predict. Anchored text gives it something to copy
-from. {{S27.i}} {{S27.k}}
+Read that failure past OCR, and the reading is this chapter's own rather than
+either paper's: a vision language model is still a language model, so where the image
+underdetermines the text, a blurred word or a clipped line, falling back on what text
+usually looks like and emitting the most plausible continuation is exactly what such a
+model was trained to do. Neither excerpt states that account of the mechanism. What
+they establish separately is the specific failure, completing sentences and inventing
+text, {{S27.k}} and the anchoring mechanism described earlier, handing the model text
+to copy from instead of only an image. {{S27.i}} Pairing the two as failure and remedy
+is this chapter's own reading; no excerpt states that anchoring was introduced to fix
+this particular failure.
 
 ## Cost per page, and why quoting it means naming a version
 
@@ -164,11 +167,12 @@ representation, so unit tests let different-yet-equivalently-correct representat
 of the same content score similarly, where edit distance often rewards or penalises
 those cases differently. {{S28.i}}
 
-Edit distance breaks here for a mechanical reason. Scoring against a reference string
-requires committing to one serialization of a table. Another serialization that any
-reader would call correct, with the header row written differently or the cells
-delimited another way, is a large edit distance from the reference and gets punished
-for it. The disagreement is in the format, not in the reading.
+The mechanism behind that is this chapter's own reading, not a claim either excerpt
+makes: scoring against a reference string requires committing to one serialization of
+a table, and another serialization that any reader would call correct, with the header
+row written differently or the cells delimited another way, is a large edit distance
+from the reference and gets punished for it. The disagreement is in the format, not in
+the reading.
 
 The alternative is to score a set of checkable assertions instead of a string.
 olmOCR 2 is powered by olmOCR-2-7B-1025, a specialised 7B vision language model
@@ -176,7 +180,7 @@ trained with reinforcement learning from verifiable rewards, where the rewards a
 diverse set of binary unit tests. {{S28.a}} The reward function is as simple as that
 description suggests: each test case passes or fails, and the reward is the fraction
 of passing test cases, from 0.0 to 1.0. {{S28.f}} Two outputs that differ in format
-but satisfy the same assertions collect the same reward. {{S28.i}}
+but satisfy the same assertions yield similar rewards, on the source's own wording. {{S28.i}}
 
 The training result is a +14.2 point overall improvement on olmOCR-Bench over the
 initial release six months prior. {{S28.e}} The gains concentrated where the format
@@ -225,17 +229,18 @@ unfaithfully, or captioning images when it was not instructed to. {{S27.l}}
 Notice whose behaviour that sentence describes. It is an assessment of GPT-4o, made
 by people using GPT-4o inside a data pipeline. {{S27.l}} It is not a measurement of
 what olmOCR's own output gets wrong, and neither is anything else in this chapter.
-Both failure descriptions cited here belong to a model being used to produce data:
-GPT-4o in the first paper {{S27.l}}, and the general VLM prompted to write ground
-truth HTML in the second {{S28.h}}. Treat the absence of a residual error rate for
-olmOCR itself as a gap in what you have read, not as evidence that the rate is low.
+The second paper names a different model producing data, the general VLM prompted to
+write ground-truth HTML for olmOCR 2's training pipeline, {{S28.g}} but no excerpt
+pinned here documents a failure description for that model the way S27.l documents one
+for GPT-4o. Treat that missing description, and the absence of a residual error rate
+for olmOCR itself, as a gap in what you have read, not as evidence that the rate is low.
 
 That is the question to carry into any system built this way. A specialised model
 trained on another model's output is trained toward that output, and the assertions in
 olmOCR 2's reward are test cases extracted from pages whose HTML a general VLM wrote.
 {{S28.b}} {{S28.g}} {{S28.h}} Ask what produced the targets, and what that producer is known to do wrong,
-because the answer bounds what the student can be trusted with. The mitigation this
-chapter has already described applies at exactly this point. Document-anchoring hands
-any VLM the coordinates and the raw characters the file already recorded alongside the
-image {{S27.i}}, and prompting on the image alone is what produced completed sentences
-and invented text. {{S27.k}}
+because the answer bounds what the student can be trusted with. The pairing this
+chapter drew earlier, not a claim either excerpt makes outright, applies at exactly
+this point. Document-anchoring hands any VLM the coordinates and the raw characters
+the file already recorded alongside the image {{S27.i}}, and prompting on the image
+alone is what produced completed sentences and invented text. {{S27.k}}

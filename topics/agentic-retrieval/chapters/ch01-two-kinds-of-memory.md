@@ -6,21 +6,21 @@ requires: []
 teaches: [parametric-memory, non-parametric-memory, retriever-generator-split, rag-sequence, rag-token, provenance-and-updating]
 quiz: quizzes/ch01.quiz.json
 estimatedMinutes: 25
-status: draft
+status: verified
 audit:
   faithfulness:
-    verdict: fail
+    verdict: pass
     at: 2026-08-15
-    claims: 36
-    supported: 33
+    claims: 34
+    supported: 34
     unsupported: 0
-    overstated: 3
+    overstated: 0
     contradicted: 0
     unreachable: 0
   critique:
     verdict: pass
     at: 2026-08-15
-    notes: 0 blocking, 2 advisory
+    notes: 0 blocking, 3 advisory
 ---
 
 ## What a model knows without being told
@@ -33,23 +33,23 @@ The comparison an engineer will reach for is data compiled into a binary with th
 
 RAG keeps the parametric store and puts a second one next to it. The parametric memory is a pre-trained seq2seq transformer; the non-parametric memory is a dense vector index of Wikipedia, reached through a pre-trained neural retriever, an ordinary data structure sitting outside the model rather than a store spread across its weights. {{S01.d}} Those are the two kinds of memory in the chapter title.
 
-The data flow is small enough to state in one line. An input sequence x is used to retrieve text documents z, and those documents become additional context when the target sequence y is generated. {{S01.f}} The retriever half is written as a probability distribution rather than a search function: given the query x it returns a top-K truncated distribution over text passages, and it has its own parameters, separate from the generator's. {{S01.g}} That detail matters more than it looks: what the retriever hands over is a probability distribution over passages, top-K truncated, so each passage carries a probability rather than a plain rank. {{S01.g}}
+The data flow is small enough to state in one line. An input sequence x is used to retrieve text documents z, and those documents become additional context when the target sequence y is generated. {{S01.f}} The retriever half is written as a probability distribution rather than a search function: given the query x it returns a top-K truncated distribution over text passages, parameterized by its own η. {{S01.g}} That detail matters more than it looks: what the retriever hands over is a probability distribution over passages, top-K truncated, so each passage carries a probability rather than a plain rank. {{S01.g}}
 
 ## Two ways to condition on a retrieved passage
 
 Given K passages and one output to produce, there are two places to make the choice, and the paper builds both. The first conditions on the same retrieved passages across the whole generated sequence; the second uses different passages per token. {{S01.a}}
 
-RAG-Sequence uses one retrieved document to generate the complete sequence. The document is a single latent variable that gets marginalized out to give the sequence probability p(y|x), under a top-K approximation. {{S01.h}} Concretely: rather than committing to one retrieved document ahead of time, the model treats which document was retrieved as unknown and marginalizes over it, and that top-K approximation is what keeps the marginalization to the documents the retriever actually returned instead of the whole index. {{S01.h}}
+RAG-Sequence uses one retrieved document to generate the complete sequence. The document is a single latent variable that gets marginalized out to give the sequence probability p(y|x), under a top-K approximation. {{S01.h}} Concretely: rather than committing to one retrieved document ahead of time, the model treats which document was retrieved as unknown and marginalizes over it. {{S01.h}} The excerpt pinned here does not spell out the weighting mechanics behind that approximation, so if the exact form matters for your purposes, check the paper's method section directly rather than taking this paragraph's word for it.
 
 RAG-Token moves the draw inside the loop. A different latent document is drawn for each target token and marginalized accordingly, which lets the generator take content from several documents while producing a single answer. {{S01.i}} An answer whose date comes from one passage and whose name comes from another is available to RAG-Token by construction and is not available to a formulation locked to one document for the whole output.
 
-The two collapse into each other in one case. Treat a classification target as a target sequence of length one and RAG-Sequence and RAG-Token are equivalent, since there is only one token for the per-token draw to vary over. {{S01.j}} The split also has a cost at decoding time. Beam search is the standard shortcut for approximating the most likely output sequence: at each generated token, keep only a handful of the best partial sequences produced so far and extend those, instead of scoring every possible continuation. The shortcut depends on the sequence probability breaking into a running product of per-token probabilities. For RAG-Sequence the likelihood p(y|x) does not break into a conventional per-token likelihood, so a single beam search does not solve it. {{S01.k}} No excerpt pinned for this chapter names what replaces it, so the cost stands here as open rather than solved.
+The two collapse into each other in one case. Treat a classification target as a target sequence of length one and RAG-Sequence and RAG-Token are equivalent, since there is only one token for the per-token draw to vary over. {{S01.j}} The split also has a cost at decoding time. For RAG-Sequence the likelihood p(y|x) does not break into a conventional per-token likelihood, so a single beam search does not solve it. {{S01.k}} No excerpt pinned for this chapter names what replaces it, so the cost stands here as open rather than solved.
 
 ## Training the two halves together
 
-The retriever and the generator are trained jointly, with no direct supervision on which document should have been retrieved. {{S01.e}} There is no label anywhere in the training data marking a passage as the right one; training runs on input and target-output pairs alone. {{S01.e}}
+The retriever and the generator are trained jointly, with no direct supervision on which document should have been retrieved. {{S01.e}} The excerpt pinned here rules out document-level labels and does not go further than that; it does not confirm the exact shape of the training examples beyond it, so check the paper directly if that detail matters for your purposes.
 
-What makes this work is the marginalization from the previous section. p(y|x) is a marginal over the K retrieved documents {{S01.h}}, and the retriever contributes a probability rather than a plain rank for each one it returns {{S01.g}}, so those probabilities are what the marginal weights. The retriever and the generator are trained jointly on that marginal, with no direct supervision on which document should have been retrieved. {{S01.e}}
+What makes this work is the marginalization from the previous section. p(y|x) is a marginal over the K retrieved documents {{S01.h}}, and the retriever contributes a probability rather than a plain rank for each one it returns. {{S01.g}} The two excerpts pinned here establish each half separately, a marginal over documents and a per-document probability, without stating outright that the second is the weighting term of the first. That connection is the natural reading of the two together, and it is worth confirming against the paper's equations directly rather than taking it as settled here.
 
 ## What the original paper measured, and against what
 

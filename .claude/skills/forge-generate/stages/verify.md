@@ -99,14 +99,55 @@ is wrong.
 - `overstated` claims: almost always the house style flattening a qualified source. The fix
   is to state the narrower thing the source actually supports, not to add a hedge. "Above 11
   newton metres the fastener yields" instead of "over-torque may cause problems".
+- a claim worth keeping at its current precision even though no pinned excerpt carries it
+  that precisely, and neither narrowing nor a return to research is worth the cost: say so
+  in the chapter, as a fact about the sourcing rather than a hedge about the claim. Name what
+  the pinned excerpt does and does not establish, and point at where a reader could confirm
+  the rest themselves. This is the same move the contract already asks for when sources
+  disagree with each other (the `contested-evidence` and `evidence-gap` shape); it is not a
+  new category, only that shape applied to a source that is thin rather than one that
+  conflicts. It is an editorial call the owner makes claim by claim, not a default an agent
+  reaches for on its own, and the resulting sentence still has to pass the next audit on what
+  it now actually says.
+
+  A disclaimer does not neutralise the sentence it follows. Naming a claim as unconfirmed
+  and then restating the claim anyway still leaves the restatement itself uncited and
+  gradeable, and it fails the same way an unmarked sentence always does. The version that
+  passes narrows what is actually said down to what the excerpt supports plus the fact of
+  the gap, and drops the unconfirmed mechanics rather than keeping them company with a
+  caveat. One round of this stage caught exactly that shape: a hedge added next to a claim
+  the source did not carry, ruled `unsupported` on the next pass for the same reason the
+  original did.
 - `blocking` critique findings: fix the named defect. Read the `keep` list first, because a
   revision that fixes an ordering problem and loses the one worked example that made the
   chapter land has not improved anything.
 
-After revising, delete that chapter's verdict files and run both agents again. A stale
-verdict describing a chapter that no longer exists is worse than no verdict.
+After revising, delete that chapter's verdict files and run the agent again. A stale
+verdict describing a chapter that no longer exists is worse than no verdict. On round one,
+delete both files and run both agents. On round two and three, delete and re-run only the
+agent whose finding drove the revision; the other agent's passing verdict from round one
+still describes the untouched parts of the chapter, and re-running it too would pay full
+price to relearn what it already ruled.
 
-### Two rules that come from watching this loop fail to converge
+**Round one audits the whole chapter. Round two and three audit the fix, not the chapter
+again.** Full re-decomposition costs the same whether the revision touched one sentence or
+ten, because it re-quotes and re-rules every claim from scratch, and a chapter runs 30 to 70
+claims. Name the exact sentence or clause that changed and what the fix was supposed to do,
+and ask the agent to rule on that change plus its immediate paragraph, not the whole chapter.
+It still needs the full chapter path and `sources.json`, since a claim's neighbours are part
+of reading it in context, but it does not need to re-decompose material nowhere near the
+edit. This is the fix for a cost that showed up concretely on 2026-08-16: one chapter took
+four full-chapter audit rounds, each re-ruling 30-plus claims, to land three one-sentence
+citation fixes. A scoped check on rounds two and three would have caught the same three
+findings for a fraction of the tokens.
+
+The trade this makes: a full re-pass sometimes catches something unrelated to the edit that
+the previous round missed, which is real and documented below. A scoped pass will not. That
+risk is the reason round one still audits everything, and the reason a chapter that fails all
+three rounds gets reported to the owner rather than pushed through a fourth scoped pass that
+was never going to see the whole picture anyway.
+
+### Three rules that come from watching this loop fail to converge
 
 **Cap it at three rounds per chapter.** The first run of this stage put one chapter through
 three passes. It failed all three, on a different set of claims each time, while the claim
@@ -114,6 +155,19 @@ count rose from 32 to 40 on text that changed in one passage per round. A fourth
 not going to land somewhere the first three had not. When a chapter fails a third pass, stop
 revising and report it to the owner with all three verdicts, because at that point the
 finding is about the material or the sources rather than about the prose.
+
+A chapter can earn an extra round past the cap, but only on the owner's say-so and only for
+a fix that is mechanical rather than a rewrite, such as attaching a marker that was already
+correctly used elsewhere in the same paragraph. Ask before taking a fourth round; do not
+decide on your own that a finding looks trivial enough to warrant one.
+
+**Report findings; do not auto-fix and re-loop past round one.** Round one's findings get
+fixed and re-audited without asking, since that is this stage's ordinary job. From round two
+on, when an audit or critique finding is not a mechanical marker fix (see above), name the
+finding to the owner and wait rather than fixing it and immediately spending another full
+agent run to re-check. The chapters most prone to non-convergence are exactly the ones where
+this saves the most: a chapter oscillating between findings is a chapter where the next fix
+is least likely to be the last one.
 
 **A critic asking for new material is asking for a claim.** The same run produced this in
 one loop: the critic asked for a correspondence to be stated because a quiz question turned

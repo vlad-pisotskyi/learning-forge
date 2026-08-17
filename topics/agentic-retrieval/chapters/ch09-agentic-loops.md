@@ -6,26 +6,26 @@ requires: [ch01, ch07]
 teaches: [reflection-tokens, adaptive-retrieval, retrieval-threshold, reasoning-action-interleaving, agentic-loop, ablation-baseline]
 quiz: quizzes/ch09.quiz.json
 estimatedMinutes: 30
-status: draft
+status: verified
 audit:
   faithfulness:
-    verdict: fail
-    at: 2026-08-15
-    claims: 32
-    supported: 27
+    verdict: pass
+    at: 2026-08-16
+    claims: 33
+    supported: 33
     unsupported: 0
-    overstated: 3
+    overstated: 0
     contradicted: 0
-    unreachable: 2
+    unreachable: 0
   critique:
     verdict: pass
-    at: 2026-08-15
-    notes: 0 blocking, 4 advisory
+    at: 2026-08-16
+    notes: 0 blocking, 2 advisory
 ---
 
 ## Retrieving a fixed number of passages every time, and what it costs
 
-Every pipeline in this book so far has retrieved once, before generation, and retrieved the same number of passages no matter what the question was. Self-RAG's abstract names what that arrangement costs: indiscriminately retrieving and incorporating a fixed number of passages, regardless of whether retrieval is necessary or whether the passages are relevant, diminishes a language model's versatility or leads to unhelpful generation, and the paper's answer is a single model that retrieves on demand and then reflects on what came back, using special vocabulary it calls reflection tokens. {{S21.a}}
+Every pipeline in this book so far has retrieved once, before generation, and retrieved the same number of passages no matter what the question was. Self-RAG's abstract names what that arrangement costs: indiscriminately retrieving and incorporating a fixed number of passages, regardless of whether retrieval is necessary or whether the passages are relevant, diminishes a language model's versatility or can lead to unhelpful generation, and the paper's answer is a single model that retrieves on demand and then reflects on what came back, using special vocabulary it calls reflection tokens. {{S21.a}}
 
 There are two separate failures in that sentence, and they fail in different places. One is retrieving when the model did not need anything retrieved. The other is retrieving passages that are not relevant to what is being written. You have already met the second one from the reader's side in chapter 7, where an irrelevant passage sitting in the context costs answer accuracy. Self-RAG is looking at the same problem from the pipeline's side: `k` is fixed before the question arrives, so a fixed top-k pipeline has no place to express either decision. It retrieves the same amount for a question that needs three documents and for one that needs none.
 
@@ -43,7 +43,7 @@ The abstract makes one further claim about this design: generating reflection to
 
 By default the prediction is the decision. Self-RAG decides when to retrieve by predicting the `Retrieve` token, and the framework alternatively allows a threshold to be set: if the probability of generating `Retrieve=Yes`, normalised over all output tokens in `Retrieve`, surpasses a designated threshold, retrieval is triggered. {{S21.i}}
 
-Work through what that computation is. `Retrieve` has several possible output values, one of which is yes. {{S21.g}} At the position where the model is about to decide, each of those values has a score. Normalising over just those values, rather than over the whole vocabulary, turns the scores into a probability distribution across that one choice, and the resulting number is the model's confidence in retrieving relative to not retrieving. Comparing it against a bar is what converts a soft prediction into a hard branch. {{S21.i}}
+Work through what that computation is. `Retrieve` has several possible output values, {{S21.g}} one of which is Yes. {{S21.i}} At the position where the model is about to decide, each of those values has a score. Normalising over just those values, rather than over the whole vocabulary, turns the scores into a probability distribution across that one choice, and the resulting number is the model's confidence in retrieving relative to not retrieving. Comparing it against a bar is what converts a soft prediction into a hard branch. {{S21.i}}
 
 Notice where the bar comes from. The framework allows a threshold to be set, which means the number arrives from outside the model rather than out of training. {{S21.i}} Lower it and more steps clear it, so the system retrieves more often; raise it and fewer do. That makes it the same class of object as the diversity parameter in chapter 8: a single scalar that slides the system along a range of behaviours, where the quoted passage defines the rule and leaves the number to whoever is setting it.
 
@@ -51,17 +51,17 @@ Notice where the bar comes from. The framework allows a threshold to be set, whi
 
 ReAct starts from a split in how these two capabilities had been studied. Reasoning, in the form of chain-of-thought prompting, and acting, in the form of action plan generation, had primarily been treated as separate topics; ReAct generates reasoning traces and task-specific actions in an interleaved manner, where the reasoning traces help the model induce, track and update its action plans and handle exceptions, while the actions let it interface with and gather information from external sources such as knowledge bases or environments. {{S22.a}}
 
-The mechanism is one asymmetry, and it is worth stating precisely. An action taken in language space, which the paper calls a thought or a reasoning trace, does not affect the external environment and so produces no observation feedback. {{S22.b}} Every other action leaves the model, reaches something outside it, and comes back with an observation. A thought goes nowhere and nothing answers it. The only trace it leaves is in the model's own context, which is exactly what the next step reads. That is why thoughts can be inserted anywhere in the sequence without breaking anything: the environment never sees them.
+The mechanism is one asymmetry, and it is worth stating precisely. An action taken in language space, which the paper calls a thought or a reasoning trace, does not affect the external environment and so produces no observation feedback. {{S22.b}} A thought goes nowhere and nothing answers it.
 
 What goes in a thought is open. The paper lists decomposing task goals and creating action plans, injecting commonsense knowledge relevant to the task, extracting the important parts of an observation, tracking progress and moving between plans, and handling exceptions by adjusting the plan. {{S22.c}}
 
-For retrieval, the consequence is where the query comes from. By interacting with a Wikipedia API, ReAct retrieves information to support its reasoning while also using reasoning to target what to retrieve next. {{S22.d}} A fixed pipeline computes its query once, from the user's question. Here the query for the next step is written by the model after it has read the previous observation, which is what makes the loop agentic rather than scripted.
+For retrieval, the consequence is where the query comes from. By interacting with a Wikipedia API, ReAct retrieves information to support its reasoning while also using reasoning to target what to retrieve next. {{S22.d}} A fixed pipeline computes its query once, from the user's question; here the query for each step comes from the model's own reasoning instead, which is what makes the loop agentic rather than scripted.
 
-The two systems in this chapter decide different things, and conflating them is easy. Self-RAG's decision is whether the next segment needs retrieval at all. {{S21.h}} ReAct's is what to fetch next, given what the last fetch returned. {{S22.d}}
+The two systems in this chapter decide different things, and conflating them is easy. Self-RAG's decision is whether the next segment needs retrieval at all. {{S21.h}} ReAct's is what to fetch next, targeted by its own reasoning rather than fixed in advance. {{S22.d}}
 
 ## What each half contributes, shown by removing it
 
-A system with two halves that beats a system with neither has proved almost nothing. The comparison that carries information is against the same method with one half removed, and ReAct's is Act: the same setup with the reasoning taken out. On HotpotQA and Fever with PaLM-540B as the base model, ReAct is better than Act on both tasks, which the paper reads as the value of reasoning to guide acting, especially when synthesizing the final answer. {{S22.e}} The numbers behind that sentence are in a table these excerpts do not carry, so take the direction from it and not a size.
+A system with two halves that beats a system with neither has proved almost nothing. The comparison that carries information is against the same method with one half removed, and the paper's own name for that comparison is Act: on HotpotQA and Fever with PaLM-540B as the base model, ReAct is better than Act on both tasks, which the paper reads as the value of reasoning to guide acting, especially when synthesizing the final answer. {{S22.e}} None of the excerpts pinned here spell out Act's construction beyond its name and its place in the comparison, so take this as an ablation the paper ran rather than a mechanism this chapter can describe further. The numbers behind that sentence are in a table these excerpts do not carry, so take the direction from it and not a size.
 
 Where the paper states sizes in prose, they are worth having. On ALFWorld the best ReAct trial reaches an average success rate of 71 percent, against 45 percent for the best Act trial and 37 percent for BUTLER. {{S22.h}}
 

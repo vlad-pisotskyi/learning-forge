@@ -6,21 +6,21 @@ requires: [ch01]
 teaches: [document-conversion, document-layout-analysis, layout-label-set, layout-domain-shift, pipeline-composition]
 quiz: quizzes/ch13.quiz.json
 estimatedMinutes: 30
-status: draft
+status: verified
 audit:
   faithfulness:
-    verdict: fail
-    at: 2026-08-15
-    claims: 33
-    supported: 32
+    verdict: pass
+    at: 2026-08-16
+    claims: 28
+    supported: 28
     unsupported: 0
     overstated: 0
     contradicted: 0
-    unreachable: 1
+    unreachable: 0
   critique:
     verdict: pass
-    at: 2026-08-15
-    notes: 0 blocking, 2 advisory
+    at: 2026-08-16
+    notes: 0 blocking, 4 advisory
 ---
 
 ## A format built for printing, read back for machines
@@ -83,10 +83,10 @@ inclusions. Labels such as Author and Affiliation, which DocBank carries, are of
 distinguishable by discriminating on the textual content of an element, which goes beyond
 visual layout recognition, particularly outside the Scientific Articles category. {{S23.y}}
 An author line and an affiliation line can sit in the same position, in the same font, at
-the same size. Nothing about the rectangle separates them. That is a boundary of visual
-layout analysis as a task, not a gap in any particular model, and it is why a conversion
-pipeline that needs those distinctions has to get them from somewhere other than the
-layout stage.
+the same size. Nothing about the rectangle separates them: distinguishing them goes
+beyond visual layout recognition itself, on the cited account and particularly outside
+the Scientific Articles category, which is why a conversion pipeline that needs those
+distinctions has to get them from somewhere other than the layout stage there. {{S23.y}}
 
 ## Two corpora built from uniformly typeset documents
 
@@ -162,6 +162,7 @@ first model's.
 The layout model's architecture is derived from RT-DETR and re-trained on DocLayNet,
 alongside other proprietary datasets. {{S25.c}} That closes the loop this chapter has been
 walking. The label set, the six categories, the sampling policy, and the document-boundary
-split are not properties of a benchmark that a system consults later. They are the training
-data of the layout stage in a shipped converter, and they set what that converter can
+split are not properties of a benchmark that a system consults later. They are part of the
+training data of the layout stage in a shipped converter, alongside the other proprietary
+datasets the same retraining drew on {{S25.c}}, and they set what that converter can
 report about a page before any chunker or retriever sees a single token.

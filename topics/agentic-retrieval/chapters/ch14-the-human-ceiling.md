@@ -10,16 +10,16 @@ status: draft
 audit:
   faithfulness:
     verdict: fail
-    at: 2026-08-15
-    claims: 34
-    supported: 30
+    at: 2026-08-16
+    claims: 33
+    supported: 32
     unsupported: 0
-    overstated: 0
+    overstated: 1
     contradicted: 0
-    unreachable: 4
+    unreachable: 0
   critique:
     verdict: pass
-    at: 2026-08-15
+    at: 2026-08-16
     notes: 0 blocking, 1 advisory
 ---
 
@@ -27,14 +27,15 @@ audit:
 
 Chapter three described a test collection as documents, information needs, and
 relevance judgements, and then used the judgements as though they were facts about the
-world. They are not. Every judgement is one person's decision, written down once, and
-the file format keeps no record of how confident that person was or whether a second
-person would have decided the same way. The only way to recover that missing
-information is to pay for the same item to be labelled more than once.
+world. They are not, and the framing is this chapter's own: a judgement recorded once
+carries no record of how confident the labeller was or whether a second labeller would
+have agreed. Recovering that missing information means paying for the same item to be
+labelled more than once, which is exactly what the double- and triple-annotated pages
+below are for. {{S24.a}}
 
 DocLayNet does exactly that, and although the labels are document layout boxes, nothing
 in this chapter depends on that. The dataset ships a subset of pages annotated twice
-and a smaller subset annotated three times, and the stated purpose of that subset is to
+and a smaller subset annotated three times, {{S23.n}} and the stated purpose of that subset is to
 determine the inter-annotator agreement. {{S23.c}} The authors list the redundancy as a
 contribution of the dataset in its own right: a fraction of the pages carry more than
 one human annotation, which is what makes experimentation with annotation uncertainty
@@ -49,9 +50,7 @@ instances. {{S23.n}} Thousands of pages were paid for twice, and one thousand fi
 hundred of them three times, to produce a number that describes the labellers rather
 than the data. The released dataset also records what kind of document each page came
 from, in a field whose permitted values are financial_reports, scientific_articles,
-laws_and_regulations, government_tenders, manuals, and patents. {{S24.b}} A
-redundantly annotated page therefore arrives with the stratum it was drawn from
-attached to it.
+laws_and_regulations, government_tenders, manuals, and patents. {{S24.b}}
 
 ## Scoring people with the metric you score the model with
 
@@ -66,8 +65,8 @@ supplies more than one such pair, which is where the range comes from.
 The point of using that metric rather than some purpose-built agreement statistic is
 that it puts the humans and the models on one axis. Section 5 of the paper subtracts one
 from the other directly, reporting that the variation in mAP between the models is low
-but that all of them sit below the mAP computed from the pairwise human annotations on
-the triple-annotated pages. {{S23.aq}} A ceiling expressed in a different unit from the
+but that overall the models sit between 6 and 10% below the mAP computed from the
+pairwise human annotations on the triple-annotated pages. {{S23.aq}} A ceiling expressed in a different unit from the
 model's score cannot be subtracted from it, and a difference you cannot compute is a
 ceiling you cannot use.
 
@@ -125,9 +124,10 @@ neither leaves room for a house style.
 
 Rules of that precision do not fit on a page. The complete annotation guideline runs to
 over 100 pages, which the paper notes is too long to describe in the paper itself.
-{{S23.ae}} When you write instructions for the people labelling your evaluation set,
-that is the order of magnitude the work actually takes if you want the ambiguity handled
-in the document rather than in each labeller's head.
+{{S23.ae}} That is one campaign's page count, not a rule for every evaluation set, but
+the reason it grew that long generalizes: writing down where the ambiguity gets
+resolved, instead of leaving it to each labeller's head, is what a guideline for
+checkable rules like these actually costs.
 
 ## Screening labellers, and the ones who do not pass
 
@@ -148,15 +148,18 @@ has produced no information about the cohort.
 
 ## Keeping annotators from seeing each other's work
 
-An agreement number is only worth reading if the two annotations were produced
-independently. The campaign enforced that: annotation staff were not able to see each
-other's annotations, and this was enforced by design specifically to avoid bias in the
-annotation that could skew the inter-annotator agreement numbers. {{S23.am}} Drop that
-constraint and the quantity you compute changes identity without changing its name. Two
-people who can see each other converge, and the resulting figure measures how readily
-the second labeller deferred to the first rather than how far two independent readings
-of the guideline coincide. A ceiling built from conformity sits higher than the real one,
-which means every model measured against it looks worse than it is.
+The campaign enforced independence between annotators: staff were not able to see each
+other's annotations, enforced by design specifically because unblinded viewing could
+skew the inter-annotator agreement numbers. {{S23.am}} Reading past what the excerpt
+measures, the inference is this chapter's own: if that risk is why independence was
+enforced, dropping the constraint would change what the resulting number represents.
+No excerpt pinned for this chapter measures what an unblinded second
+annotator actually does; the paper states only that visibility was avoided to prevent bias
+in the agreement numbers, not what shape that bias takes. Read as a guess rather than a
+finding, one candidate shape is deference: a labeller who can see the first annotation
+converges toward it, and the resulting figure would measure agreement with a colleague
+rather than two independent readings of the guideline. Whether that guess is right is
+exactly what the missing measurement would settle.
 
 Two other rules shaped what an annotation could be. Only non-overlapping, vertically
 oriented, rectangular boxes were allowed. {{S23.al}} And there was a way to flag a page
@@ -165,8 +168,7 @@ as rejected for cases where no valid annotation under the guideline could be ach
 facing an unlabellable page has to guess, and a guess entered as a label is
 indistinguishable from a judgement. With all these measures in place, experienced staff
 annotated a single page in a typical span of 20 to 60 seconds, depending on its
-complexity. {{S23.ao}} Independence, a hundred-page rulebook, and a screening exam did
-not make the work slow.
+complexity. {{S23.ao}}
 
 ## Reading the gap: what the abstract says against what section five says
 

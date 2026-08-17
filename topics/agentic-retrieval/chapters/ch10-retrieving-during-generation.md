@@ -6,20 +6,20 @@ requires: [ch05, ch09]
 teaches: [single-time-retrieval, fixed-schedule-interleaving, model-decided-interleaving, query-complexity-routing, just-in-time-context, interleaving-overhead, baseline-mismatch]
 quiz: quizzes/ch10.quiz.json
 estimatedMinutes: 35
-status: draft
+status: verified
 audit:
   faithfulness:
-    verdict: fail
-    at: 2026-08-15
-    claims: 44
-    supported: 41
+    verdict: pass
+    at: 2026-08-16
+    claims: 48
+    supported: 48
     unsupported: 0
-    overstated: 1
-    contradicted: 1
-    unreachable: 1
+    overstated: 0
+    contradicted: 0
+    unreachable: 0
   critique:
     verdict: pass
-    at: 2026-08-15
+    at: 2026-08-16
     notes: 0 blocking, 4 advisory
 ---
 
@@ -29,7 +29,7 @@ The standard pipeline retrieves documents from the user's input and then generat
 
 FLARE's authors state the condition under which that is enough: the information needs are clear in the user's input, and retrieving relevant knowledge once from the input alone is sufficient {{S48.c}}. Read that as a precondition rather than a concession, because it tells you exactly which questions the design serves. The same paper states the other half: most retrieval augmented models retrieve once from the input, which is limiting when the task involves generating long text and information has to be gathered continually across the course of generation {{S48.a}}.
 
-IRCoT names the failure in a different shape. One-step retrieve-and-read is insufficient for multi-step question answering, because what needs to be retrieved depends on what has already been derived, which in turn depends on what was retrieved before {{S49.a}}. A one-shot retrieval from the question succeeds on many factoid tasks; on a multi-step question you retrieve partial knowledge, perform partial reasoning, retrieve more on the strength of that partial reasoning, and iterate {{S49.b}}. Consider a question whose answer requires knowing which company acquired a particular startup and then knowing where that company is headquartered. The second fact is unreachable from the original wording, because the entity you would search for does not appear in it.
+IRCoT names the failure in a different shape. One-step retrieve-and-read is insufficient for multi-step question answering, because what needs to be retrieved depends on what has already been derived, which in turn can depend on what was retrieved before {{S49.a}}. A one-shot retrieval from the question succeeds on many factoid tasks; on a multi-step question one often must retrieve partial knowledge, perform partial reasoning, retrieve more on the strength of that partial reasoning, and iterate {{S49.b}}. Consider a question whose answer requires knowing which company acquired a particular startup and then knowing where that company is headquartered. The second fact is unreachable from the original wording, because the entity you would search for does not appear in it.
 
 ## Three places the decision can live
 
@@ -49,7 +49,7 @@ The numbers here are the most concrete in the chapter, and one detail bounds all
 
 Against one-step retrieval, IRCoT improves recall for Flan-T5-XXL by 7.9 points on HotpotQA, 14.3 on 2WikiMultihopQA, 3.5 on MuSiQue, and 10.2 on IIRC; for GPT3 the same four improvements are 11.3, 22.6, 12.5, and 21.2 points {{S49.d}}. Downstream answer quality mostly follows. Flan-T5-XXL gains 9.4, 15.3, 5.0, and 2.5 F1 points on the four datasets, and GPT3 gains 7.1, 13.2, and 7.1 on the first three {{S49.e}}.
 
-The fourth GPT3 cell is the one worth stopping on. On IIRC, GPT3 answer quality did not improve at all, despite a 21-point retrieval gain, and the authors' stated explanation is that the relevant knowledge is already inside GPT3, with the similarity of its no-retrieval answer score offered as the evidence {{S49.e}}. Chapter 8 made this point with rerankers; here it is again from a different direction. A retrieval metric moving is not an answer metric moving. The abstract also asserts that IRCoT reduces hallucination and produces factually more accurate reasoning, with no number attached to that claim {{S49.f}}.
+The fourth GPT3 cell is the one worth stopping on. On IIRC, GPT3 answer quality did not improve at all, despite a 21-point retrieval gain, and the authors' stated explanation is that the relevant knowledge is likely already present inside GPT3, with the similarity of its no-retrieval answer score offered as the evidence {{S49.e}}. Chapter 8 made this point with rerankers; here it is again from a different direction. A retrieval metric moving is not an answer metric moving. The abstract also asserts that IRCoT reduces hallucination and produces factually more accurate reasoning, with no number attached to that claim {{S49.f}}.
 
 ## Letting the generator decide, from confidence or from its own sub-question
 
@@ -59,11 +59,11 @@ The paper's overall-results section states that FLARE outperforms all baselines 
 
 Self-Ask puts the trigger in the model's output text instead of its confidence. The prompt format makes the model ask itself follow-up questions, and because that format marks the beginning and end of every sub-question, a search engine can answer the sub-questions in place of the model {{S50.c}}. The loop is mechanical enough to write from the description. Feed in the prompt. If the model emits "Follow up:", let it finish generating the question, which it terminates by emitting "Intermediate answer:". Stop the model there. Send the full sub-question to a search engine API, append the returned answer to the prompt, and let the model continue {{S50.d}}. In an SDK you would recognise this as a generation call with a stop sequence, a tool call, and a resumed completion. Those results were produced with Davinci-002 on 2WikiMultiHopQA, Musique, and Bamboogle {{S50.f}}.
 
-Self-RAG and ReAct from chapter 9 belong in this same box. Self-RAG emits its decision to retrieve as a token, ReAct interleaves thoughts with actions, and in both the generator owns the trigger. Chapter 9 carries their citations and their numbers.
+Self-RAG and ReAct from chapter 9 belong in this same box: Self-RAG decodes a retrieval token first and, when retrieval is not required, predicts the next output segment from the same model in the step right after {{S21.h}}, and ReAct's reasoning targets what to retrieve next {{S22.d}}, so the generator owns the trigger in both. Their numbers are not repeated here, since chapter 9 already carries them; this chapter adds nothing beyond the classification.
 
 ## Deciding before generation starts, from the question alone
 
-Adaptive-RAG targets a failure with two directions. Existing approaches either handle simple queries with unnecessary computational overhead or fail to address complex multi-step queries adequately, and real user requests do not sort cleanly into simple or complex {{S51.a}}. Committing to one strategy for all traffic is wrong for part of that traffic either way.
+Adaptive-RAG targets a failure with two directions. Existing approaches either handle simple queries with unnecessary computational overhead or fail to address complex multi-step queries adequately, and not all user requests sort cleanly into one of the two categories {{S51.a}}. Committing to one strategy for all traffic is wrong for part of that traffic either way.
 
 Its answer is a router. The framework selects the most suitable strategy, from the simplest to the most sophisticated, based on query complexity, and that selection is done by a classifier: a smaller language model trained to predict the complexity of an incoming query, with training labels collected automatically from the actual predicted outcomes of models and from inductive biases in the datasets. The strategies it chooses among are iterative retrieval, single-step retrieval, and no retrieval {{S51.b}}. For the taxonomy this is the whole point. The decision is per query, it is made before generation starts, and it is made by a different model from the one that will generate.
 
@@ -78,21 +78,21 @@ Structurally an identifier is a query held in a more precise form, and the decis
 
 ## What it costs, and why every source says so rather than shows it
 
-Every cost statement in this chapter's sources runs against the pattern the same sources advocate, and none of the four is a benchmark of the cost.
+Every cost statement in this chapter's sources runs against the pattern the same sources advocate. Three of the four assert what interleaving costs rather than measure it; the fourth, on a related but different question, does pair its claim with a number.
 
 FLARE's limitations section is the most specific. Interleaving generation and retrieval with a naive implementation increases both the overheads and the cost of generation, because the model has to be activated once per retrieval and, without caching, the previous activations are recomputed after each retrieval {{S48.i}}. That is an assertion about what an implementation does, not a measurement of what it costs, and no cost figure accompanies it {{S48.i}}. The appendix repeats the claim with the comparison named: against single-time retrieval, naive interleaving does increase overheads {{S48.j}}. The mechanism is worth holding on to, because it explains why the cost is not simply one extra network call. Retrieved text is inserted into the context that the already-generated tokens were produced against, so a system with no cache pays for those tokens again on every round.
 
 The engineering article states the tradeoff in one line: runtime exploration is slower than retrieving pre-computed data, and getting an agent to navigate its own information sources takes deliberate engineering of tools and heuristics {{S52.c}}. Asserted, again, rather than measured.
 
-Adaptive-RAG puts the cost on the other side of the routing decision. A multi-step approach gives rise to unnecessary computational overhead for simple queries, while being vital for complex ones {{S51.c}}. Of the sources this chapter cites, Adaptive-RAG is the one that pairs its cost claim with a measured comparison, reported as significantly more efficient than the always-multi-step strategy {{S51.d}}, with elapsed time per query among the quantities it measures {{S51.e}}.
+Adaptive-RAG puts the cost on the other side of the routing decision. A multi-step approach could give rise to unnecessary computational overhead for simple queries, even though it would be vital for complex ones {{S51.c}}. Of the sources this chapter cites, Adaptive-RAG is the one that pairs its cost claim with a measured comparison, reported as significantly more efficient than the always-multi-step strategy {{S51.d}}, with elapsed time per query among the quantities it measures {{S51.e}}.
 
 ## Reading four results whose baselines do not line up
 
 FLARE's overhead discussion names its comparison explicitly as single-time retrieval {{S48.j}}, and IRCoT's recall table is reported relative to one-step retrieval {{S49.d}}. Those two are the same kind of baseline: retrieve once from the question, then read.
 
-Self-Ask's number is not. Adding the search engine to self-ask improves performance on all datasets, sometimes by as much as 10 percent absolute {{S50.e}}, and the thing it improves on is self-ask without the search engine, which answers its own follow-up questions from what the model already knows. That is much closer to a no-retrieval comparison than to retrieve-then-read. The reason lies in what the paper set out to do. It defines the compositionality gap as the fraction of questions where a model answers the individual sub-questions correctly but not the compositional question {{S50.b}}, and it reports that across the GPT-3 family, single-hop performance improves faster than multi-hop performance as models get larger, so the gap does not close; the search engine is then plugged into the sub-question slots that the prompt format creates {{S50.a}}. A paper measuring a gap in parametric reasoning baselines against parametric reasoning.
+Self-Ask's number is not. Adding the search engine to self-ask improves performance on all datasets, sometimes by as much as 10 percent absolute {{S50.e}}, and the thing it improves on is self-ask without the search engine, which answers its own follow-up questions from what the model already knows {{S50.d}}. That is much closer to a no-retrieval comparison than to retrieve-then-read. The reason lies in what the paper set out to do. It defines the compositionality gap as the fraction of questions where a model answers the individual sub-questions correctly but not the compositional question {{S50.b}}, and it reports that across the GPT-3 family, single-hop performance improves faster than multi-hop performance as models get larger, so the gap does not close; the search engine is then plugged into the sub-question slots that the prompt format creates {{S50.a}}. A paper measuring a gap in parametric reasoning baselines against parametric reasoning.
 
-Adaptive-RAG gives a third line again, since its claim is about two failure directions at once and its comparisons run against fixed strategies at both ends {{S51.a}}.
+Adaptive-RAG gives a third line again, since its claim is about two failure directions at once, unnecessary overhead on simple queries and inadequate handling of complex ones {{S51.a}}; none of the excerpts pinned here transcribe how its own comparisons were structured.
 
 FLARE's own limitations section supplies the fourth. On ELI5, neither single-time retrieval nor FLARE produced significant gains over not retrieving at all {{S48.h}}. On Wizard of Wikipedia, the authors point at the output length, around 20 tokens on average, as the reason {{S48.g}}:
 

@@ -6,15 +6,15 @@ requires: [ch01, ch02]
 teaches: [test-collection, precision-and-recall, recall-at-k, ndcg, reciprocal-rank, graded-versus-binary-relevance, evaluation-cutoff, headline-measure]
 quiz: quizzes/ch03.quiz.json
 estimatedMinutes: 30
-status: draft
+status: verified
 audit:
   faithfulness:
-    verdict: fail
+    verdict: pass
     at: 2026-08-15
-    claims: 46
-    supported: 44
+    claims: 42
+    supported: 42
     unsupported: 0
-    overstated: 2
+    overstated: 0
     contradicted: 0
     unreachable: 0
   critique:
@@ -27,15 +27,16 @@ audit:
 
 The previous chapter compared systems using numbers it never defined: top-20 passage
 retrieval accuracy and BEIR's zero-shot scores. Before either one can be defined,
-three other things have to be pinned down. This chapter's premise is that a retrieval
-score is a property of a system and a collection together, not of the system alone,
-and the sections that follow build the case: the same system scored against a
-different collection, or against a different record of what counts as relevant, comes
-out with a different number without anything about the system changing. Measuring ad
+three other things have to be pinned down. This chapter's own claim, argued through
+the sections that follow rather than sourced from any one of them, is that a retrieval
+score is a property of a system and a collection together, not of the system alone:
+the same system scored against a different collection, or against a different record
+of what counts as relevant, comes out with a different number without anything about
+the system changing. Measuring ad
 hoc retrieval effectiveness in the standard way starts by assembling a test
 collection. {{S38.a}} A test collection, in the sense this book uses throughout, is
 documents being searched, information needs being served, and a record of which
-documents are relevant to which need.
+documents are relevant to which need. {{S38.a}}
 
 The middle part is where engineers new to this go wrong, because a need is not a
 query. Relevance is assessed relative to an information need, not relative to a
@@ -57,8 +58,8 @@ and recall. {{S07.a}} Precision is the fraction of retrieved documents that are
 relevant. {{S07.c}} Recall is the fraction of relevant documents that are retrieved.
 {{S07.b}} Both fractions count the same numerator, the documents that are retrieved
 and relevant, and differ only in what they divide by: precision divides by what the
-system returned, recall divides by what existed. The standard presentation is a
-contingency table of retrieved against relevant. {{S07.d}}
+system returned, recall divides by what existed. The textbook introducing these two
+measures lays them out as a contingency table of retrieved against relevant. {{S07.d}}
 
 |               | relevant | nonrelevant |
 | ------------- | -------- | ----------- |
@@ -103,11 +104,9 @@ parameter string. {{S05.b}} {{S05.a}}
 static long long_cutoff_array[] = { 5, 10, 15, 20, 30, 100, 200, 500, 1000 };
 ```
 
-Which cutoff to report is a decision about the application, not a property of the
-ranker.
-BEIR's argument for its own metric opens on exactly that point: retrieval tasks are
-precision focused or recall focused depending on the nature and requirements of the
-real world application. {{S03.i}}
+BEIR's argument for its own metric opens on a related point about the application
+rather than the ranker: retrieval tasks are precision focused or recall focused
+depending on the nature and requirements of the real world application. {{S03.i}}
 
 ## Discounted gain, and what normalising it against the ideal buys
 
@@ -217,13 +216,12 @@ aware but binary, and fail on graded judgements; nDCG at a cutoff covers both ki
 of judgement. {{S03.i}} The number that comes out is nDCG@10, computed for every
 dataset through the Python interface of the official TREC evaluation tool. {{S03.j}}
 
-So the headline number is chosen for comparability across tasks rather than because
-10 is the right depth for each of them, and BEIR's own opening observation is that
-applications are precision focused or recall focused depending on their requirements.
-{{S03.i}} Two systems that both put a relevant document at rank 1 are
+BEIR's own opening observation is that applications are precision focused or recall
+focused depending on their requirements. {{S03.i}} Two systems that both put a relevant document at rank 1 are
 indistinguishable on reciprocal rank, which stops reading after that document.
-{{S06.b}} They separate on nDCG@10 when one of them fills the remaining nine
-positions with graded gain and the other leaves them empty. {{S04.d}}
+{{S06.b}} nDCG separates them: the ratio it computes rises with any extra graded gain
+one system's ranking accumulates and the other's does not, wherever in the ranking
+that gain sits. {{S04.d}}
 
 Every comparison in the chapters that follow is a comparison at a cutoff, over one
 collection, against judgements somebody wrote down. When a result looks surprising,

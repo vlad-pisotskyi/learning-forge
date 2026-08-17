@@ -6,20 +6,20 @@ requires: [ch01]
 teaches: [sparse-retrieval, dense-retrieval, in-batch-negatives, in-domain-versus-zero-shot, hybrid-retrieval, annotation-artefact]
 quiz: quizzes/ch02.quiz.json
 estimatedMinutes: 30
-status: draft
+status: verified
 audit:
   faithfulness:
-    verdict: fail
-    at: 2026-08-15
-    claims: 35
-    supported: 32
-    unsupported: 1
+    verdict: pass
+    at: 2026-08-16
+    claims: 36
+    supported: 36
+    unsupported: 0
     overstated: 0
     contradicted: 0
-    unreachable: 2
+    unreachable: 0
   critique:
     verdict: pass
-    at: 2026-08-15
+    at: 2026-08-16
     notes: 0 blocking, 2 advisory
 ---
 
@@ -29,25 +29,32 @@ The retriever in the previous chapter was a black box that returned passages. Op
 and the oldest working answer inside is to score a passage by the words it shares with
 the query. BM25 is that idea in its standard form: a bag-of-words scoring function
 computed as token matching between two high-dimensional sparse vectors whose components
-carry TF-IDF weights, each one scoring a token by its frequency in the passage weighed
-against its rarity across the whole corpus. {{S03.d}}
+carry TF-IDF weights. {{S03.d}} The two halves are separate counts, combined. Term
+frequency is the number of times a term occurs in a document. {{S53.a}} Inverse
+document frequency runs the opposite direction: it is high for a term that is rare
+across the collection, and likely low for one that is frequent. {{S54.a}} The two are
+combined into one composite weight per term per document. {{S55.a}} A stopword like
+"the" turns up in nearly every document, so it is exactly the kind of term whose
+inverse document frequency is likely low, however often it occurs in any one passage.
+{{S54.a}}
 
 Sparse is literal. The space has one dimension per token in the vocabulary, and any one
 passage uses a small fraction of them, so nearly every component of its vector is zero.
 {{S03.d}} A score is then a weighted count of the tokens the query and the passage both
-put a nonzero value on. Because the match is on tokens, a query and a passage that use
+put a nonzero value on. {{S03.d}} Because the match is on tokens, a query and a passage that use
 different words for the same thing contribute nothing to each other on those words.
 {{S03.d}}
 
 This is the method new retrieval work had to beat. For open-domain question answering,
 sparse vector space models such as TF-IDF and BM25 were the de facto way to select
 candidate passages. {{S02.a}} The two names overlap on purpose: TF-IDF is the per-token
-weighting scheme already described, the one behind BM25's own vectors, and also, used on
-its own, a ranking method that scores a passage directly by those weights.
+weighting scheme already described, the one behind BM25's own vectors. Whether TF-IDF is
+also used as a ranking method by itself is not something any source pinned for this chapter
+states; no excerpt here settles it, so it is left open rather than asserted.
 
 ## Ranking by the vectors that match
 
-Dense retrieval scores by similarity between learned representations instead. The DPR
+Dense retrieval works from learned representations instead of token weights: the DPR
 paper showed that retrieval can be implemented in practice using dense representations
 alone, with the embeddings learned from a small number of questions and passages by a
 dual-encoder framework. {{S02.a}}
@@ -62,19 +69,18 @@ question-passage pairs rather than assigned by a fixed rule. {{S02.a}}
 
 ## How a dense retriever is trained, and on how little
 
-An encoder is not trained to judge a passage relevant in isolation. It is trained to put
-the right passage above the wrong ones, so the training procedure has to supply wrong
-ones, and where those come from is a design decision with a name.
-
 The DPR model used in the paper's main experiments was trained in the in-batch negative
 setting, with a batch size of 128 and one additional BM25 negative passage per question.
-{{S02.d}} The setting is named for where the negatives come from: in-batch negatives are a
-standard training technique in which every other example already sitting in the same
-training batch stands in as a negative for the current one, so no separate retrieval step
-has to go find one. Applied here, a batch already holds 128 question-passage pairs, and
-for any one question in it, the passages that belong to the other 127 questions serve as
-its negatives. The extra negative per question is the exception, and it comes from BM25
-{{S02.d}}, which puts the lexical method inside the dense retriever's training loop rather
+{{S02.d}} The setting is named for where the negatives come from, and it is also where
+the training procedure gets a passage to judge as wrong rather than right. Reusing a
+batch's own question and passage embeddings, every question in a batch of size B gets B
+question-passage pairs to score, one positive where it matches its own passage and B-1
+negative where it does not, giving B training instances per batch and B-1 negatives for
+each question, with no separate retrieval step needed to go find one. {{S02.h}} Applied
+here, a batch already holds 128
+question-passage pairs, and for any one question in it, the passages that belong to the
+other 127 questions serve as its negatives. {{S02.d}}{{S02.h}} The extra negative per question is the
+exception, and it comes from BM25 {{S02.d}}, which puts the lexical method inside the dense retriever's training loop rather
 than only opposite it at evaluation.
 
 The amount of supervision this needs is smaller than the setup suggests. In the paper's
@@ -119,13 +125,13 @@ and the condition is the finding.
 ## One dataset where the lexical baseline wins, and why
 
 The exception in DPR's own table teaches more than the rule does. SQuAD is the single
-dataset where BM25 stays ahead. {{S02.b}}
+dataset where BM25 stays ahead. {{S02.b}}{{S02.c}}
 
 The paper offers a conjecture for it rather than a measurement, and the conjecture points
 at two properties of how the dataset was built. The annotators wrote their questions
 after seeing the passage, which on the authors' account leaves a high lexical overlap
 between questions and passages and gives BM25 a clear advantage. And the data was
-collected from just over 500 Wikipedia articles, which they give as the reason the
+collected from 500 or more Wikipedia articles, which they give as the reason the
 distribution of training examples is extremely biased. {{S02.c}}
 
 Neither property is a fact about question answering. Both are facts about a collection
